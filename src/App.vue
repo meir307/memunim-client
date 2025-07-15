@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main  dir="rtl">
       <router-view/>
     </v-main>
   </v-app>

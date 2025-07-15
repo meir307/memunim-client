@@ -1,13 +1,31 @@
 <template>
 
+<div class="d-flex  main-content"  >
+<v-tabs
+      v-model="tab"
+      align-tabs="center"
+    
+      color="deep-purple-accent-4"
+      
+    >
+    <v-tab :value="2">חוקים ותקנות</v-tab>
+      <v-tab :value="1">בעלי מקצוע</v-tab>
+
+      
+    </v-tabs>
+</div>
+
 <v-container>
+
+    
+
       <v-row class="text-center">
         <v-col cols="12">
           <v-img
             :src="require('../../assets/logo.svg')"
             class="my-3"
             contain
-            height="200"
+            height="900"
           />
         </v-col>
 
@@ -37,4 +55,10 @@ export default {
     }
   }
   </script>
+  
+<style>
+.main-content {
+  margin-top: 50px;
+}
+</style>
   
