@@ -14,8 +14,6 @@ import MainBody from './MainBody.vue'
 //import { MainBody } from './MainBody.vue'
 
 
-ddd
-
 export default {
   name: 'HelloWorld',
   components: { TopStrip,MainBody },
