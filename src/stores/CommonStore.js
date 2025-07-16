@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-export const useApiStore = defineStore('api', {
+export const CommonStore = defineStore('api', {
 
 
   state: () => ({
@@ -27,19 +27,17 @@ export const useApiStore = defineStore('api', {
         this.data = response.data
         this.handleSuccess();
       } catch (error) {
+        alert(error.message)
         this.error = error.message
       } finally {
         this.loading = false
       }
     },
+    handleSuccess() {
+      // This can be called from any action
+      console.log('API call succeeded!')
+    }
   },
-  handleSuccess() {
-    // This can be called from any action
-    console.log('API call succeeded!')
-  },
-  handleError(error) {
-    // This can be called from any action
-    console.error('API call failed:', error)
-  }
+  
   
 }) 

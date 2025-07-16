@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { useApiStore } from '@/stores/apiStore'
+import { CommonStore } from '@/stores/CommonStore'
 import TopStrip from './TopStrip.vue'
 import MainBody from './MainBody.vue'
 //import { MainBody } from './MainBody.vue'
@@ -67,9 +67,9 @@ export default {
   }),
   methods: {
     async init() {
-      const apiStore = useApiStore()
+      const commonStore = CommonStore()
       
-      await apiStore.fetchInitData()
+      await commonStore.fetchInitData()
     }
   },
   created() {

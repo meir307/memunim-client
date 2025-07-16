@@ -5,7 +5,7 @@
       v-model="tab"
       align-tabs="center"
     
-      color="deep-purple-accent-4"
+      color="deep-purple-accent-1"
       
     >
     <v-tab :value="2">חוקים ותקנות</v-tab>
@@ -44,7 +44,7 @@ export default {
     name: 'MainBody',
     
     data: () => ({
-      
+      tab:1
     }),
     methods: {
      
