@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useLoaderStore } from './LoaderStore'
 
-export const CommonStore = defineStore('api', {
-
-
+export const CommonStore = defineStore('common', {
   state: () => ({
     apiUrl: process.env.VUE_APP_API_ADDRESS,
     data: null,
@@ -19,9 +18,9 @@ export const CommonStore = defineStore('api', {
 
   actions: {
     async fetchInitData() {
-      console.log('fetchInitData')
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
       this.loading = true
-     
       try {
         const response = await axios.post(this.apiUrl + 'common/init')
         this.data = response.data
@@ -31,6 +30,7 @@ export const CommonStore = defineStore('api', {
         this.error = error.message
       } finally {
         this.loading = false
+        loaderStore.hide()
       }
     },
     handleSuccess() {
@@ -38,6 +38,4 @@ export const CommonStore = defineStore('api', {
       console.log('API call succeeded!')
     }
   },
-  
-  
 }) 
