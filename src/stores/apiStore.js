@@ -2,7 +2,10 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useApiStore = defineStore('api', {
+
+
   state: () => ({
+    apiUrl: process.env.VUE_APP_API_ADDRESS,
     data: null,
     loading: false,
     error: null
@@ -16,38 +19,27 @@ export const useApiStore = defineStore('api', {
 
   actions: {
     async fetchInitData() {
+      console.log('fetchInitData')
       this.loading = true
-      this.error = null
      
-      const apiUrl = process.env.VUE_APP_API_ADDRESS;
-      console.log(apiUrl)
       try {
-        const response = await axios.post(apiUrl + 'common/init')
+        const response = await axios.post(this.apiUrl + 'common/init')
         this.data = response.data
+        this.handleSuccess();
       } catch (error) {
         this.error = error.message
-        console.error('Error fetching data:', error)
       } finally {
         this.loading = false
       }
     },
-
-
-    async demo() {
-      this.loading = true
-      this.error = null
-      const payload = { name: 'John', age: 30 };
-      const apiUrl = process.env.VUE_APP_API_ADDRESS;
-      console.log(apiUrl)
-      try {
-        const response = await axios.post(apiUrl + 'users/postMyUser1/', payload)
-        this.data = response.data
-      } catch (error) {
-        this.error = error.message
-        console.error('Error fetching data:', error)
-      } finally {
-        this.loading = false
-      }
-    }
+  },
+  handleSuccess() {
+    // This can be called from any action
+    console.log('API call succeeded!')
+  },
+  handleError(error) {
+    // This can be called from any action
+    console.error('API call failed:', error)
   }
+  
 }) 
