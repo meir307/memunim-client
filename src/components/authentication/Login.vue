@@ -8,12 +8,12 @@
           </v-card-title>
           <v-card-text>
             <v-form>
-              <v-text-field
+              <v-text-field reverse
                 label="אימייל"
                 type="email"
                 required
               ></v-text-field>
-              <v-text-field
+              <v-text-field reverse
                 label="סיסמה"
                 type="password"
                 required

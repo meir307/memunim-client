@@ -23,7 +23,8 @@ export default {
   components: { MainRegulations, MainServices },
   data: () => ({
     tab: 0,
-    tabs: [
+    links: [
+     
       {
         id: 0,
         text: 'חוקים ותקנות',
@@ -34,8 +35,25 @@ export default {
         text: 'נותני שרות',
         component: 'MainServices'
       },
+      {
+        id: 2,
+        text: 'איזור אישי',
+        component: 'MainRegulations'
+      },
+      
+     
     ]
   }),
+
+  computed: {
+    tabs: {
+      get() {
+        return this.links.slice(0, -1)
+      },
+      // set() {   //I dont need this. only to avoid error
+      // }
+    }
+  }
 }
 </script>
 

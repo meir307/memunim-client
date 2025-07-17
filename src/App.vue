@@ -1,7 +1,7 @@
 <template>
-  <v-app>
+  <v-app  dir="rtl">
     
-    <v-main dir="rtl">
+    <v-main  dir="rtl">
       <router-view/>
       <AppLoader />
     </v-main>
