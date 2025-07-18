@@ -1,0 +1,19 @@
+.popup-title{
+    padding: 0;
+    margin: 0;
+    padding-right: 12px;
+    margin-bottom: 20px;
+    background-color: rgb(138, 200, 224);
+    text-align: right;
+    border-color: black;
+    border-width: 2px;
+}
+
+.popup-btn-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 24px;
+    margin-bottom: 8px;
+  }

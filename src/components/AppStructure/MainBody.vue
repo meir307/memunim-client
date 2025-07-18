@@ -68,7 +68,7 @@ export default {
   /* Example: orange */
   background-color: #e7edff !important;
   /* Example: light background */
-  border-bottom: 7px solid #367dbe !important;
+  border-bottom: 5px solid #367dbe !important;
   /* Example: underline */
   /* Add any other styles you want */
 }
