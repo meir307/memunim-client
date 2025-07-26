@@ -42,26 +42,30 @@ export default {
     password: ''
   }),
   methods: {
+   
+    
     getClientType() {
       const userAgent = navigator.userAgent.toLowerCase()
       
       if (/android|iphone|ipad|ipod|blackberry|windows phone/.test(userAgent)) {
-        return 'mobile'
+        return 3 //'mobile'
       } else if (/tablet|ipad/.test(userAgent)) {
-        return 'tablet'
+        return 2 //'tablet'
       } else {
-        return 'desktop'
+        return 1 //'desktop'
       }
     },
     
     async login() {
+      
+      alert('Login button clicked!')
       const userStore = useUserStore()
       await userStore.login({
         email: this.email,
         password: this.password,
         clientType: this.getClientType()
       })
-
+      console.log(userStore.user)
       if ( userStore.isAuthenticated ) {
         this.$emit('btnCancel')
       }

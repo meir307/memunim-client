@@ -40,6 +40,7 @@
 import * as validationRules from '@/utils/ValidationRules'
 import axios from 'axios'
 import { useCommonStore } from '@/stores/CommonStore'
+import { useLoaderStore } from '@/stores/LoaderStore'
 
 export default {
     name: 'RegistrationComponent',
@@ -52,7 +53,7 @@ export default {
                 password: ''
             },
             validationRules,
-
+            loaderStore: useLoaderStore()
         }
     },
     methods: {
@@ -63,6 +64,7 @@ export default {
             const phoneValid = this.validationRules.phoneRules.every(rule => rule(this.user.phone) === true);
 
             if (emailValid && passwordValid && fullNameValid && phoneValid) {
+                this.loaderStore.show()
                 try {
                     const commonStore = useCommonStore()
                     const response = await axios.post(commonStore.apiUrl + 'user/register', this.user)
@@ -71,6 +73,8 @@ export default {
                     this.$emit('btnCancel')
                 } catch (error) {
                     alert(error.response?.data?.message || 'Registration failed')
+                } finally {
+                    this.loaderStore.hide()
                 }
             } else {
                 alert('not valid')
