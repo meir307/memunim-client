@@ -9,14 +9,14 @@
 
 
 <div v-if="!isAuthenticated"  class="d-flex align-center">
-  <p class="ma-0 ml-6">שלום אורח</p>
+  <p class="ma-0 ml-2">שלום אורח</p>
   <v-btn variant="text" @click="showLogin = true">כניסה</v-btn>
   <v-btn variant="text" @click="showRegister = true" >הרשמה</v-btn>
 </div>
 
 <div v-if="isAuthenticated" class="d-flex align-center" style="font-weight: 200;">
   <p class="ma-0 mr-2">שלום {{ userName }} </p>
-  <v-btn variant="text" @click="logout = true" class="ma-0 mr-4">התנתק</v-btn>
+  <v-btn variant="text" @click="logout" class="ma-0 mr-4">התנתק</v-btn>
 </div>
 
   <v-dialog v-model="showLogin" width="1000">
@@ -41,20 +41,20 @@ export default {
   components: { Login, Register},
   data: () => ({
     showLogin: false,
-    showRegister:false
+    showRegister: false,
+    userStore: useUserStore()
   }),
   computed: {
     isAuthenticated() {
-      const userStore = useUserStore()
-      return userStore.isAuthenticated
+      return this.userStore.user.isAuthenticated ? true : false
     },
     userName(){
-
-      console.log('userName')
-
-      const userStore = useUserStore()
-      console.log(userStore.user)
-      return userStore.user.fullName
+      return this.userStore.user.fullName
+    }
+  },
+  methods: {
+    logout() {
+      this.userStore.logout()
     }
   }
 }

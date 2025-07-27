@@ -6,9 +6,8 @@ export const useUserStore = defineStore('UserStore', {
   state: () => ({
     apiUrl: process.env.VUE_APP_API_ADDRESS,
     loaderStore: useLoaderStore(),
-    user: {},
+    user: JSON.parse(localStorage.getItem('user')) || {},
     count: 2,
-    isAuthenticated: false,
   }),
   
   getters: {
@@ -20,15 +19,25 @@ export const useUserStore = defineStore('UserStore', {
     async login(credentials) {
       this.preAction()
       try {
+        console.log('login')  
         const response = await axios.post(this.apiUrl + 'user/login', credentials)
         this.user = response.data.user
-        this.isAuthenticated = true
+        
+        // Save to localStorage
+        localStorage.setItem('user', JSON.stringify(this.user))
+        
       } catch (error) {
         alert(error.message)
         this.error = error.message
       } finally {
         this.postAction()
       }
+    },
+
+    logout() {
+      this.user = {}
+            // Clear localStorage
+      localStorage.removeItem('user')
     },
  
     preAction() {

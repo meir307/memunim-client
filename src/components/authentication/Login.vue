@@ -57,17 +57,21 @@ export default {
     },
     
     async login() {
-      
-      alert('Login button clicked!')
-      const userStore = useUserStore()
-      await userStore.login({
-        email: this.email,
-        password: this.password,
-        clientType: this.getClientType()
-      })
-      console.log(userStore.user)
-      if ( userStore.isAuthenticated ) {
-        this.$emit('btnCancel')
+      try {
+        const userStore = useUserStore()
+        await userStore.login({
+          email: this.email,
+          password: this.password,
+          clientType: this.getClientType()
+        })
+          
+        // Check if login was successful (user object has data)
+        if (userStore.user.isAuthenticated) {
+          this.$emit('btnCancel')
+        }
+      } catch (error) {
+        console.error('Login error:', error)
+        alert('Login failed: ' + error.message)
       }
     },
   },
