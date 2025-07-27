@@ -21,7 +21,7 @@ export const useUserStore = defineStore('UserStore', {
       this.preAction()
       try {
         const response = await axios.post(this.apiUrl + 'user/login', credentials)
-        this.user = response.data
+        this.user = response.data.user
         this.isAuthenticated = true
       } catch (error) {
         alert(error.message)
