@@ -17,11 +17,14 @@
 <script>
 import MainRegulations from './Tabs/Regulations/MainRegulations.vue'
 import MainServices from './Tabs/ProServices/MainServices.vue'
+import UserMain from './Tabs/User/UserMain.vue'
+import { useUserStore } from '@/stores/UserStore'
 
 export default {
   name: 'MainBody',
-  components: { MainRegulations, MainServices },
+  components: { MainRegulations, MainServices, UserMain },
   data: () => ({
+    userStore: useUserStore(),
     tab: 0,
     links: [
      
@@ -38,7 +41,7 @@ export default {
       {
         id: 2,
         text: 'איזור אישי',
-        component: 'MainRegulations'
+        component: 'UserMain'
       },
       
      
@@ -46,12 +49,24 @@ export default {
   }),
 
   computed: {
-    tabs: {
-      get() {
+    tabs() {
+      if (this.userStore.user.isAuthenticated) {
+        return this.links
+      }
+      else {
         return this.links.slice(0, -1)
-      },
-      // set() {   //I dont need this. only to avoid error
-      // }
+      }
+    }
+  },
+  
+  watch: {
+    'userStore.user.isAuthenticated': {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.tab = 2
+        }
+      }
     }
   }
 }
