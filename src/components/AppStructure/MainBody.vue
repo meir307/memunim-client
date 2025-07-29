@@ -1,13 +1,13 @@
 <template>
   <div class="d-flex main-content">
-    <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-1" selected-class="my-selected-tab">
-      <v-tab v-for="tabItem in tabs" :key="tabItem.id">
+    <v-tabs v-model="activeTab" align-tabs="center" color="deep-purple-accent-1" selected-class="my-selected-tab">
+      <v-tab v-for="tabItem in tabs" :key="tabItem.id" @click="navigateToTab(tabItem.route)">
         {{ tabItem.text }}
       </v-tab>
     </v-tabs>
   </div>
 
-  <v-window v-model="tab">
+  <v-window v-model="activeTab">
     <v-window-item v-for="tabItem in tabs" :key="tabItem.id" :value="tabItem.id">
       <component :is="tabItem.component" />
     </v-window-item>
@@ -25,26 +25,26 @@ export default {
   components: { MainRegulations, MainServices, UserMain },
   data: () => ({
     userStore: useUserStore(),
-    tab: 0,
+    activeTab: 0,
     links: [
-     
       {
         id: 0,
         text: 'חוקים ותקנות',
-        component: 'MainRegulations'
+        component: 'MainRegulations',
+        route: '/regulations'
       },
       {
         id: 1,
         text: 'נותני שרות',
-        component: 'MainServices'
+        component: 'MainServices',
+        route: '/services'
       },
       {
         id: 2,
         text: 'איזור אישי',
-        component: 'UserMain'
-      },
-      
-     
+        component: 'UserMain',
+        route: '/user'
+      }
     ]
   }),
 
@@ -59,12 +59,19 @@ export default {
     }
   },
   
+  methods: {
+    navigateToTab(route) {
+      this.$router.push(route)
+    }
+  },
+  
   watch: {
     'userStore.user.isAuthenticated': {
       immediate: true,
       handler(newValue) {
         if (newValue) {
-          this.tab = 2
+          this.activeTab = 2
+          this.$router.push('/user')
         }
       }
     }
