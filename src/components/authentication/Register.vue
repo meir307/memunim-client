@@ -50,7 +50,8 @@ export default {
                 fullName: '',
                 email: '',
                 phone: '',
-                password: ''
+                password: '',
+                role: 1
             },
             validationRules,
             loaderStore: useLoaderStore()

@@ -8,8 +8,8 @@
           </v-card-title>
           <v-card-text>
 
-            <v-text-field v-model="email" reverse label="אימייל" type="email" required></v-text-field>
-            <v-text-field v-model="password" reverse label="סיסמה" type="password" required></v-text-field>
+            <v-text-field ref="emailField" v-model="email" reverse label="אימייל" type="email" required @keyup.enter="focusPassword"></v-text-field>
+            <v-text-field ref="passwordField" v-model="password" reverse label="סיסמה" type="password" required @keyup.enter="login"></v-text-field>
             <div class="popup-btn-row">
 
               <v-btn @click="login" color="primary">התחבר</v-btn>
@@ -42,7 +42,11 @@ export default {
     password: ''
   }),
   methods: {
-   
+    focusPassword() {
+      this.$nextTick(() => {
+        this.$refs.passwordField.focus()
+      })
+    },
     
     getClientType() {
       const userAgent = navigator.userAgent.toLowerCase()
