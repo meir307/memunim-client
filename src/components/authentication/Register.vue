@@ -25,7 +25,7 @@
 
                         <div class="popup-btn-row">
                             <v-btn @click="regUser" color="primary">הרשם</v-btn>
-                            <v-btn @click="$emit('btnCancel')">סגור</v-btn>
+                            <v-btn @click="$emit('btnClose')">סגור</v-btn>
                             <v-spacer></v-spacer>
                         </div>
                         <!-- </v-form> -->
@@ -71,7 +71,7 @@ export default {
                     const response = await axios.post(commonStore.apiUrl + 'user/register', this.user)
                     alert('Registration successful!')
                     console.log(response)
-                    this.$emit('btnCancel')
+                    this.$emit('btnClose')
                 } catch (error) {
                     alert(error.response?.data?.message || 'Registration failed')
                 } finally {

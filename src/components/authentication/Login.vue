@@ -13,14 +13,14 @@
             <div class="popup-btn-row">
 
               <v-btn @click="login" color="primary">התחבר</v-btn>
-              <v-btn @click="$emit('btnCancel')">סגור</v-btn>
+              <v-btn @click="$emit('btnClose')">סגור</v-btn>
               <v-spacer></v-spacer>
             </div>
 
 
             <!-- <div class="login-btn-row">
                 <v-btn color="primary">התחבר</v-btn>
-                <v-btn @click="$emit('btnCancel')">סגור</v-btn>
+                <v-btn @click="$emit('btnClose')">סגור</v-btn>
               </div>
              -->
 
@@ -71,7 +71,7 @@ export default {
           
         // Check if login was successful (user object has data)
         if (userStore.user.isAuthenticated) {
-          this.$emit('btnCancel')
+          this.$emit('btnClose')
         }
       } catch (error) {
         console.error('Login error:', error)
