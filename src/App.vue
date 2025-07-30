@@ -1,7 +1,7 @@
 <template>
   <v-app dir="rtl">
     <TopStrip />
-    <v-main dir="rtl">
+    <v-main>
       <router-view/>
       <AppLoader />
     </v-main>
@@ -11,9 +11,14 @@
 <script>
 import AppLoader from '@/components/Common/AppLoader.vue'
 import TopStrip from '@/components/AppStructure/TopStrip.vue'
+import { useCommonStore } from '@/stores/CommonStore'
 
 export default {
   name: 'App',
-  components: { AppLoader, TopStrip }
+  components: { AppLoader, TopStrip },
+  async created() {
+    const commonStore = useCommonStore()
+    await commonStore.fetchInitData()
+  }
 }
 </script>
