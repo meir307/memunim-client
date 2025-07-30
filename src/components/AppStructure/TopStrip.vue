@@ -7,8 +7,20 @@
       elevation="2"
       class="topstrip-fixed"
     >
+      <!-- Mobile Menu Button - First element (leftmost) -->
+      <v-btn
+        icon
+        variant="text"
+        color="white"
+        @click="drawer = !drawer"
+        class="d-md-none"
+        size="medium"
+      >
+        <v-icon icon="mdi-menu" size="large"></v-icon>
+      </v-btn>
+
       <!-- App Title/Logo -->
-      <v-app-bar-title class="d-flex align-center">
+      <v-app-bar-title class="d-none d-md-flex align-center">
         <v-icon icon="mdi-shield-check" class="mr-2"></v-icon>
         <span class="font-weight-bold">Memunim</span>
       </v-app-bar-title>
@@ -57,18 +69,6 @@
             התנתק
           </v-btn>
         </div>
-
-        <!-- Mobile Menu Button -->
-        <v-btn
-          icon
-          variant="text"
-          color="white"
-          @click="drawer = !drawer"
-          class="d-md-none ml-2"
-          size="large"
-        >
-          <v-icon icon="mdi-menu" size="large"></v-icon>
-        </v-btn>
       </div>
 
       <!-- Dialogs -->
@@ -88,6 +88,7 @@
       temporary 
       width="200"
       overlay
+      class="mobile-drawer"
     >
       <v-list>
         <v-list-item
