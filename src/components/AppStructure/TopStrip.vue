@@ -1,98 +1,107 @@
 <template>
-  <v-app-bar
-    dir="rtl"
-    color="primary"
-    prominent
-    elevation="2"
-    class="topstrip-fixed"
-  >
-    <!-- App Title/Logo -->
-    <v-app-bar-title class="d-flex align-center">
-      <v-icon icon="mdi-shield-check" class="mr-2"></v-icon>
-      <span class="font-weight-bold">Memunim</span>
-    </v-app-bar-title>
-
-    <v-spacer></v-spacer>
-
-    <!-- Navigation Tabs -->
-    <v-tabs
-      v-model="activeTab"
-      color="white"
-      align-tabs="center"
-      class="d-none d-md-flex"
+  <div>
+    <v-app-bar
+      dir="rtl"
+      color="primary"
+      prominent
+      elevation="2"
+      class="topstrip-fixed"
     >
-      <v-tab
-        v-for="tab in visibleTabs"
-        :key="tab.id"
-        @click="navigateToTab(tab.route)"
-        class="text-white"
-      >
-        {{ tab.text }}
-      </v-tab>
-    </v-tabs>
+      <!-- App Title/Logo -->
+      <v-app-bar-title class="d-flex align-center">
+        <v-icon icon="mdi-shield-check" class="mr-2"></v-icon>
+        <span class="font-weight-bold">Memunim</span>
+      </v-app-bar-title>
 
-    <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-    <!-- User Section -->
-    <div class="d-flex align-center">
-      <!-- Guest User -->
-      <div v-if="!isAuthenticated" class="d-flex align-center">
-        <span class="text-white mr-4">שלום אורח</span>
-        <v-btn variant="text" color="white" @click="showLogin = true" class="mr-2">
-          כניסה
-        </v-btn>
-        <v-btn variant="outlined" color="white" @click="showRegister = true">
-          הרשמה
-        </v-btn>
-      </div>
-
-      <!-- Authenticated User -->
-      <div v-if="isAuthenticated" class="d-flex align-center">
-        <v-avatar size="32" class="mr-2">
-          <v-icon icon="mdi-account"></v-icon>
-        </v-avatar>
-        <span class="text-white mr-4">שלום {{ userName }}</span>
-        <v-btn variant="text" color="white" @click="logout" class="mr-2">
-          התנתק
-        </v-btn>
-      </div>
-
-      <!-- Mobile Menu Button -->
-      <v-btn
-        icon
-        variant="text"
+      <!-- Navigation Tabs -->
+      <v-tabs
+        v-model="activeTab"
         color="white"
-        @click="drawer = !drawer"
-        class="d-md-none ml-2"
+        align-tabs="center"
+        class="d-none d-md-flex"
       >
-        <v-icon icon="mdi-menu"></v-icon>
-      </v-btn>
-    </div>
+        <v-tab
+          v-for="tab in visibleTabs"
+          :key="tab.id"
+          @click="navigateToTab(tab.route)"
+          class="text-white"
+        >
+          {{ tab.text }}
+        </v-tab>
+      </v-tabs>
 
-    <!-- Dialogs -->
-    <!-- <v-dialog v-model="showLogin" width="800" persistent> -->
-    <v-dialog v-model="showLogin" max-width="1000" width="90%" persistent>
-      <Login @btnClose="showLogin = false" />
-    </v-dialog>
+      <v-spacer></v-spacer>
 
-    <v-dialog v-model="showRegister" max-width="1000" width="90%" persistent>
-      <Register @btnClose="showRegister = false" />
-    </v-dialog>
+      <!-- User Section -->
+      <div class="d-flex align-center">
+        <!-- Guest User -->
+        <div v-if="!isAuthenticated" class="d-flex align-center">
+          <span class="text-white mr-4">שלום אורח</span>
+          <v-btn variant="text" color="white" @click="showLogin = true" class="mr-2">
+            כניסה
+          </v-btn>
+          <v-btn variant="outlined" color="white" @click="showRegister = true">
+            הרשמה
+          </v-btn>
+        </div>
 
-    <!-- Mobile Navigation Drawer -->
-    <v-navigation-drawer v-model="drawer" location="right" temporary width="300">
+        <!-- Authenticated User -->
+        <div v-if="isAuthenticated" class="d-flex align-center">
+          <v-avatar size="32" class="mr-2">
+            <v-icon icon="mdi-account"></v-icon>
+          </v-avatar>
+          <span class="text-white mr-4">שלום {{ userName }}</span>
+          <v-btn variant="text" color="white" @click="logout" class="mr-2">
+            התנתק
+          </v-btn>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <v-btn
+          icon
+          variant="text"
+          color="white"
+          @click="drawer = !drawer"
+          class="d-md-none ml-2"
+          size="large"
+        >
+          <v-icon icon="mdi-menu" size="large"></v-icon>
+        </v-btn>
+      </div>
+
+      <!-- Dialogs -->
+      <v-dialog v-model="showLogin" max-width="1000" width="90%" persistent>
+        <Login @btnClose="showLogin = false" />
+      </v-dialog>
+
+      <v-dialog v-model="showRegister" max-width="1000" width="90%" persistent>
+        <Register @btnClose="showRegister = false" />
+      </v-dialog>
+    </v-app-bar>
+
+    <!-- Mobile Navigation Drawer - Outside App Bar -->
+    <v-navigation-drawer 
+      v-model="drawer" 
+      location="right" 
+      temporary 
+      width="200"
+      overlay
+    >
       <v-list>
         <v-list-item
           v-for="tab in visibleTabs"
           :key="tab.id"
           @click="navigateToTab(tab.route)"
           :active="$route.path === tab.route"
+          class="mb-2"
         >
-          <v-list-item-title>{{ tab.text }}</v-list-item-title>
+          <v-list-item-title class="text-h6">{{ tab.text }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-  </v-app-bar>
+  </div>
 </template>
 
 <script>
