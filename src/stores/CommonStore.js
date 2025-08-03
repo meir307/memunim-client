@@ -12,6 +12,7 @@ export const useCommonStore = defineStore('common', {
 
   getters: {
     getData: (state) => state.data,
+    getFactoryWork:  (state) => state.data.su_factory_work,
     getError: (state) => state.error
   },
 

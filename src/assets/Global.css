@@ -4,6 +4,7 @@
   text-align: right;
 }
 
+/* Global RTL for all Vuetify components */
 [dir="rtl"] .v-btn {
   margin-left: 8px;
   margin-right: 0;
@@ -15,6 +16,32 @@
 
 [dir="rtl"] .v-card-title {
   text-align: right;
+}
+
+/* Force RTL for all Vuetify components when parent has RTL */
+[dir="rtl"] .v-card,
+[dir="rtl"] .v-dialog,
+[dir="rtl"] .v-form,
+[dir="rtl"] .v-text-field,
+[dir="rtl"] .v-textarea,
+[dir="rtl"] .v-select,
+[dir="rtl"] .v-btn,
+[dir="rtl"] .v-card-title,
+[dir="rtl"] .v-card-text {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* RTL for form inputs */
+[dir="rtl"] .v-text-field input,
+[dir="rtl"] .v-textarea textarea {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+/* RTL for labels */
+[dir="rtl"] .v-label {
+  text-align: right !important;
 }
 
 .popup-title{
