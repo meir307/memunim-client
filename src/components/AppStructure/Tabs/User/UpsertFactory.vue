@@ -61,7 +61,7 @@
           <div class="d-flex justify-end gap-2 mt-4">
             <v-btn
               variant="outlined"
-              @click="$emit('cancel')"
+              @click="close"
             >
               ביטול
             </v-btn>
@@ -178,7 +178,7 @@
               type="submit"
               :loading="loading"
             >
-              הוסף מפעל
+              {{ submitButtonText }}
             </v-btn>
           </div>
         </v-form>
@@ -190,6 +190,12 @@
 <script>
 export default {
   name: 'UpsertFactory',
+  props: {
+    // Mode: 'add' or 'update'
+    mode: String,
+    // Initial data for update mode
+    initialData: Object
+  },
   data: () => ({
     loading: false,
     currentStep: 1,
@@ -211,6 +217,20 @@ export default {
       notes: ''
     }
   }),
+  computed: {
+    submitButtonText() {
+      return this.mode === 'update' ? 'עדכן מפעל' : 'הוסף מפעל'
+    },
+    dialogTitle() {
+      return this.mode === 'update' ? 'עדכן מפעל' : 'הוסף מפעל חדש'
+    }
+  },
+  created() {
+    // Initialize form data if initialData is provided
+    if (this.initialData && Object.keys(this.initialData).length > 0) {
+      this.factoryData = { ...this.factoryData, ...this.initialData }
+    }
+  },
   methods: {
     nextStep() {
       if (this.currentStep < 3) {
@@ -234,6 +254,9 @@ export default {
         // Emit event to parent
         this.$emit('factory-added', this.factoryData)
         
+        // Emit close event
+        this.$emit('onClose')
+        
         // Reset form and wizard
         this.factoryData = {
           name: '',
@@ -253,6 +276,9 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    close() {
+      this.$emit('onClose')
     }
   }
 }

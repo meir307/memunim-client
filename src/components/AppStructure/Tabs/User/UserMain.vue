@@ -35,7 +35,10 @@
           ></v-btn>
         </v-card-title>
         <v-card-text>
-          <UpsertFactory @factory-added="onFactoryAdded" />
+          <UpsertFactory 
+            mode="add"
+            @onClose="showAddFactoryDialog = false"
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -54,11 +57,7 @@ export default {
     showAddFactoryDialog: false
   }),
   methods: {
-    onFactoryAdded() {
-      this.showAddFactoryDialog = false
-      // TODO: Refresh factory list or show success message
-      console.log('Factory added successfully')
-    }
+    // Methods can be added here when needed
   }
 }
 </script>
