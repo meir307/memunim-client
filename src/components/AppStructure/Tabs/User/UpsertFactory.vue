@@ -189,7 +189,7 @@
 
 <script>
 export default {
-  name: 'AddFactory',
+  name: 'UpsertFactory',
   data: () => ({
     loading: false,
     currentStep: 1,
@@ -256,4 +256,4 @@ export default {
     }
   }
 }
-</script>
+</script> 

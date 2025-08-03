@@ -35,7 +35,7 @@
           ></v-btn>
         </v-card-title>
         <v-card-text>
-          <AddFactory @factory-added="onFactoryAdded" />
+          <UpsertFactory @factory-added="onFactoryAdded" />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -43,12 +43,12 @@
 </template>
 
 <script>
-import AddFactory from './AddFactory.vue'
+import UpsertFactory from './UpsertFactory.vue'
 
 export default {
   name: 'UserMain',
   components: {
-    AddFactory
+    UpsertFactory
   },
   data: () => ({
     showAddFactoryDialog: false
