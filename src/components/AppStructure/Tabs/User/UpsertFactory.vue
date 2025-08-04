@@ -25,12 +25,13 @@
 
       </v-row>
 
-      <div class="d-flex justify-end gap-2 mt-4">
-        <v-btn variant="outlined" @click="close">
-          ביטול
-        </v-btn>
+      <div  class="popup-btn-row">
+       
         <v-btn color="primary" type="submit" :loading="loading">
           {{ submitButtonText }}
+        </v-btn>
+        <v-btn variant="outlined" @click="close">
+          ביטול
         </v-btn>
       </div>
     </v-form>

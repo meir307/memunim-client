@@ -55,6 +55,18 @@ export default {
   data: () => ({
     showAddFactoryDialog: false
   }),
+  beforeRouteEnter(to, from, next) {
+    // Check if user is authenticated
+    const isAuthenticated = localStorage.getItem('user') || false
+    
+    if (!isAuthenticated) {
+      // Redirect to login or show login modal
+      next('/regulations')
+      return
+    }
+    
+    next() // Allow access to component
+  },
   methods: {
     // Methods can be added here when needed
   }

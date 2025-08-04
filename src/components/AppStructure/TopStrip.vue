@@ -141,6 +141,7 @@ export default {
   methods: {
     logout() {
       this.userStore.logout()
+      this.$router.push('/regulations')
     },
     navigateToTab(route) {
       this.$router.push(route)

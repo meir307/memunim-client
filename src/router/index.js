@@ -19,7 +19,8 @@ const routes = [
   {
     path: '/user',
     name: 'user',
-    component: () => import('../components/AppStructure/Tabs/User/UserMain.vue')
+    component: () => import('../components/AppStructure/Tabs/User/UserMain.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/about',
@@ -31,6 +32,24 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+// Navigation guard to check authentication
+router.beforeEach((to, from, next) => {
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    // Get user store to check authentication status
+    // You'll need to import your user store here
+    const isAuthenticated = localStorage.getItem('user') || false // Simple check
+    
+    if (!isAuthenticated) {
+      // Redirect to login or show login modal
+      next('/regulations') // Redirect to home page
+      return
+    }
+  }
+  
+  next() // Allow navigation
 })
 
 export default router

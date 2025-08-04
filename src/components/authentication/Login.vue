@@ -4,17 +4,16 @@
       <v-col cols="12" sm="8" md="4">
         <v-card>
           <v-card-title class="popup-title d-flex align-center justify-space-between">
-          כניסה
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-           @click="$emit('btnClose')"
-          ></v-btn>
-        </v-card-title>
+            כניסה
+            <v-btn icon="mdi-close" variant="text" @click="$emit('btnClose')"></v-btn>
+          </v-card-title>
           <v-card-text>
 
-            <v-text-field ref="emailField" v-model="email" reverse label="אימייל" type="email" required @keyup.enter="focusPassword"></v-text-field>
-            <v-text-field ref="passwordField" v-model="password" reverse label="סיסמה" type="password" required @keyup.enter="login"></v-text-field>
+            <v-text-field ref="emailField" v-model="email" reverse label="אימייל" type="email" required
+              @keyup.enter="focusPassword"></v-text-field>
+            <v-text-field ref="passwordField" v-model="password" reverse label="סיסמה" type="password" required
+              @keyup.enter="login"></v-text-field>
+              
             <div class="popup-btn-row">
 
               <v-btn @click="login" color="primary">התחבר</v-btn>
@@ -22,6 +21,7 @@
               <v-spacer></v-spacer>
             </div>
 
+        
 
             <!-- <div class="login-btn-row">
                 <v-btn color="primary">התחבר</v-btn>
@@ -52,10 +52,10 @@ export default {
         this.$refs.passwordField.focus()
       })
     },
-    
+
     getClientType() {
       const userAgent = navigator.userAgent.toLowerCase()
-      
+
       if (/android|iphone|ipad|ipod|blackberry|windows phone/.test(userAgent)) {
         return 3 //'mobile'
       } else if (/tablet|ipad/.test(userAgent)) {
@@ -64,7 +64,7 @@ export default {
         return 1 //'desktop'
       }
     },
-    
+
     async login() {
       try {
         const userStore = useUserStore()
@@ -73,7 +73,7 @@ export default {
           password: this.password,
           clientType: this.getClientType()
         })
-          
+
         // Check if login was successful (user object has data)
         if (userStore.user.isAuthenticated) {
           this.$emit('btnClose')
