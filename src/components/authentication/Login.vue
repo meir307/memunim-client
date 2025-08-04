@@ -74,9 +74,12 @@ export default {
           clientType: this.getClientType()
         })
 
+        
         // Check if login was successful (user object has data)
         if (userStore.user.isAuthenticated) {
           this.$emit('btnClose')
+          // Navigate to user route after successful login
+          this.$router.push('/user')
         }
       } catch (error) {
         console.error('Login error:', error)
