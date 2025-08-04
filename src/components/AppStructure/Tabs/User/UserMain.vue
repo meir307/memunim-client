@@ -25,9 +25,8 @@
       persistent
     >
       <v-card>
-        <v-card-title class="text-h5 d-flex align-center">
+        <v-card-title class="popup-title d-flex align-center justify-space-between">
           הוסף מפעל חדש
-          <v-spacer></v-spacer>
           <v-btn
             icon="mdi-close"
             variant="text"

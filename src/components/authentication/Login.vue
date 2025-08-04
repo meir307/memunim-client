@@ -3,9 +3,14 @@
     <v-row justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-card>
-          <v-card-title class="popup-title">
-            <h3>כניסה</h3>
-          </v-card-title>
+          <v-card-title class="popup-title d-flex align-center justify-space-between">
+          כניסה
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+           @click="$emit('btnClose')"
+          ></v-btn>
+        </v-card-title>
           <v-card-text>
 
             <v-text-field ref="emailField" v-model="email" reverse label="אימייל" type="email" required @keyup.enter="focusPassword"></v-text-field>

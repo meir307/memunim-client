@@ -3,8 +3,9 @@
         <v-row justify="center">
             <v-col cols="12" sm="8" md="4">
                 <v-card>
-                    <v-card-title class="popup-title">
-                        <h3>הרשמה</h3>
+                    <v-card-title class="popup-title d-flex align-center justify-space-between">
+                        הרשמה
+                        <v-btn icon="mdi-close" variant="text" @click="$emit('btnClose')"></v-btn>
                     </v-card-title>
                     <v-card-text>
                         <!-- <v-form ref="form"> -->

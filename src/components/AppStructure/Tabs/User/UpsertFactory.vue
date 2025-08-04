@@ -1,189 +1,39 @@
 <template>
   <div>
-    <!-- Wizard Steps Indicator -->
-    <v-stepper v-model="currentStep" class="mb-4">
-      <v-stepper-header>
-        <template v-for="(step, index) in steps" :key="step.id">
-          <v-stepper-item
-            :value="index + 1"
-            :title="step.title"
-            :subtitle="step.subtitle"
-          ></v-stepper-item>
-          <v-divider v-if="index < steps.length - 1"></v-divider>
-        </template>
-      </v-stepper-header>
-    </v-stepper>
+    <v-form ref="form" @submit.prevent="submitForm">
+      <v-row>
+        <!-- Step 1 Fields -->
+        <v-col cols="12" md="5">
+          <v-text-field v-model="factoryData.name" label="שם המפעל" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-text-field v-model="factoryData.id" label="ח.פ" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
+        </v-col>
+        <v-col cols="12" md="3">
+          <v-text-field v-model="factoryData.employees" label="מספר עובדים" :rules="[rules.required]" variant="outlined" type="number"
+            reverse></v-text-field>
+        </v-col>
+        <v-col cols="12" md="5">
+          <v-text-field v-model="factoryData.address" label="כתובת" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
+        </v-col>
 
-    <!-- Step Content -->
-    <v-stepper-window v-model="currentStep">
-      <!-- Step 1: Basic Info -->
-      <v-stepper-window-item :value="1">
-        <v-form @submit.prevent="nextStep" class="mt-1">
-          <v-row>
-            <v-col cols="12" md="5">
-              <v-text-field
-                v-model="factoryData.name"
-                label="שם המפעל"
-                required
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-text-field
-                v-model="factoryData.id"
-                label="ח.פ"
-                required
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="3">
-              <v-text-field
-                v-model="factoryData.employees"
-                label="מספר עובדים"
-                required
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="factoryData.description"
-                label="תיאור המפעל"
-                variant="outlined"
-                rows="3"
-                reverse
-              ></v-textarea>
-            </v-col>
-          </v-row>
-          
-          <div class="d-flex justify-end gap-2 mt-4">
-            <v-btn
-              variant="outlined"
-              @click="close"
-            >
-              ביטול
-            </v-btn>
-            <v-btn
-              color="primary"
-              @click="nextStep"
-              :disabled="!factoryData.name || !factoryData.id || !factoryData.employees"
-            >
-              הבא
-            </v-btn>
-          </div>
-        </v-form>
-      </v-stepper-window-item>
+        <v-col cols="7">
+          <v-textarea v-model="factoryData.description" label="תיאור המפעל" :rules="[rules.required]" variant="outlined" rows="2"
+            reverse></v-textarea>
+        </v-col>
 
-      <!-- Step 2: Contact Details -->
-      <v-stepper-window-item :value="2">
-        <v-form @submit.prevent="nextStep">
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="factoryData.address"
-                label="כתובת"
-                required
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="factoryData.phone"
-                label="טלפון"
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="factoryData.email"
-                label="אימייל"
-                type="email"
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="factoryData.website"
-                label="אתר אינטרנט"
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          
-          <div class="d-flex justify-space-between gap-2 mt-4">
-            <v-btn
-              variant="outlined"
-              @click="previousStep"
-            >
-              הקודם
-            </v-btn>
-            <v-btn
-              color="primary"
-              @click="nextStep"
-              :disabled="!factoryData.address"
-            >
-              הבא
-            </v-btn>
-          </div>
-        </v-form>
-      </v-stepper-window-item>
 
-      <!-- Step 3: Additional Info -->
-      <v-stepper-window-item :value="3">
-        <v-form @submit.prevent="submitForm">
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="factoryData.industry"
-                label="תחום עיסוק"
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="factoryData.employees"
-                label="מספר עובדים"
-                type="number"
-                variant="outlined"
-                reverse
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="factoryData.notes"
-                label="הערות נוספות"
-                variant="outlined"
-                rows="3"
-                reverse
-              ></v-textarea>
-            </v-col>
-          </v-row>
-          
-          <div class="d-flex justify-space-between gap-2 mt-4">
-            <v-btn
-              variant="outlined"
-              @click="previousStep"
-            >
-              הקודם
-            </v-btn>
-            <v-btn
-              color="primary"
-              type="submit"
-              :loading="loading"
-            >
-              {{ submitButtonText }}
-            </v-btn>
-          </div>
-        </v-form>
-      </v-stepper-window-item>
-    </v-stepper-window>
+      </v-row>
+
+      <div class="d-flex justify-end gap-2 mt-4">
+        <v-btn variant="outlined" @click="close">
+          ביטול
+        </v-btn>
+        <v-btn color="primary" type="submit" :loading="loading">
+          {{ submitButtonText }}
+        </v-btn>
+      </div>
+    </v-form>
   </div>
 </template>
 
@@ -198,23 +48,16 @@ export default {
   },
   data: () => ({
     loading: false,
-    currentStep: 1,
-    steps: [
-      { id: 1, title: 'מידע בסיסי', subtitle: 'שם ותיאור המפעל' },
-      { id: 2, title: 'אתרים', subtitle: 'אתרי המפעל בהם אתה ממונה בטיחות' },
-      { id: 3, title: 'מידע נוסף', subtitle: 'פרטים נוספים על המפעל' }
-    ],
+    rules: {
+      required: value => !!value || 'שדה זה הוא חובה'
+    },
     factoryData: {
       name: '',
       id: '',
-      description: '',
-      address: '',
-      phone: '',
-      email: '',
-      website: '',
-      industry: '',
       employees: '',
-      notes: ''
+      address: '',
+      description: '',
+
     }
   }),
   computed: {
@@ -232,45 +75,36 @@ export default {
     }
   },
   methods: {
-    nextStep() {
-      if (this.currentStep < 3) {
-        this.currentStep++
-      }
-    },
-    previousStep() {
-      if (this.currentStep > 1) {
-        this.currentStep--
-      }
-    },
     async submitForm() {
+      // Validate form before submitting
+      const { valid } = await this.$refs.form.validate()
+      
+      if (!valid) {
+        return
+      }
+
       this.loading = true
       try {
         // TODO: Add API call to save factory
         console.log('Saving factory:', this.factoryData)
-        
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000))
-        
+
         // Emit event to parent
         this.$emit('factory-added', this.factoryData)
-        
+
         // Emit close event
         this.$emit('onClose')
-        
-        // Reset form and wizard
+
+        // Reset form
         this.factoryData = {
           name: '',
           id: '',
-          description: '',
-          address: '',
-          phone: '',
-          email: '',
-          website: '',
-          industry: '',
           employees: '',
-          notes: ''
+          address: '',
+          description: '',
         }
-        this.currentStep = 1
       } catch (error) {
         console.error('Error adding factory:', error)
       } finally {
@@ -282,4 +116,4 @@ export default {
     }
   }
 }
-</script> 
+</script>
