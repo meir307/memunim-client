@@ -7,7 +7,7 @@
           <v-text-field v-model="factoryData.name" label="שם המפעל" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
         </v-col>
         <v-col cols="12" md="4">
-          <v-text-field v-model="factoryData.id" label="ח.פ" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
+          <v-text-field v-model="factoryData.hetpei" label="ח.פ" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
         </v-col>
         <v-col cols="12" md="3">
           <v-text-field v-model="factoryData.employees" label="מספר עובדים" :rules="[rules.required]" variant="outlined" type="number"
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { useUserStore } from '@/stores/UserStore'
 export default {
   name: 'UpsertFactory',
   props: {
@@ -53,11 +54,11 @@ export default {
       required: value => !!value || 'שדה זה הוא חובה'
     },
     factoryData: {
-      name: '',
-      id: '',
-      employees: '',
-      address: '',
-      description: '',
+      name: 'Hff',
+      hetpei: 'd',
+      employees: '77',
+      address: 'd',
+      description: 'd',
 
     }
   }),
@@ -90,28 +91,34 @@ export default {
         console.log('Saving factory:', this.factoryData)
 
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        //await new Promise(resolve => setTimeout(resolve, 1000))
+
+        const userStore = useUserStore()
+        await userStore.addFactory(this.factoryData)
+
+
 
         // Emit event to parent
-        this.$emit('factory-added', this.factoryData)
+       // this.$emit('factory-added', this.factoryData)
 
         // Emit close event
-        this.$emit('onClose')
+       // this.$emit('onClose')
 
         // Reset form
-        this.factoryData = {
-          name: '',
-          id: '',
-          employees: '',
-          address: '',
-          description: '',
-        }
+        // this.factoryData = {
+        //   name: '',
+        //   hetpei: '',
+        //   employees: '',
+        //   address: '',
+        //   description: '',
+        // }
       } catch (error) {
         console.error('Error adding factory:', error)
       } finally {
         this.loading = false
       }
     },
+    
     close() {
       this.$emit('onClose')
     }

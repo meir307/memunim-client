@@ -6,7 +6,16 @@ export const useUserStore = defineStore('UserStore', {
   state: () => ({
     apiUrl: process.env.VUE_APP_API_ADDRESS,
     loaderStore: useLoaderStore(),
-    user: JSON.parse(localStorage.getItem('user')) || {},
+    user: (() => {
+      const stored = localStorage.getItem('user')
+      return stored && stored !== 'undefined' ? JSON.parse(stored) : {}
+    })(),
+    factories: (() => {
+      const stored = localStorage.getItem('factories')
+      return stored && stored !== 'undefined' ? JSON.parse(stored) : []
+    })(),
+
+    //factories: [],
     count: 2,
   }),
   
@@ -16,6 +25,31 @@ export const useUserStore = defineStore('UserStore', {
   },
   
   actions: {
+
+    async addFactory(factory) {
+      
+      this.preAction()
+      try {
+        console.log('addFactory')  
+        const response = await axios.post(this.apiUrl + 'user/addFactory', factory, {
+          headers: {
+            'sessionId': this.user.sessionId || ''
+          }
+        })
+        this.factories = response.data.factories
+        
+        // Save to localStorage
+        localStorage.setItem('factories', JSON.stringify(this.factories))
+        
+      } catch (error) {
+        alert(error.message)
+        this.error = error.message
+      } finally {
+        this.postAction()
+      }
+    },
+
+
     async login(credentials) {
       this.preAction()
       try {
