@@ -37,10 +37,9 @@ export const useUserStore = defineStore('UserStore', {
           }
         })
         this.factories = response.data.factories
-        
         // Save to localStorage
         localStorage.setItem('factories', JSON.stringify(this.factories))
-        
+
       } catch (error) {
         alert(error.message)
         this.error = error.message
@@ -49,6 +48,35 @@ export const useUserStore = defineStore('UserStore', {
       }
     },
 
+
+    async getFactories() {
+      
+      this.preAction()
+      try {
+        console.log('getFactories')  
+        const response = await axios.post(this.apiUrl + 'user/getFactories', null,{
+          headers: {
+            'sessionId': this.user.sessionId || ''
+          }
+        })
+        this.factories = response.data.factories
+        // Save to localStorage
+        localStorage.setItem('factories', JSON.stringify(this.factories))
+          
+      } catch (error) {
+        //if (error.response && error.response.status === 500) {
+          alert(error.response.data.message);
+          // Redirect to login page or show login modal
+        //}
+        //alert(error.message)
+        this.error = error.message
+      } finally {
+        this.postAction()
+      }
+    },
+
+
+    
 
     async login(credentials) {
       this.preAction()

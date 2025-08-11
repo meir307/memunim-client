@@ -11,10 +11,24 @@
       </v-btn>
     </div>
     
-    <!-- Factory list will go here -->
-    <v-card class="mt-4">
-      <v-card-text>
-        <p>רשימת המפעלים תוצג כאן</p>
+    <!-- Factory list -->
+    <div v-if="userStore.factories && userStore.factories.length > 0">
+      <FactoryTile
+        v-for="factory in userStore.factories"
+        :key="factory.hetpei"
+        :factory="factory"
+        @edit="editFactory"
+        @delete="deleteFactory"
+        @view="viewFactory"
+      />
+    </div>
+    
+    <!-- Empty state -->
+    <v-card v-else class="mt-4">
+      <v-card-text class="text-center py-8">
+        <v-icon size="64" color="grey-lighten-1" class="mb-4">mdi-factory</v-icon>
+        <h3 class="text-h6 mb-2">אין מפעלים</h3>
+        <p class="text-body-2 text-medium-emphasis">עדיין לא הוספת מפעלים. לחץ על "הוסף מפעל" כדי להתחיל.</p>
       </v-card-text>
     </v-card>
 
@@ -36,7 +50,32 @@
         <v-card-text>
           <UpsertFactory 
             mode="add"
-            @onClose="showAddFactoryDialog = false"
+            @onClose="onFactoryAdded"
+          />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- Edit Factory Dialog -->
+    <v-dialog
+      v-model="showEditFactoryDialog"
+      max-width="800"
+      persistent
+    >
+      <v-card>
+        <v-card-title class="popup-title d-flex align-center justify-space-between">
+          ערוך מפעל
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="showEditFactoryDialog = false"
+          ></v-btn>
+        </v-card-title>
+        <v-card-text>
+          <UpsertFactory 
+            mode="edit"
+            :initial-data="selectedFactory"
+            @onClose="onFactoryEdited"
           />
         </v-card-text>
       </v-card>
@@ -46,15 +85,28 @@
 
 <script>
 import UpsertFactory from './UpsertFactory.vue'
+import FactoryTile from './FactoryTile.vue'
+import { useUserStore } from '@/stores/UserStore'
 
 export default {
   name: 'UserMain',
   components: {
-    UpsertFactory
+    UpsertFactory,
+    FactoryTile
   },
   data: () => ({
-    showAddFactoryDialog: false
+    showAddFactoryDialog: false,
+    showEditFactoryDialog: false,
+    selectedFactory: null
   }),
+  computed: {
+    userStore() {
+      return useUserStore()
+    }
+  },
+  async created() {
+    await this.userStore.getFactories()
+  },
   beforeRouteEnter(to, from, next) {
     // Check if user is authenticated
     const isAuthenticated = localStorage.getItem('user') || false
@@ -68,7 +120,33 @@ export default {
     next() // Allow access to component
   },
   methods: {
-    // Methods can be added here when needed
+    editFactory(factory) {
+      this.selectedFactory = factory
+      this.showEditFactoryDialog = true
+    },
+    
+    deleteFactory(factory) {
+      // TODO: Implement delete functionality
+      console.log('Delete factory:', factory)
+    },
+    
+    viewFactory(factory) {
+      // TODO: Implement view functionality
+      console.log('View factory:', factory)
+    },
+    
+    onFactoryAdded() {
+      this.showAddFactoryDialog = false
+      // Refresh factories list
+      this.userStore.getFactories()
+    },
+    
+    onFactoryEdited() {
+      this.showEditFactoryDialog = false
+      this.selectedFactory = null
+      // Refresh factories list
+      this.userStore.getFactories()
+    }
   }
 }
 </script>
