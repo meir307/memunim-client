@@ -12,15 +12,17 @@
     </div>
     
     <!-- Factory list -->
-    <div v-if="userStore.factories && userStore.factories.length > 0">
-      <FactoryTile
-        v-for="factory in userStore.factories"
-        :key="factory.hetpei"
-        :factory="factory"
-        @edit="editFactory"
-        @delete="deleteFactory"
-        @view="viewFactory"
-      />
+    <div v-if="userStore.factories && userStore.factories.length > 0" class="d-flex justify-center">
+      <div class="d-flex flex-column align-center" style="width: 100%; max-width: none;">
+        <FactoryTile
+          v-for="factory in userStore.factories"
+          :key="factory.hetpei"
+          :factory="factory"
+          @edit="editFactory"
+          @delete="deleteFactory"
+          @view="viewFactory"
+        />
+      </div>
     </div>
     
     <!-- Empty state -->
@@ -73,7 +75,7 @@
         </v-card-title>
         <v-card-text>
           <UpsertFactory 
-            mode="edit"
+            mode="update"
             :initial-data="selectedFactory"
             @onClose="onFactoryEdited"
           />
@@ -138,14 +140,14 @@ export default {
     onFactoryAdded() {
       this.showAddFactoryDialog = false
       // Refresh factories list
-      this.userStore.getFactories()
+      //this.userStore.getFactories()
     },
     
     onFactoryEdited() {
       this.showEditFactoryDialog = false
       this.selectedFactory = null
       // Refresh factories list
-      this.userStore.getFactories()
+      //this.userStore.getFactories()
     }
   }
 }

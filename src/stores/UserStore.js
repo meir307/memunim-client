@@ -26,6 +26,31 @@ export const useUserStore = defineStore('UserStore', {
   
   actions: {
 
+    
+
+    async updateFactory(factory) {
+      
+      this.preAction()
+      try {
+        console.log('addFactory')  
+        const response = await axios.post(this.apiUrl + 'user/updateFactory', factory, {
+          headers: {
+            'sessionId': this.user.sessionId || ''
+          }
+        })
+        this.factories = response.data.factories
+        // Save to localStorage
+        localStorage.setItem('factories', JSON.stringify(this.factories))
+
+      } catch (error) {
+        alert(error.message)
+        this.error = error.message
+      } finally {
+        this.postAction()
+      }
+    },
+
+
     async addFactory(factory) {
       
       this.preAction()
@@ -74,9 +99,6 @@ export const useUserStore = defineStore('UserStore', {
         this.postAction()
       }
     },
-
-
-    
 
     async login(credentials) {
       this.preAction()

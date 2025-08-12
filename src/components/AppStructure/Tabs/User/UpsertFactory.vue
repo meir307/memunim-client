@@ -13,6 +13,10 @@
           <v-text-field v-model="factoryData.employees" label="מספר עובדים" :rules="[rules.required]" variant="outlined" type="number"
             reverse></v-text-field>
         </v-col>
+        <v-col cols="12" md="3">
+          <v-text-field v-model="factoryData.memuneHours" label="שעות ממונה בחודש" :rules="[rules.required]" variant="outlined" type="number"
+            reverse></v-text-field>
+        </v-col>
         <v-col cols="12" md="5">
           <v-text-field v-model="factoryData.address" label="כתובת" :rules="[rules.required]" variant="outlined" reverse></v-text-field>
         </v-col>
@@ -54,19 +58,23 @@ export default {
       required: value => !!value || 'שדה זה הוא חובה'
     },
     factoryData: {
-      name: 'Hff',
-      hetpei: 'd',
-      employees: '77',
-      address: 'd',
-      description: 'd',
+      name: '',
+      hetpei: '',
+      employees: '',
+      address: '',
+      description: '',
+      memuneHours: '',
 
     }
   }),
   computed: {
+      
     submitButtonText() {
+     
       return this.mode === 'update' ? 'עדכן מפעל' : 'הוסף מפעל'
     },
     dialogTitle() {
+      alert(this.mode)
       return this.mode === 'update' ? 'עדכן מפעל' : 'הוסף מפעל חדש'
     }
   },
@@ -87,31 +95,26 @@ export default {
 
       this.loading = true
       try {
-        // TODO: Add API call to save factory
-        console.log('Saving factory:', this.factoryData)
-
-        // Simulate API call
-        //await new Promise(resolve => setTimeout(resolve, 1000))
-
         const userStore = useUserStore()
-        await userStore.addFactory(this.factoryData)
-
-
-
-        // Emit event to parent
-       // this.$emit('factory-added', this.factoryData)
+        if (this.mode === 'add') {
+          await userStore.addFactory(this.factoryData)
+        } 
+        else {
+          await userStore.updateFactory(this.factoryData)
+        }
 
         // Emit close event
-       // this.$emit('onClose')
+        this.$emit('onClose')
 
         // Reset form
-        // this.factoryData = {
-        //   name: '',
-        //   hetpei: '',
-        //   employees: '',
-        //   address: '',
-        //   description: '',
-        // }
+         this.factoryData = {
+           name: '',
+           hetpei: '',
+           employees: '',
+           address: '',
+           description: '',
+           memuneHours: '',
+         }
       } catch (error) {
         console.error('Error adding factory:', error)
       } finally {

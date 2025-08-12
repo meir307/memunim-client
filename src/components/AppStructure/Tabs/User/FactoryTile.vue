@@ -4,6 +4,7 @@
     elevation="2"
     hover
     dir="rtl"
+    :width="$vuetify.display.mdAndUp ? '800' : '98%'"
   >
     <v-card-title class="d-flex align-center justify-space-between pa-4">
       <div class="d-flex align-center">
@@ -46,31 +47,30 @@
     <v-divider></v-divider>
 
     <v-card-text class="pa-4">
-      <v-row>
-        <v-col cols="12" md="6">
-          <div class="mb-3">
-            <div class="text-caption text-medium-emphasis mb-1">כתובת</div>
-            <div class="text-body-2">{{ factory.address || 'לא צוין' }}</div>
-          </div>
-          
-          <div class="mb-3">
-            <div class="text-caption text-medium-emphasis mb-1">טלפון</div>
-            <div class="text-body-2">{{ factory.phone || 'לא צוין' }}</div>
-          </div>
-        </v-col>
-        
-        <v-col cols="12" md="6">
-          <div class="mb-3">
-            <div class="text-caption text-medium-emphasis mb-1">אימייל</div>
-            <div class="text-body-2">{{ factory.email || 'לא צוין' }}</div>
-          </div>
-          
-          <div class="mb-3">
-            <div class="text-caption text-medium-emphasis mb-1">תיאור</div>
-            <div class="text-body-2">{{ factory.description || 'לא צוין' }}</div>
-          </div>
-        </v-col>
-      </v-row>
+             <v-row>
+         <v-col cols="7">
+           <div class="mb-3">
+             <div class="text-caption text-medium-emphasis mb-1">כתובת</div>
+             <div class="text-body-2">{{ factory.address || 'לא צוין' }}</div>
+           </div>
+           
+           <div class="mb-3">
+             <div class="text-caption text-medium-emphasis mb-1">תאור המפעל</div>
+             <div class="text-body-2">{{ factory.description || 'לא צוין' }}</div>
+           </div>
+         </v-col>
+         
+         <v-col cols="5">
+           <div class="mb-3">
+             <div class="text-caption text-medium-emphasis mb-1">מספר עובדים</div>
+             <div class="text-body-2">{{ factory.employees || 'לא צוין' }}</div>
+           </div>
+           <div class="mb-3">
+             <div class="text-caption text-medium-emphasis mb-1">שעות ממונה בחודש</div>
+             <div class="text-body-2">{{ factory.memuneHours || 'לא צוין' }}</div>
+           </div>
+         </v-col>
+       </v-row>
     </v-card-text>
 
     <v-card-actions class="pa-4 pt-0">
@@ -107,7 +107,8 @@ export default {
         address: '',
         phone: '',
         email: '',
-        description: ''
+        description: '',
+        memuneHours: ''
       })
     }
   },
