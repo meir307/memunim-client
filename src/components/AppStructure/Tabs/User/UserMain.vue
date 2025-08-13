@@ -133,15 +133,13 @@ export default {
     },
     
     viewFactory(factory) {
-      // Navigate to FactoryMain with factory object
-      this.selectedFactory = factory
-      useUserStore.selectedFactory = factory
-      
-      alert(this.selectedFactory.hetpei)
+      // Set selected factory in store
+      const userStore = useUserStore()
+      userStore.selectedFactory = factory
 
+      // Navigate to FactoryMain
       this.$router.push({
-        name: 'FactoryMain',
-       
+        name: 'FactoryMain'
       })
     },
     
@@ -161,27 +159,3 @@ export default {
 }
 </script>
 
-<style scoped>
-.sticky-header {
-  position: sticky;
-  top: 64px; /* Height of the app bar */
-  z-index: 100;
-  background-color: white;
-  padding: 16px 0;
-  border-bottom: 1px solid #e0e0e0;
-  margin: -16px -16px 16px -16px;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-/* Add shadow when scrolled */
-.sticky-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
-}
-</style>

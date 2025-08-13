@@ -2,7 +2,7 @@
   <div>
     <v-app-bar
       dir="rtl"
-      color="primary"
+  color="primary"
       prominent
       elevation="2"
       class="topstrip-fixed"
@@ -25,7 +25,7 @@
         <span class="font-weight-bold">Memunim</span>
       </v-app-bar-title>
 
-      <v-spacer></v-spacer>
+  <v-spacer></v-spacer>
 
       <!-- Navigation Tabs -->
       <v-tabs
@@ -57,7 +57,7 @@
           <v-btn variant="outlined" color="white" @click="showRegister = true">
             הרשמה
           </v-btn>
-        </div>
+</div>
 
         <!-- Authenticated User -->
         <div v-if="isAuthenticated" class="d-flex align-center">
@@ -69,16 +69,16 @@
             התנתק
           </v-btn>
         </div>
-      </div>
+</div>
 
       <!-- Dialogs -->
       <v-dialog v-model="showLogin" max-width="1000" width="90%" persistent>
         <Login @btnClose="showLogin = false" />
-      </v-dialog>
+  </v-dialog>
 
       <v-dialog v-model="showRegister" max-width="1000" width="90%" persistent>
         <Register @btnClose="showRegister = false" />
-      </v-dialog>
+  </v-dialog>
     </v-app-bar>
 
     <!-- Mobile Navigation Drawer - Outside App Bar -->
