@@ -78,10 +78,10 @@
       <v-btn
         color="primary"
         variant="outlined"
-        prepend-icon="mdi-eye"
+        prepend-icon="mdi-factory"
         @click="$emit('view', factory)"
       >
-        צפייה
+        פעילות
       </v-btn>
       <v-btn
         color="primary"

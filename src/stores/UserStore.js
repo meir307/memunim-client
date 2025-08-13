@@ -6,6 +6,7 @@ export const useUserStore = defineStore('UserStore', {
   state: () => ({
     apiUrl: process.env.VUE_APP_API_ADDRESS,
     loaderStore: useLoaderStore(),
+    selectedFactory: null,
     user: (() => {
       const stored = localStorage.getItem('user')
       return stored && stored !== 'undefined' ? JSON.parse(stored) : {}

@@ -23,6 +23,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/factory',
+    name: 'FactoryMain',
+    component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/FactoryMain.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
