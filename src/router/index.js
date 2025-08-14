@@ -26,7 +26,34 @@ const routes = [
     path: '/factory',
     name: 'FactoryMain',
     component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/FactoryMain.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        redirect: 'employees'
+      },
+      {
+        path: 'employees',
+        name: 'factory-employees',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/EmployeesTab.vue')
+      },
+      {
+        path: 'reports',
+        name: 'factory-reports',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/ReportsTab.vue')
+      },
+      {
+        path: 'settings',
+        name: 'factory-settings',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SettingsTab.vue')
+      },
+      {
+        path: 'safety-committee',
+        name: 'safety-committee',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SafetyCommittee/SafetyCommittee.vue')
+      },
+      
+    ]
   },
   {
     path: '/about',
