@@ -27,12 +27,12 @@
                             <tr v-for="user in users" :key="user.id" class="table-row">
                                 <td class="table-cell">
                                     <v-checkbox v-model="user.isCommitteeMember" :true-value="true" :false-value="false"
-                                        hide-details class="committee-checkbox"></v-checkbox>
+                                        hide-details class="committee-checkbox" @change="handleCommitteeStatusChange(user, $event)"></v-checkbox>
                                 </td>
                                 <td class="table-cell">
                                     <div class="user-info">
                                         <!-- <div class="user-avatar">{{ user.name.charAt(0) }}</div> -->
-                                        <span class="user-name">{{ user.name }}</span>
+                                        <span class="user-name">{{ user.fullName }}</span>
                                     </div>
                                 </td>
                                 <td class="table-cell">{{ user.email }}</td>
@@ -60,7 +60,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-form @submit.prevent="save">
-                        <v-text-field v-model="editedItem.name" label="שם" required reverse></v-text-field>
+                        <v-text-field v-model="editedItem.fullName" label="שם" required reverse></v-text-field>
                         <v-text-field v-model="editedItem.email" label="אימייל" type="email" required
                             reverse></v-text-field>
 
@@ -98,72 +98,73 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
+import { useUserStore } from '@/stores/UserStore'
+
+const safetyCommitteeStore = useSafetyCommitteeStore()
 
 const dialog = ref(false)
 const dialogDelete = ref(false)
-const users = ref([])
 const editedIndex = ref(-1)
 const editedItem = ref({
-    name: '',
+    fullName: '',
     email: '',
     isCommitteeMember: false,
-    phone: ''
+    phone: '',
+    factoryId: 0,
+    role: 2,
+    password: ''
 })
 
-
+// Use store state
+const users = computed(() => safetyCommitteeStore.getMembers)
 
 const formTitle = computed(() => {
     return editedIndex.value === -1 ? 'משתמש חדש' : 'ערוך משתמש'
 })
 
-
-
-onMounted(() => {
-    users.value = [
-        {
-            id: 1,
-            name: 'יוסי ברזילי',
-            email: 'john.doe@example.com',
-            isCommitteeMember: true,
-            phone: '+1-555-0123'
-        },
-        {
-            id: 2,
-            name: 'אבי דוידי',
-            email: 'jane.smith@example.com',
-            isCommitteeMember: false,
-            phone: '+1-555-0124'
-        },
-        {
-            id: 3,
-            name: 'משה דנגורי',
-            email: 'bob.johnson@example.com',
-            isCommitteeMember: true,
-            phone: '+1-555-0125'
-        }
-    ]
+onMounted(async () => {
+    try {
+        // Fetch members from API - you'll need to pass the actual factoryId
+        await safetyCommitteeStore.fetchMembers(1) // Replace with actual factoryId
+    } catch (error) {
+        console.error('Failed to fetch safety committee members:', error)
+    }
 })
 
-function editUser(item) {
+// // Watch for errors and show them
+// watch(error, (newError) => {
+//     if (newError) {
+//         alert(newError)
+//         safetyCommitteeStore.clearError()
+//     }
+// })
+
+async function editUser(item) {
     editedIndex.value = users.value.indexOf(item)
     editedItem.value = { ...item }
     dialog.value = true
 }
 
-function deleteUser(item) {
+async function deleteUser(item) {
     editedIndex.value = users.value.indexOf(item)
     dialogDelete.value = true
 }
 
-function deleteItemConfirm() {
-    users.value.splice(editedIndex.value, 1)
-    closeDelete()
+async function deleteItemConfirm() {
+    try {
+        const itemToDelete = users.value[editedIndex.value]
+        await safetyCommitteeStore.deleteMember(itemToDelete.id)
+        closeDelete()
+    } catch (error) {
+        console.error('Failed to delete member:', error)
+    }
 }
 
 function closeDialog() {
     dialog.value = false
     editedIndex.value = -1
-    editedItem.value = { name: '', email: '', isCommitteeMember: false, phone: '' }
+    editedItem.value = { fullName: '', email: '', isCommitteeMember: false, phone: '', factoryId: 0, role: 2 }
 }
 
 function closeDelete() {
@@ -171,21 +172,39 @@ function closeDelete() {
     editedIndex.value = -1
 }
 
-function save() {
-    if (editedIndex.value > -1) {
-        Object.assign(users.value[editedIndex.value], editedItem.value)
-    } else {
-        const newId = Math.max(...users.value.map(u => u.id)) + 1
-        users.value.push({
-            id: newId,
-            ...editedItem.value
-        })
+async function save() {
+    const userStore = useUserStore()
+    const factoryId = userStore.selectedFactory.id
+    editedItem.value.password =  editedItem.value.phone
+    try {
+        if (editedIndex.value > -1) {
+            // Update existing member
+            const itemToUpdate = users.value[editedIndex.value]
+            await safetyCommitteeStore.updateMember(itemToUpdate.id, editedItem.value)
+        } else {
+            // Add new member
+            editedItem.value.factoryId = factoryId
+            await safetyCommitteeStore.addMember(editedItem.value)
+        }
+        closeDialog()
+    } catch (error) {
+        console.error('Failed to save member:', error)
     }
-    closeDialog()
 }
 
 function openDialog() {
     dialog.value = true
+}
+
+// Handle committee status changes
+async function handleCommitteeStatusChange(user, newStatus) {
+    try {
+        await safetyCommitteeStore.updateCommitteeStatus(user.id, newStatus)
+    } catch (error) {
+        console.error('Failed to update committee status:', error)
+        // Revert the checkbox state on error
+        user.isCommitteeMember = !newStatus
+    }
 }
 </script>
 
