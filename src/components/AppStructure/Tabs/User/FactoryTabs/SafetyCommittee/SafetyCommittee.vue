@@ -26,7 +26,7 @@
                         <tbody>
                             <tr v-for="user in users" :key="user.id" class="table-row">
                                 <td class="table-cell">
-                                    <v-checkbox v-model="user.isCommitteeMember" :true-value="true" :false-value="false"
+                                    <v-checkbox v-model="user.isCommitteeMember" readonly="true" :true-value="true" :false-value="false"
                                         hide-details class="committee-checkbox" @change="handleCommitteeStatusChange(user, $event)"></v-checkbox>
                                 </td>
                                 <td class="table-cell">
@@ -116,17 +116,29 @@ const editedItem = ref({
     password: ''
 })
 
+
+
 // Use store state
-const users = computed(() => safetyCommitteeStore.getMembers)
+const users = computed(() => {
+    const members = safetyCommitteeStore.getMembers
+    console.log('🔍 Raw members from store:', members)
+    
+    // Convert integer values to boolean for display
+    return members.map(user => ({
+        ...user,
+        isCommitteeMember: user.isCommitteeMember === 1 || user.isCommitteeMember === true
+    }))
+})
 
 const formTitle = computed(() => {
     return editedIndex.value === -1 ? 'משתמש חדש' : 'ערוך משתמש'
 })
 
 onMounted(async () => {
-    try {
-        // Fetch members from API - you'll need to pass the actual factoryId
-        await safetyCommitteeStore.fetchMembers(1) // Replace with actual factoryId
+    try {   
+
+        const userStore = useUserStore()
+        await safetyCommitteeStore.fetchMembers(userStore.selectedFactory.id)
     } catch (error) {
         console.error('Failed to fetch safety committee members:', error)
     }
@@ -141,8 +153,23 @@ onMounted(async () => {
 // })
 
 async function editUser(item) {
+ 
+    
     editedIndex.value = users.value.indexOf(item)
-    editedItem.value = { ...item }
+    editedItem.value = { 
+        id: item.id,
+        fullName: item.fullName || item.name || '',
+        email: item.email || '',
+        isCommitteeMember: item.isCommitteeMember === 1 || item.isCommitteeMember === true, // Convert int to boolean
+        phone: item.phone || '',
+        factoryId: item.factoryId || 0,
+        role: item.role || 2,
+
+    }
+    
+    console.log('🔍 Edited item after mapping:', editedItem.value)
+    console.log('🔍 isCommitteeMember after mapping:', editedItem.value.isCommitteeMember)
+    
     dialog.value = true
 }
 
@@ -164,7 +191,15 @@ async function deleteItemConfirm() {
 function closeDialog() {
     dialog.value = false
     editedIndex.value = -1
-    editedItem.value = { fullName: '', email: '', isCommitteeMember: false, phone: '', factoryId: 0, role: 2 }
+    editedItem.value = { 
+        fullName: '', 
+        email: '', 
+        isCommitteeMember: false, 
+        phone: '', 
+        factoryId: 0, 
+        role: 2,
+        password: ''
+    }
 }
 
 function closeDelete() {
@@ -173,22 +208,32 @@ function closeDelete() {
 }
 
 async function save() {
+   
     const userStore = useUserStore()
     const factoryId = userStore.selectedFactory.id
-    editedItem.value.password =  editedItem.value.phone
+       
+    // Convert boolean to integer for API
+    const dataToSend = {
+        ...editedItem.value,
+        isCommitteeMember: editedItem.value.isCommitteeMember ? 1 : 0
+    }
+    
     try {
         if (editedIndex.value > -1) {
             // Update existing member
             const itemToUpdate = users.value[editedIndex.value]
-            await safetyCommitteeStore.updateMember(itemToUpdate.id, editedItem.value)
+            await safetyCommitteeStore.updateMember(itemToUpdate.id, dataToSend)
         } else {
             // Add new member
-            editedItem.value.factoryId = factoryId
-            await safetyCommitteeStore.addMember(editedItem.value)
+            dataToSend.password = editedItem.value.phone
+            dataToSend.factoryId = factoryId
+            const newMember = await safetyCommitteeStore.addMember(dataToSend)
+            console.log('🔍 New member added:', newMember)
+            closeDialog()
         }
         closeDialog()
     } catch (error) {
-        console.error('Failed to save member:', error)
+        alert(error)
     }
 }
 
@@ -197,14 +242,33 @@ function openDialog() {
 }
 
 // Handle committee status changes
-async function handleCommitteeStatusChange(user, newStatus) {
-    try {
-        await safetyCommitteeStore.updateCommitteeStatus(user.id, newStatus)
-    } catch (error) {
-        console.error('Failed to update committee status:', error)
-        // Revert the checkbox state on error
-        user.isCommitteeMember = !newStatus
-    }
+async function handleCommitteeStatusChange(user, newStatus) {   //xxxxx
+    console.log('🔄 Committee status change:', user.id, 'from', user.isCommitteeMember, 'to', newStatus)
+    return;
+   
+    
+
+    // const itemToUpdate = users.value[editedIndex.value]
+    // await safetyCommitteeStore.updateMember(itemToUpdate.id, dataToSend)
+
+
+
+    // try {
+    //     // Convert boolean to integer for API
+    //     const statusValue = newStatus ? 1 : 0
+    //     await safetyCommitteeStore.updateCommitteeStatus(user.id, statusValue)
+        
+    //     // Update the user object in the store to reflect the change
+    //     const members = safetyCommitteeStore.getMembers
+    //     const userIndex = members.findIndex(m => m.id === user.id)
+    //     if (userIndex !== -1) {
+    //         members[userIndex].isCommitteeMember = statusValue
+    //     }
+    // } catch (error) {
+    //     console.error('Failed to update committee status:', error)
+    //     // Revert the checkbox state on error
+    //     user.isCommitteeMember = !newStatus
+    // }
 }
 </script>
 

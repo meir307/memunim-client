@@ -20,6 +20,7 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
   actions: {
     // Fetch all safety committee members
     async fetchMembers(factoryId) {
+        
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -27,13 +28,13 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        const response = await axios.get(`${commonStore.apiUrl}safety-committee/members/${factoryId}`, {
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/getMembers', {'factoryId': factoryId}, {
           headers: {
-            'sessionId': userStore.sessionId
+            'sessionId': userStore.user.sessionId
           }
         })
-        this.members = response.data
-        return response.data
+        this.members = response.data.members
+        return response.data.members
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to fetch safety committee members'
         throw error
@@ -58,11 +59,11 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
         })
         
         // Add the new member to the local state
-        this.members.push(response.data)
-        return response.data
+        this.members.push(response.data.member)
+        return response.data.member
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to add safety committee member'
-        throw error
+        throw this.error
       } finally {
         loaderStore.hide()
       }
@@ -77,22 +78,22 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        const response = await axios.put(`${commonStore.apiUrl}safety-committee/members/${memberId}`, memberData, {
-          headers: {
-            'sessionId': userStore.sessionId
-          }
-        })
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/updateMember', memberData, {
+            headers: {
+              'sessionid': userStore.user.sessionId
+            }
+          })
         
         // Update the member in local state
         const index = this.members.findIndex(member => member.id === memberId)
         if (index !== -1) {
-          this.members[index] = response.data
+          this.members[index] = response.data.member
         }
         
-        return response.data
+        return response.data.member
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to update safety committee member'
-        throw error
+        this.error = error.response?.data?.message 
+        throw this.error
       } finally {
         loaderStore.hide()
       }
