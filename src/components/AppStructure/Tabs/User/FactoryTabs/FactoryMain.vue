@@ -108,6 +108,12 @@ export default {
                      route: 'factory-settings'
                  },
                  {
+                     key: 'safety-procedures',
+                     title: 'נהלי בטיחות',
+                     icon: 'mdi-comment-text-outline',
+                     route: 'safety-procedures'
+                 },
+                 {
                      key: 'safety-committee',
                      title: 'ועדת בטיחות',
                      icon: 'mdi-cog',
