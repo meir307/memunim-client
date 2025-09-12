@@ -16,26 +16,28 @@
           <v-simple-table class="modern-table">
             <thead>
               <tr>
-                <th class="table-header">שם הנהל</th>
-                <th class="table-header">תאריך</th>
-                <th class="table-header">הועלה על ידי</th>
-                <th class="table-header actions-header">פעולות</th>
+                <th class="table-header" style="width: 40%;">שם הנהל</th>
+                <th class="table-header" style="width: 10%;">תאריך</th>
+                <th class="table-header" style="width: 25%;">הועלה על ידי</th>
+                <th class="table-header actions-header" style="width: 15%;">פעולות</th>
+                
               </tr>
             </thead>
             <tbody>
               <tr v-for="procedure in procedures" :key="procedure.id" class="table-row">
-                <td class="table-cell">
+                <td class="table-cell" >
                   <div class="procedure-info">
                     <a href="#" class="procedure-link" @click.prevent="viewProcedure(procedure)">
                       {{ procedure.name }}
                     </a>
                   </div>
                 </td>
-                <td class="table-cell">{{ formatDate(procedure.createdAt) }}</td>
-                <td class="table-cell">{{ procedure.createdBy }}</td>
-                <td class="table-cell actions-cell">
-                  <v-btn icon size="small" @click="uploadFile(procedure)" color="success" class="action-btn">
-                    <v-icon>mdi-upload</v-icon>
+                <td class="table-cell" >{{ formatDate(procedure.createdAt) }}</td>
+                <td class="table-cell" >{{ procedure.createdBy }}</td>
+                <td class="table-cell actions-cell" >
+                 
+                  <v-btn icon size="small" @click="editProcedure(procedure)" color="primary" class="action-btn">
+                      <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                   <v-btn icon size="small" @click="deleteProcedure(procedure)" color="error" class="action-btn">
                     <v-icon>mdi-delete</v-icon>
@@ -167,16 +169,6 @@ async function viewProcedure(procedure) {
   }
 }
 
-function uploadFile(procedure) {
-  console.log('Uploading file for procedure:', procedure.name)
-
- 
-  // Trigger the file input for this procedure
-  const fileInput = document.querySelector(`input[ref="fileInput-${procedure.id}"]`)
-  if (fileInput) {
-    fileInput.click()
-  }
-}
 
 async function handleFileUpload(event, procedure) {
   const file = event.target.files[0]
@@ -193,6 +185,11 @@ async function handleFileUpload(event, procedure) {
   }
   // Reset the input
   event.target.value = ''
+}
+
+function editProcedure(procedure) {
+  console.log('Editing procedure:', procedure.name)
+  // TODO: Implement edit functionality
 }
 
 async function deleteProcedure(procedure) {
@@ -225,5 +222,15 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.table-wrapper {
+  width: 60%;
+  margin-left: auto;
+  margin-right: 0;
+}
 
+@media (max-width: 768px) {
+  .table-wrapper {
+    width: 100%;
+  }
+}
 </style>
