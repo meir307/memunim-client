@@ -161,7 +161,7 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
 
     // Download procedure file
     async downloadProcedureFile(procedureName, factoryId) {
-      alert(procedureName)
+      alert(factoryId)
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()

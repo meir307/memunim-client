@@ -27,7 +27,7 @@
               <tr v-for="procedure in procedures" :key="procedure.id" class="table-row">
                 <td class="table-cell" >
                   <div class="procedure-info">
-                    <a href="#" class="procedure-link" @click.prevent="viewProcedure(procedure)">
+                    <a :href="procedure.fileName" target="_blank" class="procedure-link">
                       {{ procedure.name }}
                     </a>
                   </div>
@@ -155,17 +155,6 @@ async function saveProcedure() {
   } catch (error) {
     console.error('Failed to add procedure:', error)
     // You can show an error message to the user here
-  }
-}
-
-async function viewProcedure(procedure) {
-  console.log('Viewing procedure:', procedure.name)
- 
-  try {
-    // Use the download function from the store
-    await safetyProceduresStore.downloadProcedureFile(procedure.fileName, this.selectedFactory.id)
-  } catch (error) {
-    console.error('Failed to download procedure file:', error)
   }
 }
 
