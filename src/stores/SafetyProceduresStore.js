@@ -60,7 +60,8 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
         this.procedures.push(response.data.procedure)
         return response.data.procedure
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to add safety procedure'
+        this.error = error.response?.data?.message || 'תקלה בשמירת הנהל'
+        alert(this.error)
         throw this.error
       } finally {
         loaderStore.hide()
@@ -68,7 +69,7 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
     },
 
     // Update existing safety procedure
-    async updateProcedure(procedureId, procedureData) {
+    async updateProcedure(procedureData) {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -81,16 +82,17 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
               'sessionid': userStore.user.sessionId
             }
           })
-        
+   
         // Update the procedure in local state
-        const index = this.procedures.findIndex(procedure => procedure.id === procedureId)
+        const index = this.procedures.findIndex(procedure => procedure.id == response.data.procedure.id )
         if (index !== -1) {
-          this.procedures[index] = response.data
+          this.procedures[index] = response.data.procedure
         }
         
         return response.data
       } catch (error) {
         this.error = error.response?.data?.message 
+        alert(this.error)
         throw this.error
       } finally {
         loaderStore.hide()
@@ -98,7 +100,7 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
     },
 
     // Delete safety procedure
-    async deleteProcedure(procedureId) {
+    async deleteProcedure(procedure) {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -106,14 +108,14 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        await axios.delete(`${commonStore.apiUrl}safety-procedures/procedures/${procedureId}`, {
+        const res = await axios.post(commonStore.apiUrl + 'safetyprocedures/deleteProcedure', procedure, {
           headers: {
-            'sessionId': userStore.sessionId
+            'sessionid': userStore.user.sessionId
           }
         })
         
         // Remove the procedure from local state
-        this.procedures = this.procedures.filter(procedure => procedure.id !== procedureId)
+        this.procedures = this.procedures.filter(procedure => res.data.procedureId !== procedure.id)
         
         return true
       } catch (error) {

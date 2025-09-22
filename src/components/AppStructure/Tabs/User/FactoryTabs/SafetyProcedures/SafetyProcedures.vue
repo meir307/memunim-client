@@ -20,35 +20,30 @@
                 <th class="table-header" style="width: 10%;">תאריך</th>
                 <th class="table-header" style="width: 25%;">הועלה על ידי</th>
                 <th class="table-header actions-header" style="width: 15%;">פעולות</th>
-                
+
               </tr>
             </thead>
             <tbody>
               <tr v-for="procedure in procedures" :key="procedure.id" class="table-row">
-                <td class="table-cell" >
+                <td class="table-cell">
                   <div class="procedure-info">
                     <a :href="procedure.fileName" target="_blank" class="procedure-link">
                       {{ procedure.name }}
                     </a>
                   </div>
                 </td>
-                <td class="table-cell" >{{ formatDate(procedure.createdAt) }}</td>
-                <td class="table-cell" >{{ procedure.createdBy }}</td>
-                <td class="table-cell actions-cell" >
-                 
+                <td class="table-cell">{{ formatDate(procedure.createdAt) }}</td>
+                <td class="table-cell">{{ procedure.createdBy }}</td>
+                <td class="table-cell actions-cell">
+
                   <v-btn icon size="small" @click="editProcedure(procedure)" color="primary" class="action-btn">
-                      <v-icon>mdi-pencil</v-icon>
+                    <v-icon>mdi-pencil</v-icon>
                   </v-btn>
                   <v-btn icon size="small" @click="deleteProcedure(procedure)" color="error" class="action-btn">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
-                  <input 
-                    type="file" 
-                    :ref="`fileInput-${procedure.id}`" 
-                    style="display: none" 
-                    @change="handleFileUpload($event, procedure)"
-                    accept=".pdf,.doc,.docx"
-                  />
+                  <input type="file" :ref="`fileInput-${procedure.id}`" style="display: none"
+                    @change="handleFileUpload($event, procedure)" accept=".pdf,.doc,.docx" />
                 </td>
               </tr>
             </tbody>
@@ -61,27 +56,15 @@
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title class="popup-title d-flex align-center justify-space-between">
-          הוסף נהל בטיחות חדש
+          {{ dialogTitle }}
           <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
         </v-card-title>
         <v-card-text>
           <v-form @submit.prevent="saveProcedure">
-            <v-text-field 
-              v-model="newProcedure.name" 
-              label="שם הנהל" 
-              required 
-              reverse
-            ></v-text-field>
-            
-            <v-file-input
-              v-model="newProcedure.file"
-              label="קובץ הנהל"
-              accept=".pdf,.doc,.docx"
-              prepend-icon="mdi-file-document"
-              reverse
-              show-size
-              counter
-            ></v-file-input>
+            <v-text-field v-model="newProcedure.name" label="שם הנהל" required reverse></v-text-field>
+
+            <v-file-input v-model="newProcedure.file" label="קובץ הנהל" accept=".pdf,.doc,.docx"
+              prepend-icon="mdi-file-document" reverse show-size counter></v-file-input>
           </v-form>
           <div class="popup-btn-row">
             <v-btn @click="saveProcedure" color="primary">שמור</v-btn>
@@ -112,13 +95,20 @@ const newProcedure = ref({
   file: null
 })
 
+var dialogMode = ref('add')
+
+const dialogTitle = ref('הוסף נהל בטיחות חדש')
+
 function openDialog() {
   console.log('Opening dialog to add new procedure')
+  dialogTitle.value = 'הוסף נהל בטיחות חדש'
   dialog.value = true
 }
 
 function closeDialog() {
   dialog.value = false
+  dialogMode.value = 'add'
+  dialogTitle.value = 'הוסף נהל בטיחות חדש'
   newProcedure.value = {
     name: '',
     file: null
@@ -127,34 +117,54 @@ function closeDialog() {
 
 async function saveProcedure() {
   console.log('Saving new procedure:', newProcedure.value)
-  
-  if (!newProcedure.value.name.trim()) {
-    console.error('Procedure name is required')
-    return
+  const factoryId = userStore.selectedFactory.id
+
+  if (dialogMode.value === 'add') {
+
+    if (!newProcedure.value.name.trim()) {
+      console.error('Procedure name is required')
+      return
+    }
+
+    if (!newProcedure.value.file) {
+      console.error('Procedure file is required')
+      return
+    }
+
+    try {
+      
+      // Create FormData for file upload
+      const formData = new FormData()
+      formData.append('name', newProcedure.value.name)
+      formData.append('file', newProcedure.value.file)
+      formData.append('factoryId', factoryId)
+     
+      // Call store method to add procedure
+      await safetyProceduresStore.addProcedure(formData)
+
+      console.log('Procedure added successfully')
+      closeDialog()
+    } catch (error) {
+      console.error('Failed to add procedure:', error)
+      // You can show an error message to the user here
+    }
+
   }
-  
-  if (!newProcedure.value.file) {
-    console.error('Procedure file is required')
-    return
-  }
-  
-  try {
-    const factoryId = userStore.selectedFactory.id
+  else {
+    try {
+      // Create a plain object to avoid proxy issues
+      const formData = new FormData()
+      formData.append('name', newProcedure.value.name)
+      formData.append('file', newProcedure.value.file)
+      formData.append('factoryId', factoryId)
+      formData.append('id', newProcedure.value.id)
+
+      await safetyProceduresStore.updateProcedure(formData)
+      closeDialog()
+    } catch (error) {
+      console.error('Failed to update procedure:', error)
+    }
     
-    // Create FormData for file upload
-    const formData = new FormData()
-    formData.append('name', newProcedure.value.name)
-    formData.append('file', newProcedure.value.file)
-    formData.append('factoryId', factoryId)
-    
-    // Call store method to add procedure
-    await safetyProceduresStore.addProcedure(formData)
-    
-    console.log('Procedure added successfully')
-    closeDialog()
-  } catch (error) {
-    console.error('Failed to add procedure:', error)
-    // You can show an error message to the user here
   }
 }
 
@@ -163,7 +173,7 @@ async function handleFileUpload(event, procedure) {
   const file = event.target.files[0]
   if (file) {
     console.log('File selected for procedure:', procedure.name, 'File:', file.name)
-    
+
     try {
       // Call store method to upload file
       await safetyProceduresStore.uploadProcedureFile(procedure.id, file)
@@ -176,20 +186,30 @@ async function handleFileUpload(event, procedure) {
   event.target.value = ''
 }
 
-function editProcedure(procedure) {
+async function editProcedure(procedure) {
   console.log('Editing procedure:', procedure.name)
-  // TODO: Implement edit functionality
+  dialogTitle.value = 'ערוך נהל בטיחות'
+  dialogMode.value = 'edit'
+  // Set the form data for editing
+  newProcedure.value = {
+    name: procedure.name,
+    id: procedure.id,
+    file: null
+  }
+  dialog.value = true
+  // TODO: Implement the actual update logic
 }
 
 async function deleteProcedure(procedure) {
-  console.log('Deleting procedure:', procedure.name)
-  
-  try {
-    // Call store method to delete procedure
-    await safetyProceduresStore.deleteProcedure(procedure.id)
-    console.log('Procedure deleted successfully')
-  } catch (error) {
-    console.error('Failed to delete procedure:', error)
+  // Show confirmation dialog
+  if (confirm(`האם אתה בטוח שברצונך למחוק את הנהל "${procedure.name}"?`)) {
+    try {
+      // Call store method to delete procedure  
+      await safetyProceduresStore.deleteProcedure(procedure)
+     
+    } catch (error) {
+      alert(error)
+    }
   }
 }
 
