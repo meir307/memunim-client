@@ -173,11 +173,29 @@ async function save() {
 
 async function deleteItemConfirm() {
     try {
+        console.log('🔍 deleteItemConfirm - editedIndex:', editedIndex.value)
+        console.log('🔍 deleteItemConfirm - users array:', users.value)
+        
+        if (editedIndex.value === -1) {
+            console.error('Cannot delete: editedIndex is -1')
+            alert('Error: Cannot find the item to delete')
+            return
+        }
+        
         const itemToDelete = users.value[editedIndex.value]
+        console.log('🔍 itemToDelete:', itemToDelete)
+        
+        if (!itemToDelete) {
+            console.error('Cannot delete: itemToDelete is undefined')
+            alert('Error: Item to delete not found')
+            return
+        }
+        
         await safetyCommitteeStore.deleteMember(itemToDelete.id)
         closeDelete()
     } catch (error) {
         console.error('Failed to delete member:', error)
+        alert('Failed to delete member: ' + error)
     }
 }
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card class="modern-card">
-            <v-card-title class="modern-title">
+            <v-card-title class="modern-title" style="height: 55px; display: flex; align-items: center;" >
                 <div class="title-container">
                     <v-tabs v-model="activeTab" class="tabs-in-title">
                         <v-tab value="committee">נאמני בטיחות</v-tab>
@@ -17,10 +17,7 @@
                     </v-btn>
                 </div>
             </v-card-title>
-        </v-card>
-
-        <v-card class="content-card">
-            <v-card-text>
+            <v-card-text class="pa-0">
                 <v-window v-model="activeTab">
                     <v-window-item value="committee">
                         <SafetyCommittee 
@@ -126,19 +123,29 @@ onMounted(async () => {
 <style scoped>
 .title-section {
     flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .tabs-in-title {
     background: transparent;
     min-height: auto;
-    margin: 0 16px;
+    margin: 0 2px;
 }
 
 .tabs-in-title ::v-deep .v-tab {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
     min-width: auto;
-    padding: 8px 16px;
+    padding: 2px 8px;
 }
 
 .tabs-in-title ::v-deep .v-tab--selected {
@@ -151,9 +158,4 @@ onMounted(async () => {
     background: white;
 }
 
-.content-card {
-    margin-top: 0;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
 </style>

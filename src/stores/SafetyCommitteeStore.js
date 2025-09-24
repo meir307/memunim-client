@@ -108,9 +108,11 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        await axios.delete(`${commonStore.apiUrl}safety-committee/members/${memberId}`, {
+        const factoryId = userStore.selectedFactory.id
+        
+        await axios.post(commonStore.apiUrl + 'safetycommittee/deleteMember',{'memberId':memberId, 'factoryId':factoryId}, {
           headers: {
-            'sessionId': userStore.sessionId
+            'sessionId': userStore.user.sessionId
           }
         })
         
