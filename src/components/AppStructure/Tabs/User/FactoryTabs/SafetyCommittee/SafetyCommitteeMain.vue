@@ -38,14 +38,22 @@
             :show-dialog="showDialog" 
             @close-dialog="closeDialog" 
         />
+
+        <!-- Committee Meeting Dialog Component -->
+        <CommitteeMeetingDialog 
+            ref="committeeMeetingDialog"
+            :show-dialog="showMeetingDialog" 
+            @close-dialog="closeMeetingDialog" 
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import SafetyCommittee from './SafetyCommittee.vue'
-import SafetyCommitteeMeetings from './SafetyCommitteeMeetings.vue'
+import SafetyCommitteeMeetings from './committeeMeetings.vue'
 import SafetyTrusteesDialog from './SafetyTrusteesDialog.vue'
+import CommitteeMeetingDialog from './committeeMeetingDialog.vue'
 import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 import { useUserStore } from '@/stores/UserStore'
 
@@ -54,7 +62,9 @@ const userStore = useUserStore()
 
 const activeTab = ref('committee')
 const showDialog = ref(false)
+const showMeetingDialog = ref(false)
 const safetyTrusteesDialog = ref(null)
+const committeeMeetingDialog = ref(null)
 
 const titleText = computed(() => {
     switch (activeTab.value) {
@@ -90,7 +100,21 @@ const addButtonIcon = computed(() => {
 })
 
 function openDialog() {
-    showDialog.value = true
+    if (activeTab.value === 'committee') {
+        // For committee tab - open the safety trustees dialog
+        showDialog.value = true
+    } else if (activeTab.value === 'meetings') {
+        // For meetings tab - open a different dialog or action
+        openMeetingsDialog()
+    }
+}
+
+function openMeetingsDialog() {
+    showMeetingDialog.value = true
+}
+
+function closeMeetingDialog() {
+    showMeetingDialog.value = false
 }
 
 function closeDialog() {
