@@ -7,6 +7,7 @@ import { useUserStore } from './UserStore'
 export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
   state: () => ({
     members: [],
+    meetings: [],
     error: null
   }),
 
@@ -127,38 +128,32 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
         loaderStore.hide()
       }
     },
-
-    // Update committee membership status
-    async updateCommitteeStatus(memberId, isCommitteeMember) {
-      this.error = null
-      const loaderStore = useLoaderStore()
-      loaderStore.show()
-      
-      try {
-        const commonStore = useCommonStore()
-        const userStore = useUserStore()
-        const response = await axios.patch(`${commonStore.apiUrl}safety-committee/members/${memberId}/status`, {
-          isCommitteeMember
-        }, {
-          headers: {
-            'sessionId': userStore.sessionId
+ 
+        // Add new safety committee member
+        async addMeeting(memberData) {
+          this.error = null
+          const loaderStore = useLoaderStore()
+          loaderStore.show()
+          
+          try {
+            const commonStore = useCommonStore()
+            const userStore = useUserStore()
+            const response = await axios.post(commonStore.apiUrl + 'safetycommittee/addMeeting', memberData, {
+              headers: {
+                'sessionid': userStore.user.sessionId
+              }
+            })
+            
+            // Add the new meeting to the local state
+            this.meetings.push(response.data.meeting)
+            return response.data.meeting
+          } catch (error) {
+            this.error = error.response?.data?.message || 'Failed to add safety committee meetting'
+            throw this.error
+          } finally {
+            loaderStore.hide()
           }
-        })
-        
-        // Update the member status in local state
-        const index = this.members.findIndex(member => member.id === memberId)
-        if (index !== -1) {
-          this.members[index].isCommitteeMember = isCommitteeMember
-        }
-        
-        return response.data
-      } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to update committee status'
-        throw error
-      } finally {
-        loaderStore.hide()
-      }
-    },
+        },
 
     // Clear error
     clearError() {

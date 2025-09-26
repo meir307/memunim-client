@@ -74,6 +74,8 @@
 
 <script>
 import { ref, computed, watch } from 'vue'
+import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
+import { useUserStore } from '@/stores/UserStore'
 
 export default {
     name: 'CommitteeMeetingDialog',
@@ -85,6 +87,8 @@ export default {
     },
     emits: ['close-dialog'],
     setup(props, { emit }) {
+        const userStore = useUserStore()
+        const safetyCommitteeStore = useSafetyCommitteeStore()
         const dialog = ref(false)
         const dialogDelete = ref(false)
         const loading = ref(false)
@@ -169,7 +173,7 @@ export default {
 
         async function save() {
             loading.value = true
-            
+            const factoryId = userStore.selectedFactory.id
             try {
                 // Validate required fields
                 if (!editedItem.value.title.trim()) {
@@ -191,7 +195,7 @@ export default {
                 const formData = new FormData()
                 formData.append('title', editedItem.value.title)
                 formData.append('summary', editedItem.value.summary)
-                formData.append('factoryId', editedItem.value.factoryId)
+                formData.append('factoryId', factoryId)
                 
                 if (editedItem.value.file) {
                     formData.append('file', editedItem.value.file)
@@ -203,7 +207,7 @@ export default {
                     console.log('Update meeting:', formData)
                 } else {
                     // TODO: Call add meeting API
-                    console.log('Add meeting:', formData)
+                    await safetyCommitteeStore.addMeeting(formData)
                 }
                 
                 closeDialog()
