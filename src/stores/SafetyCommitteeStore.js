@@ -13,6 +13,7 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
 
   getters: {
     getMembers: (state) => state.members,
+    getMeetings: (state) => state.meetings,
     getError: (state) => state.error,
     getCommitteeMembers: (state) => state.members.filter(member => member.isCommitteeMember),
     getNonCommitteeMembers: (state) => state.members.filter(member => !member.isCommitteeMember)
@@ -21,15 +22,15 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
   actions: {
     // Fetch all safety committee members
     async fetchMembers(factoryId) {
-        
+
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
-      
+
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/getMembers', {'factoryId': factoryId}, {
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/getMembers', { 'factoryId': factoryId }, {
           headers: {
             'sessionId': userStore.user.sessionId
           }
@@ -49,7 +50,7 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
-      
+
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
@@ -58,7 +59,7 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
             'sessionid': userStore.user.sessionId
           }
         })
-        
+
         // Add the new member to the local state
         this.members.push(response.data.member)
         return response.data.member
@@ -75,25 +76,25 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
-      
+
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
         const response = await axios.post(commonStore.apiUrl + 'safetycommittee/updateMember', memberData, {
-            headers: {
-              'sessionid': userStore.user.sessionId
-            }
-          })
-        
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
         // Update the member in local state
         const index = this.members.findIndex(member => member.id === memberId)
         if (index !== -1) {
           this.members[index] = response.data.member
         }
-        
+
         return response.data.member
       } catch (error) {
-        this.error = error.response?.data?.message 
+        this.error = error.response?.data?.message
         throw this.error
       } finally {
         loaderStore.hide()
@@ -105,21 +106,21 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
-      
+
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
         const factoryId = userStore.selectedFactory.id
-        
-        await axios.post(commonStore.apiUrl + 'safetycommittee/deleteMember',{'memberId':memberId, 'factoryId':factoryId}, {
+
+        await axios.post(commonStore.apiUrl + 'safetycommittee/deleteMember', { 'memberId': memberId, 'factoryId': factoryId }, {
           headers: {
             'sessionId': userStore.user.sessionId
           }
         })
-        
+
         // Remove the member from local state
         this.members = this.members.filter(member => member.id !== memberId)
-        
+
         return true
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to delete safety committee member'
@@ -128,32 +129,88 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
         loaderStore.hide()
       }
     },
- 
-        // Add new safety committee member
-        async addMeeting(memberData) {
-          this.error = null
-          const loaderStore = useLoaderStore()
-          loaderStore.show()
-          
-          try {
-            const commonStore = useCommonStore()
-            const userStore = useUserStore()
-            const response = await axios.post(commonStore.apiUrl + 'safetycommittee/addMeeting', memberData, {
-              headers: {
-                'sessionid': userStore.user.sessionId
-              }
-            })
-            
-            // Add the new meeting to the local state
-            this.meetings.push(response.data.meeting)
-            return response.data.meeting
-          } catch (error) {
-            this.error = error.response?.data?.message || 'Failed to add safety committee meetting'
-            throw this.error
-          } finally {
-            loaderStore.hide()
+
+    // Add new safety committee member
+    async addMeeting(memberData) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/addMeeting', memberData, {
+          headers: {
+            'sessionid': userStore.user.sessionId
           }
-        },
+        })
+
+        // Add the new meeting to the local state
+        this.meetings.push(response.data.meeting)
+        return response.data.meeting
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to add safety committee meetting'
+        throw this.error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Fetch all safety committee meetings
+    async fetchMeetings(factoryId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/getMeetings', { 'factoryId': factoryId }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+        this.meetings = response.data.meetings
+        return response.data.meetings
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch safety committee meetings'
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Update existing safety committee meeting
+    async updateMeeting(meetingData) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/updateMeeting', meetingData, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        // Update the meeting in local state
+        const index = this.meetings.findIndex(meeting => meeting.id == response.data.meeting.id)
+        if (index !== -1) {
+          this.meetings[index] = response.data.meeting
+        }
+
+        return response.data.meeting
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to update safety committee meeting'
+        throw this.error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+
 
     // Clear error
     clearError() {
@@ -163,6 +220,7 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
     // Reset store state
     reset() {
       this.members = []
+      this.meetings = []
       this.error = null
     }
   }

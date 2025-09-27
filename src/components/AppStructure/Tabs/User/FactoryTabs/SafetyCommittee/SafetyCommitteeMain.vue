@@ -26,7 +26,9 @@
                         />
                     </v-window-item>
                     <v-window-item value="meetings">
-                        <SafetyCommitteeMeetings />
+                        <SafetyCommitteeMeetings 
+                            :edit-meeting="editMeeting" 
+                        />
                     </v-window-item>
                 </v-window>
             </v-card-text>
@@ -69,9 +71,9 @@ const committeeMeetingDialog = ref(null)
 const titleText = computed(() => {
     switch (activeTab.value) {
         case 'committee':
-            return 'הגדר מי הם נאמני הבטיחות במפעל והאם הם חברי ועדת הבטיחות'
+            return '' //'הגדר מי הם נאמני הבטיחות במפעל והאם הם חברי ועדת הבטיחות'
         case 'meetings':
-            return 'נהל פגישות ועדת הבטיחות'
+            return '' //'נהל פגישות ועדת הבטיחות'
         default:
             return 'הגדר מי הם נאמני הבטיחות במפעל והאם הם חברי ועדת הבטיחות'
     }
@@ -134,6 +136,14 @@ function deleteUser(user) {
         safetyTrusteesDialog.value.deleteUser(user)
     }
 }
+
+function editMeeting(meeting) {
+    // Call the committee meeting dialog component's editMeeting method
+    if (committeeMeetingDialog.value) {
+        committeeMeetingDialog.value.editMeeting(meeting)
+    }
+}
+
 
 onMounted(async () => {
     try {
