@@ -102,10 +102,10 @@ export default {
                      route: 'factory-reports'
                  },
                  {
-                     key: 'settings',
-                     title: 'הגדרות',
+                     key: 'routine-checks',
+                     title: 'בדיקות תקופתיות',
                      icon: 'mdi-cog',
-                     route: 'factory-settings'
+                     route: 'routine-checks'
                  },
                  {
                      key: 'safety-procedures',

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { toRaw } from 'vue'
 import axios from 'axios'
 import { useLoaderStore } from './LoaderStore'
 
@@ -12,7 +13,11 @@ export const useCommonStore = defineStore('common', {
 
   getters: {
     getData: (state) => state.data,
-    getFactoryWork:  (state) => state.data.su_factory_work,
+    getRoutineCheckTypes: (state) => {
+            // Convert proxy to raw object
+      const rawData = toRaw(state.data)
+      return rawData.su_params.su_routine_check_types
+    },
     getError: (state) => state.error
   },
 
@@ -22,6 +27,7 @@ export const useCommonStore = defineStore('common', {
       try {
         const response = await axios.post(this.apiUrl + 'common/init')
         this.data = response.data
+        console.log(this.data)
       } catch (error) {
         alert(error.message)
         this.error = error.message

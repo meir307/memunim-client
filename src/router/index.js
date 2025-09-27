@@ -43,9 +43,9 @@ const routes = [
         component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/ReportsTab.vue')
       },
       {
-        path: 'settings',
-        name: 'factory-settings',
-        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SettingsTab.vue')
+        path: 'routine-checks',
+        name: 'routine-checks',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/RoutineChecks/RoutineChecksMain.vue')
       },
       {
         path: 'safety-committee',
