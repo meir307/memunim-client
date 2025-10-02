@@ -33,14 +33,14 @@ const routes = [
         redirect: 'employees'
       },
       {
-        path: 'employees',
-        name: 'factory-employees',
-        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/EmployeesTab.vue')
+        path: 'accidents',
+        name: 'factory-accidents',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/Accidents/AccidentsMain.vue')
       },
       {
-        path: 'reports',
-        name: 'factory-reports',
-        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/ReportsTab.vue')
+        path: 'hazards',
+        name: 'factory-hazards',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/Hazards/HazardsMain.vue')
       },
       {
         path: 'routine-checks',

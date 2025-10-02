@@ -90,16 +90,17 @@ export default {
              showMobileMenu: false,
              navigationItems: [
                  {
-                     key: 'employees',
-                     title: 'עובדים',
+                     key: 'accidents',
+                     title: 'תאונות',
                      icon: 'mdi-account-group',
-                     route: 'factory-employees'
+                     route: 'factory-accidents'
                  },
+                
                  {
-                     key: 'reports',
-                     title: 'דוחות',
+                     key: 'hazards',
+                     title: 'מפגעים',
                      icon: 'mdi-chart-bar',
-                     route: 'factory-reports'
+                     route: 'factory-hazards'
                  },
                  {
                      key: 'routine-checks',
@@ -127,11 +128,16 @@ export default {
         const userStore = useUserStore()
         this.factory = userStore.selectedFactory || null
 
-                 // If no factory found, redirect back
-         if (!this.factory) {
-             this.$router.push('/user')
-         }
-     },
+        // If no factory found, redirect back
+        if (!this.factory) {
+            this.$router.push('/user')
+        } else {
+            // If we're on the factory route without a specific tab, redirect to routine-checks
+            if (this.$route.name === 'FactoryMain' || this.$route.path === '/factory') {
+                this.$router.push({ name: 'routine-checks' })
+            }
+        }
+    },
      methods: {
          navigateToTab(routeName) {
              this.$router.push({ name: routeName })

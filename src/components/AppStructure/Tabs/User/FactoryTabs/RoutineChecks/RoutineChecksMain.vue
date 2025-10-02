@@ -6,7 +6,7 @@
             <h2 class="title-text">בדיקות תקופתיות</h2>
             <v-btn color="primary" @click="openDialog" class="add-btn">
               <v-icon left>mdi-plus</v-icon>
-              הוסף בדיקה תקופתית
+              הוסף סוג בדיקה תקופתית
             </v-btn>
           </div>
         </v-card-title>
@@ -16,9 +16,9 @@
         </v-card-text>
       </v-card>
 
-      <!-- Routine Check Dialog Component -->
-      <UpsertRoutineCheckDialog 
-        ref="routineCheckDialog"
+      <!-- Add Routine Check Type Dialog Component -->
+      <AddRoutineCheckTypeDialog 
+        ref="routineCheckTypeDialog"
         :show-dialog="showDialog" 
         @close-dialog="closeDialog" 
       />
@@ -27,19 +27,19 @@
   
   <script>
   import { ref } from 'vue'
-  import UpsertRoutineCheckDialog from './UpsertRoutineCheckDialog.vue'
+  import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
   
   export default {
     name: 'RoutineChecksMain',
     components: {
-      UpsertRoutineCheckDialog
+      AddRoutineCheckTypeDialog
     },
     setup() {
       const showDialog = ref(false)
-      const routineCheckDialog = ref(null)
+      const routineCheckTypeDialog = ref(null)
 
       function openDialog() {
-        console.log('Opening dialog to add new routine check')
+        console.log('Opening dialog to add new routine check type')
         showDialog.value = true
       }
 
@@ -49,7 +49,7 @@
 
       return {
         showDialog,
-        routineCheckDialog,
+        routineCheckTypeDialog,
         openDialog,
         closeDialog
       }

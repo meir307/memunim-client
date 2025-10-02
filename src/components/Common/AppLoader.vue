@@ -7,7 +7,7 @@
     >
         <v-card color="grey-darken-4" style="padding:10px;opacity: 0.75">   
             <v-card-text  class="text-right">
-                <span>...אנא המתן</span>   
+                <span>אנא המתן...</span>   
                 <v-progress-linear
                     indeterminate
                     color="white"
