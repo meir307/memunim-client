@@ -51,7 +51,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'routinecheck/getRoutineCheckTypes', { 'factoryId': factoryId }, {
+        const response = await axios.post(commonStore.apiUrl + 'routinecheck/getCheckTypes', { 'factoryId': factoryId }, {
           headers: {
             'sessionId': userStore.user.sessionId
           }

@@ -65,7 +65,6 @@
     width: 100%;
   }
 
-
   .add-btn {
     margin-left: 16px;
   }

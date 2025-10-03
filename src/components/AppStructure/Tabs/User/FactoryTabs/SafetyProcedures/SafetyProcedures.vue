@@ -13,41 +13,38 @@
 
       <v-card-text class="pa-0">
         <div class="table-wrapper">
-          <v-simple-table class="modern-table">
-            <thead>
+          <v-data-table
+            :headers="headers"
+            :items="procedures"
+            :loading="loading"
+            class="modern-table"
+            no-data-text="אין נהלי בטיחות"
+            loading-text="טוען נתונים..."
+          >
+            <template #item="{ item, columns }">
               <tr>
-                <th class="table-header" style="width: 40%;">שם הנהל</th>
-                <th class="table-header" style="width: 10%;">תאריך</th>
-                <th class="table-header" style="width: 25%;">הועלה על ידי</th>
-                <th class="table-header actions-header" style="width: 15%;">פעולות</th>
-
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="procedure in procedures" :key="procedure.id" class="table-row">
-                <td class="table-cell">
-                  <div class="procedure-info">
-                    <a :href="procedure.fileName" target="_blank" class="procedure-link">
-                      {{ procedure.name }}
+                <td v-for="column in columns" :key="column.key">
+                  <div v-if="column.key === 'name'" class="procedure-info">
+                    <a :href="item.fileName" target="_blank" class="procedure-link">
+                      {{ item.name }}
                     </a>
                   </div>
-                </td>
-                <td class="table-cell">{{ formatDate(procedure.createdAt) }}</td>
-                <td class="table-cell">{{ procedure.createdBy }}</td>
-                <td class="table-cell actions-cell">
-
-                  <v-btn icon size="small" @click="editProcedure(procedure)" color="primary" class="action-btn">
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                  <v-btn icon size="small" @click="deleteProcedure(procedure)" color="error" class="action-btn">
-                    <v-icon>mdi-delete</v-icon>
-                  </v-btn>
-                  <input type="file" :ref="`fileInput-${procedure.id}`" style="display: none"
-                    @change="handleFileUpload($event, procedure)" accept=".pdf,.doc,.docx" />
+                  <span v-else-if="column.key === 'createdAt'">{{ formatDate(item.createdAt) }}</span>
+                  <span v-else-if="column.key === 'actions'">
+                    <v-btn icon size="small" @click="editProcedure(item)" color="primary" class="action-btn">
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn icon size="small" @click="deleteProcedure(item)" color="error" class="action-btn">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                    <input type="file" :ref="`fileInput-${item.id}`" style="display: none"
+                      @change="handleFileUpload($event, item)" accept=".pdf,.doc,.docx" />
+                  </span>
+                  <span v-else>{{ item[column.key] }}</span>
                 </td>
               </tr>
-            </tbody>
-          </v-simple-table>
+            </template>
+          </v-data-table>
         </div>
       </v-card-text>
     </v-card>
@@ -90,6 +87,7 @@ const procedures = computed(() => safetyProceduresStore.getProcedures)
 
 
 const dialog = ref(false)
+const loading = ref(false)
 const newProcedure = ref({
   name: '',
   file: null
@@ -98,6 +96,13 @@ const newProcedure = ref({
 var dialogMode = ref('add')
 
 const dialogTitle = ref('הוסף נהל בטיחות חדש')
+
+const headers = [
+  { title: 'שם הנהל', key: 'name', sortable: true },
+  { title: 'תאריך', key: 'createdAt', sortable: true },
+  { title: 'הועלה על ידי', key: 'createdBy', sortable: false },
+  { title: 'פעולות', key: 'actions', sortable: false, align: 'center' }
+]
 
 function openDialog() {
   console.log('Opening dialog to add new procedure')
@@ -220,26 +225,18 @@ function formatDate(dateString) {
 
 onMounted(async () => {
   console.log('SafetyProcedures component mounted')
+  loading.value = true
   try {
     const factoryId = userStore.selectedFactory.id
     // Fetch procedures from store
     await safetyProceduresStore.fetchProcedures(factoryId)
   } catch (error) {
     console.error('Failed to fetch procedures:', error)
+  } finally {
+    loading.value = false
   }
 })
 </script>
 
 <style scoped>
-.table-wrapper {
-  width: 60%;
-  margin-left: auto;
-  margin-right: 0;
-}
-
-@media (max-width: 768px) {
-  .table-wrapper {
-    width: 100%;
-  }
-}
 </style>
