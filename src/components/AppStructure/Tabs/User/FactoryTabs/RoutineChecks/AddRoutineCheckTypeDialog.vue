@@ -113,21 +113,20 @@ export default {
                     return
                 }
 
-                // Create FormData for API call
-                const formData = new FormData()
-                formData.append('checkType', rawData.checkType)
-                formData.append('remark', rawData.remark || '')
-                formData.append('factoryId', factoryId)
+                // Create data object for API call
+                const routineCheckTypeData = {
+                    checkType: rawData.checkType,
+                    remark: rawData.remark || '',
+                    factoryId: factoryId
+                }
                 
                 // Call add routine check type API
-                await routineCheckStore.addRoutineCheckType(formData)
+                await routineCheckStore.addRoutineCheckType(routineCheckTypeData)
                 
                 closeDialog()
-                alert('סוג בדיקה נוסף בהצלחה')
                 
             } catch (error) {
                 console.error('Failed to save routine check type:', error)
-                alert('שגיאה בשמירת סוג הבדיקה: ' + error.message)
             } finally {
                 loading.value = false
             }

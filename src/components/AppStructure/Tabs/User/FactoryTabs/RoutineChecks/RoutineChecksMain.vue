@@ -12,7 +12,21 @@
         </v-card-title>
 
         <v-card-text class="pa-0">
-          <!-- Content will go here -->
+          <div class="tiles-container">
+            <div v-if="routineCheckTypes.length === 0" class="no-data">
+              אין סוגי בדיקות תקופתיות
+            </div>
+            <RoutineCheckTile
+              v-for="checkType in routineCheckTypes"
+              :key="checkType.id"
+              :check-type="checkType"
+              :check-date="checkType.lastCheckDate || ''"
+              :check-period-in-month="checkType.checkPeriodInMonth"
+              :next-check-date="checkType.nextCheckDate || ''"
+              @edit-check="editCheckType"
+              @delete-check="deleteCheckType"
+            />
+          </div>
         </v-card-text>
       </v-card>
 
@@ -26,17 +40,27 @@
   </template>
   
   <script>
-  import { ref } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
+  import RoutineCheckTile from './RoutineCheckTile.vue'
+  import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
+  import { useUserStore } from '@/stores/UserStore'
   
   export default {
     name: 'RoutineChecksMain',
     components: {
-      AddRoutineCheckTypeDialog
+      AddRoutineCheckTypeDialog,
+      RoutineCheckTile
     },
     setup() {
+      const routineCheckStore = useRoutineCheckStore()
+      const userStore = useUserStore()
+      
       const showDialog = ref(false)
       const routineCheckTypeDialog = ref(null)
+
+      // Computed property for routine check types
+      const routineCheckTypes = computed(() => routineCheckStore.getRoutineCheckTypes)
 
       function openDialog() {
         console.log('Opening dialog to add new routine check type')
@@ -47,11 +71,37 @@
         showDialog.value = false
       }
 
+      function editCheckType(checkType) {
+        console.log('Edit check type:', checkType)
+        // TODO: Implement edit functionality
+      }
+
+      function deleteCheckType(checkType) {
+        console.log('Delete check type:', checkType)
+        // TODO: Implement delete functionality
+      }
+
+      onMounted(async () => {
+        console.log('RoutineChecksMain component mounted')
+        try {
+          const factoryId = userStore.selectedFactory.id
+          console.log('Fetching routine checks for factory:', factoryId)
+          // Fetch routine check types from store
+          await routineCheckStore.fetchRoutineChecks(factoryId)
+          console.log('Routine check types after fetch:', routineCheckStore.getRoutineCheckTypes)
+        } catch (error) {
+          console.error('Failed to fetch routine check types:', error)
+        }
+      })
+
       return {
         showDialog,
         routineCheckTypeDialog,
+        routineCheckTypes,
         openDialog,
-        closeDialog
+        closeDialog,
+        editCheckType,
+        deleteCheckType
       }
     }
   }
@@ -67,5 +117,26 @@
 
   .add-btn {
     margin-left: 16px;
+  }
+
+  .tiles-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    width: 100%;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .tiles-container {
+      padding: 8px;
+    }
   }
   </style> 
