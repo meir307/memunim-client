@@ -92,20 +92,20 @@ export default {
                  {
                      key: 'accidents',
                      title: 'תאונות',
-                     icon: 'mdi-account-group',
+                     icon: 'mdi-flash',
                      route: 'factory-accidents'
                  },
                 
                  {
                      key: 'hazards',
                      title: 'מפגעים',
-                     icon: 'mdi-chart-bar',
+                     icon: 'mdi-biohazard',
                      route: 'factory-hazards'
                  },
                  {
                      key: 'routine-checks',
                      title: 'בדיקות תקופתיות',
-                     icon: 'mdi-cog',
+                     icon: 'mdi-alarm',
                      route: 'routine-checks'
                  },
                  {
@@ -117,7 +117,7 @@ export default {
                  {
                      key: 'safety-committee',
                      title: 'ועדת בטיחות',
-                     icon: 'mdi-cog',
+                     icon: 'mdi-account-group',
                      route: 'safety-committee'
                  }
              ]

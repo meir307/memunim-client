@@ -18,12 +18,15 @@
             </div>
             <RoutineCheckTile
               v-for="checkType in routineCheckTypes"
+              :id="checkType.id"
               :key="checkType.id"
               :check-type="checkType"
-              :check-date="checkType.lastCheckDate || ''"
+              :check-date="checkType.checkDate || ''"
               :check-period-in-month="checkType.checkPeriodInMonth"
-              :next-check-date="checkType.nextCheckDate || ''"
+              :next-check-date="checkType.nextCheck || ''"
+              @add-check="addCheck"
               @edit-check="editCheckType"
+              @history="showHistory"
               @delete-check="deleteCheckType"
             />
           </div>
@@ -36,6 +39,15 @@
         :show-dialog="showDialog" 
         @close-dialog="closeDialog" 
       />
+
+      <!-- Upsert Check Dialog Component -->
+      <UpsertCheckDialog 
+        ref="upsertCheckDialog"
+        :show-dialog="showCheckDialog" 
+        :check-type="selectedCheckType"
+        :edit-check="selectedEditCheck"
+        @close-dialog="closeCheckDialog" 
+      />
     </div>
   </template>
   
@@ -43,6 +55,7 @@
   import { ref, computed, onMounted } from 'vue'
   import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
   import RoutineCheckTile from './RoutineCheckTile.vue'
+  import UpsertCheckDialog from './upsertCheckDialog.vue'
   import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
   import { useUserStore } from '@/stores/UserStore'
   
@@ -50,7 +63,8 @@
     name: 'RoutineChecksMain',
     components: {
       AddRoutineCheckTypeDialog,
-      RoutineCheckTile
+      RoutineCheckTile,
+      UpsertCheckDialog
     },
     setup() {
       const routineCheckStore = useRoutineCheckStore()
@@ -58,6 +72,12 @@
       
       const showDialog = ref(false)
       const routineCheckTypeDialog = ref(null)
+      
+      // Check dialog state
+      const showCheckDialog = ref(false)
+      const selectedCheckType = ref(null)
+      const selectedEditCheck = ref(null)
+      const upsertCheckDialog = ref(null)
 
       // Computed property for routine check types
       const routineCheckTypes = computed(() => routineCheckStore.getRoutineCheckTypes)
@@ -71,14 +91,39 @@
         showDialog.value = false
       }
 
-      function editCheckType(checkType) {
-        console.log('Edit check type:', checkType)
-        // TODO: Implement edit functionality
+      function addCheck(tileProps) {
+        console.log('Add check for type:', tileProps)
+        // Extract checkType from the tile props
+        selectedCheckType.value = tileProps.checkType
+        selectedEditCheck.value = null
+        showCheckDialog.value = true
+      }
+
+      function editCheckType(tileProps) {
+        console.log('Edit check type:', tileProps)
+        // Convert proxy object to plain JavaScript object
+        const plainObject = JSON.parse(JSON.stringify(tileProps))
+
+        // Extract checkType from the tile props
+        selectedCheckType.value = plainObject.checkType
+        selectedEditCheck.value = null // TODO: Get existing check data
+        showCheckDialog.value = true
+      }
+
+      function showHistory(checkType) {
+        console.log('Show history for type:', checkType)
+        // TODO: Implement history functionality
       }
 
       function deleteCheckType(checkType) {
         console.log('Delete check type:', checkType)
         // TODO: Implement delete functionality
+      }
+
+      function closeCheckDialog() {
+        showCheckDialog.value = false
+        selectedCheckType.value = null
+        selectedEditCheck.value = null
       }
 
       onMounted(async () => {
@@ -98,10 +143,17 @@
         showDialog,
         routineCheckTypeDialog,
         routineCheckTypes,
+        showCheckDialog,
+        selectedCheckType,
+        selectedEditCheck,
+        upsertCheckDialog,
         openDialog,
         closeDialog,
+        addCheck,
         editCheckType,
-        deleteCheckType
+        showHistory,
+        deleteCheckType,
+        closeCheckDialog
       }
     }
   }
@@ -139,4 +191,4 @@
       padding: 8px;
     }
   }
-  </style> 
+  </style>

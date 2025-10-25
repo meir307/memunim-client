@@ -113,9 +113,19 @@ export default {
                     return
                 }
 
+                // Find the selected check type to get its name and period
+                const selectedCheckType = checkTypeOptions.value.find(type => type.value === rawData.checkType)
+                
+                if (!selectedCheckType) {
+                    alert('סוג הבדיקה שנבחר לא נמצא')
+                    return
+                }
+
                 // Create data object for API call
                 const routineCheckTypeData = {
-                    checkType: rawData.checkType,
+                    checkTypeId: rawData.checkType,
+                    checkTypeName: selectedCheckType.title,        // ✅ Added from dropdown
+                    checkPeriodInMonth: selectedCheckType.period,  // ✅ Added from dropdown
                     remark: rawData.remark || '',
                     factoryId: factoryId
                 }
@@ -169,3 +179,4 @@ export default {
     margin-bottom: 8px;
 }
 </style>
+

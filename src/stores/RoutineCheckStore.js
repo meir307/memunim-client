@@ -43,7 +43,6 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
-
     // Add new routine check type
     async addRoutineCheckType(routineCheckTypeData) {
       this.error = null
@@ -59,7 +58,6 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
           }
         })
 
-
         // Add the new routine check type to the local state
         this.routineCheckTypes.push(response.data.routineCheckType)
         return response.data.routineCheckType
@@ -74,9 +72,122 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
+    // Add new routine check
+    async addRoutineCheck(routineCheckData) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
 
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/addCheck', routineCheckData, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
 
+        // addCheck API returns what ever fetchRoutineChecks returns
+        this.routineCheckTypes = response.data.routineChecks
 
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Failed to add routine check'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Update existing routine check
+    async updateRoutineCheck(routineCheckData) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/updateCheck', routineCheckData, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        // Update the routine check in the local state
+        const index = this.routineChecks.findIndex(check => check.id === response.data.routineCheck.id)
+        if (index !== -1) {
+          this.routineChecks[index] = response.data.routineCheck
+        }
+        return response.data.routineCheck
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to update routine check'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Delete routine check
+    async deleteRoutineCheck(checkId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/deleteCheck', { checkId }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        // Remove the routine check from the local state
+        this.routineChecks = this.routineChecks.filter(check => check.id !== checkId)
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to delete routine check'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Update routine check type
+    async updateRoutineCheckType(id, updateData) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        await axios.post(commonStore.apiUrl + 'routineChecks/updateCheckTypeRemark', {
+          id:id,
+          remark: updateData.remark
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+        
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message
+        this.error = errorMessage
+
+      } finally {
+        loaderStore.hide()
+      }
+    },
 
     // Clear error
     clearError() {
@@ -85,6 +196,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
 
     // Reset store state
     reset() {
+      this.routineChecks = []
       this.routineCheckTypes = []
       this.error = null
     }
