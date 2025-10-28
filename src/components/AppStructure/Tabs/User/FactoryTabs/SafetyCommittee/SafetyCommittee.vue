@@ -39,9 +39,9 @@
                 </v-simple-table>
             </div>
         </v-card-text>
-    </div>
-</template>
-
+          </div>
+        </template>
+  
 <script>
 import { computed, onMounted } from 'vue'
 import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'

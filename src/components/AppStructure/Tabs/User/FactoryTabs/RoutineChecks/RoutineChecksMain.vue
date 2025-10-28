@@ -20,6 +20,7 @@
               v-for="checkType in routineCheckTypes"
               :id="checkType.id"
               :key="checkType.id"
+              :checkTypeId="checkType.checkTypeId"
               :check-type="checkType"
               :check-date="checkType.checkDate || ''"
               :check-period-in-month="checkType.checkPeriodInMonth"
@@ -48,6 +49,12 @@
         :edit-check="selectedEditCheck"
         @close-dialog="closeCheckDialog" 
       />
+
+      <!-- History Checks Component -->
+      <HistoryChecks 
+        v-if="showHistoryDialog"
+        @close-history="closeHistoryDialog"
+      />
     </div>
   </template>
   
@@ -56,6 +63,7 @@
   import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
   import RoutineCheckTile from './RoutineCheckTile.vue'
   import UpsertCheckDialog from './upsertCheckDialog.vue'
+  import HistoryChecks from './HistoryChecks.vue'
   import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
   import { useUserStore } from '@/stores/UserStore'
   
@@ -64,7 +72,8 @@
     components: {
       AddRoutineCheckTypeDialog,
       RoutineCheckTile,
-      UpsertCheckDialog
+      UpsertCheckDialog,
+      HistoryChecks
     },
     setup() {
       const routineCheckStore = useRoutineCheckStore()
@@ -78,6 +87,9 @@
       const selectedCheckType = ref(null)
       const selectedEditCheck = ref(null)
       const upsertCheckDialog = ref(null)
+      
+      // History dialog state
+      const showHistoryDialog = ref(false)
 
       // Computed property for routine check types
       const routineCheckTypes = computed(() => routineCheckStore.getRoutineCheckTypes)
@@ -112,7 +124,11 @@
 
       function showHistory(checkType) {
         console.log('Show history for type:', checkType)
-        // TODO: Implement history functionality
+        showHistoryDialog.value = true
+      }
+
+      function closeHistoryDialog() {
+        showHistoryDialog.value = false
       }
 
       function deleteCheckType(checkType) {
@@ -147,11 +163,13 @@
         selectedCheckType,
         selectedEditCheck,
         upsertCheckDialog,
+        showHistoryDialog,
         openDialog,
         closeDialog,
         addCheck,
         editCheckType,
         showHistory,
+        closeHistoryDialog,
         deleteCheckType,
         closeCheckDialog
       }

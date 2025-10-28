@@ -1,0 +1,433 @@
+<template>
+  <v-dialog v-model="showDialog" max-width="1000px" persistent>
+    <v-card class="history-card">
+      <v-card-title class="popup-title d-flex align-center justify-space-between">
+        היסטורית בדיקות דודי קיטור
+        <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
+      </v-card-title>
+      
+      <v-card-text class="pa-4">
+        <v-row class="history-content">
+
+          <v-col cols="6">
+            <div class="panel-container">
+              <div class="panel-title-with-button">
+                <h3 class="panel-title">הסטורית בדיקות</h3>
+              </div>
+              <div class="panel-content dates-panel">
+                <div v-if="checkHistory && checkHistory.length > 0" class="dates-list">
+                  <div 
+                    v-for="(check, index) in checkHistory" 
+                    :key="index" 
+                    class="date-item"
+                    :class="{ 'selected': selectedCheck && selectedCheck.checkDate === check.checkDate }"
+                    @click="selectCheck(check)"
+                  >
+                    <v-icon class="date-icon">mdi-calendar</v-icon>
+                    <span class="date-text">{{ formatDate(check.checkDate) }}</span>
+                  </div>
+                </div>
+                <div v-else class="placeholder-text">
+                  כאן יוצגו תאריכי הבדיקות
+                </div>
+              </div>
+            </div>
+          </v-col>
+          <!-- Left Panel - Files -->
+          <v-col cols="6">
+            <div class="panel-container">
+              <div class="panel-title-with-button">
+                <h3 class="panel-title">הקבצים שמקושרים לבדיקה</h3>
+                <v-btn 
+                  size="small" 
+                  color="primary" 
+                  @click="addFile"
+                  class="add-file-btn"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  הוסף קובץ
+                </v-btn>
+              </div>
+              <div class="panel-content files-panel">
+                <div v-if="selectedCheck && selectedCheck.fileNames && selectedCheck.fileNames.length > 0" class="files-list">
+                  <div v-for="(fileName, index) in selectedCheck.fileNames" :key="index" class="file-item">
+                    <v-icon class="file-icon">mdi-file-document</v-icon>
+                    <span class="file-name">{{ fileName }}</span>
+                    <v-btn
+                      icon="mdi-delete"
+                      size="small"
+                      color="error"
+                      variant="text"
+                      @click="deleteFile(index)"
+                      class="delete-file-btn"
+                    ></v-btn>
+                  </div>
+                </div>
+                <div v-else class="placeholder-text">
+                  כאן יוצגו הקבצים שמקושרים לבדיקה המסומנת
+                </div>
+              </div>
+            </div>
+          </v-col>
+
+          <!-- Right Panel - Check Dates -->
+         
+        </v-row>
+
+        <!-- Remarks Section -->
+        <v-row class="mt-4">
+          <v-col cols="12">
+            <div class="remarks-section">
+              <div class="remarks-container">
+                <v-textarea
+                  v-model="selectedRemark"
+                  label="הערות על הבדיקה המסומנת"
+                  rows="1"
+                  reverse
+                  variant="outlined"
+                  class="remarks-field"
+                  :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר בדיקה להצגת הערות'"
+                ></v-textarea>
+                <v-btn 
+                  color="primary" 
+                  @click="saveRemarks" 
+                  :disabled="!selectedCheck"
+                >
+                  <v-icon left>mdi-content-save</v-icon>
+                  שמור
+                </v-btn>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      
+      
+        <div class="popup-btn-row">
+          <v-btn @click="closeDialog" class="close-btn">סגור</v-btn>
+        </div>
+      
+    </v-card>
+  </v-dialog>
+</template>
+
+<script>
+export default {
+  name: 'HistoryChecks',
+  props: {
+    checkTypeId: {
+      type: [String, Number],
+      required: true
+    }
+  },
+  emits: ['close-history'],
+  data() {
+    return {
+      showDialog: true,
+      checkHistory: [],
+      selectedCheck: null,
+      selectedRemark: ''
+    }
+  },
+  mounted() {
+    console.log('Props:', this.$props)
+    console.log('CheckTypeId:', this.checkTypeId)
+    this.loadCheckHistory()
+  },
+  methods: {
+    // Function to load check history from store
+    loadCheckHistory() {
+      // TODO: Replace with actual store method call
+      // Example: this.checkHistory = await store.getCheckHistory(this.checkTypeId)
+      console.log('Loading check history for checkTypeId:', this.checkTypeId)
+      
+      // Mock data for demonstration
+      this.checkHistory = [
+        {
+          checkDate: '2024-01-15',
+          remark: 'בדיקה תקינה, כל המערכות פועלות כשורה',
+          fileNames: ['דוח_בדיקה_15012024.pdf', 'תמונות_דוד_1.jpg', 'תמונות_דוד_2.jpg']
+        },
+        {
+          checkDate: '2024-01-01',
+          remark: 'נמצאו ליקויים קלים במערכת הבטיחות',
+          fileNames: ['דוח_בדיקה_01012024.pdf', 'תיקון_ליקויים.docx']
+        },
+        {
+          checkDate: '2023-12-15',
+          remark: 'בדיקה שגרתית - הכל תקין',
+          fileNames: ['דוח_בדיקה_15122023.pdf']
+        }
+      ]
+      
+      // Auto-select the first check if available
+      if (this.checkHistory.length > 0) {
+        this.selectCheck(this.checkHistory[0])
+      }
+    },
+    
+    // Function to select a check and display its details
+    selectCheck(check) {
+      this.selectedCheck = check
+      this.selectedRemark = check.remark || ''
+    },
+    
+    // Function to format date for display
+    formatDate(dateString) {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('he-IL', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      })
+    },
+    
+    // Function to save remarks only
+    saveRemarks() {
+      if (this.selectedCheck) {
+        // TODO: Replace with actual store method call
+        // Example: await store.updateCheckRemark(this.selectedCheck.checkDate, this.selectedRemark)
+        
+        // Update only the remark in local data
+        this.selectedCheck.remark = this.selectedRemark
+        
+        // Show success message or handle response
+        console.log('Remarks saved for check:', this.selectedCheck.checkDate, 'New remark:', this.selectedRemark)
+        
+        // Optional: Show success notification
+        // You can add a toast notification here if you have one
+      }
+    },
+    
+    addFile() {
+      // TODO: Implement file upload functionality
+      console.log('Add file clicked for check:', this.selectedCheck?.checkDate)
+      // You can implement file upload logic here
+    },
+    
+    deleteFile(fileIndex) {
+      if (this.selectedCheck && this.selectedCheck.fileNames) {
+        // Remove the file from the array
+        this.selectedCheck.fileNames.splice(fileIndex, 1)
+        
+        // TODO: Replace with actual store method call to delete file from backend
+        // Example: await store.deleteCheckFile(this.selectedCheck.checkDate, fileIndex)
+        
+        console.log('File deleted at index:', fileIndex, 'for check:', this.selectedCheck.checkDate)
+        
+        // Optional: Show success notification
+        // You can add a toast notification here if you have one
+      }
+    },
+
+    closeDialog() {
+      this.showDialog = false
+      this.$emit('close-history')
+    }
+  }
+}
+</script>
+
+<style scoped>
+.history-content {
+  min-height: 400px;
+}
+
+.panel-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title-with-button {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: #2c3e50;
+  border: 2px solid #333;
+  border-bottom: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.panel-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.add-file-btn {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  min-width: auto;
+}
+
+.panel-content {
+  border: 2px solid #333;
+  border-top: none;
+  height: 350px;
+  overflow-y: auto;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 16px;
+}
+
+.placeholder-text {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.dates-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-bottom: 1px solid #e8eaf6;
+}
+
+.date-item:hover {
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.date-item.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.date-icon {
+  margin-left: 8px;
+  font-size: 1.2rem;
+}
+
+.date-text {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.files-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e8eaf6;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.file-item:hover {
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.file-icon {
+  margin-left: 8px;
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.delete-file-btn {
+  min-width: 32px !important;
+  height: 32px !important;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.delete-file-btn:hover {
+  opacity: 1;
+  background-color: rgba(244, 67, 54, 0.1) !important;
+}
+
+.remarks-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.remarks-field {
+  direction: rtl;
+  flex: 1;
+}
+
+.remarks-field ::v-deep .v-field__input {
+  text-align: right;
+}
+
+.remarks-field ::v-deep .v-label {
+  text-align: right;
+}
+
+.close-btn {
+  padding: 12px 24px !important;
+  min-width: 80px;
+  height: 40px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .history-content {
+    flex-direction: column;
+  }
+  
+  .panel-content {
+    height: 250px;
+  }
+  
+  .panel-title {
+    font-size: 0.9rem;
+    padding: 10px 12px;
+  }
+  
+  .date-item, .file-item {
+    padding: 10px 12px;
+  }
+  
+  .date-text, .file-name {
+    font-size: 0.9rem;
+  }
+}
+</style>
