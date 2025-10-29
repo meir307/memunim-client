@@ -189,6 +189,37 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
+    // Get check history for a specific check type
+    async getCheckHistory(id, checkTypeId, factoryId) {
+      
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/getCheckHistory', {
+          id: id,
+          checkTypeId: checkTypeId,
+          factoryId: factoryId
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        return response.data.checkHistory || []
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to fetch check history'
+        this.error = errorMessage
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Clear error
     clearError() {
       this.error = null

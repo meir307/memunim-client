@@ -27,7 +27,6 @@
               :next-check-date="checkType.nextCheck || ''"
               @add-check="addCheck"
               @edit-check="editCheckType"
-              @history="showHistory"
               @delete-check="deleteCheckType"
             />
           </div>
@@ -50,11 +49,6 @@
         @close-dialog="closeCheckDialog" 
       />
 
-      <!-- History Checks Component -->
-      <HistoryChecks 
-        v-if="showHistoryDialog"
-        @close-history="closeHistoryDialog"
-      />
     </div>
   </template>
   
@@ -63,7 +57,6 @@
   import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
   import RoutineCheckTile from './RoutineCheckTile.vue'
   import UpsertCheckDialog from './upsertCheckDialog.vue'
-  import HistoryChecks from './HistoryChecks.vue'
   import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
   import { useUserStore } from '@/stores/UserStore'
   
@@ -72,8 +65,7 @@
     components: {
       AddRoutineCheckTypeDialog,
       RoutineCheckTile,
-      UpsertCheckDialog,
-      HistoryChecks
+      UpsertCheckDialog
     },
     setup() {
       const routineCheckStore = useRoutineCheckStore()
@@ -88,8 +80,6 @@
       const selectedEditCheck = ref(null)
       const upsertCheckDialog = ref(null)
       
-      // History dialog state
-      const showHistoryDialog = ref(false)
 
       // Computed property for routine check types
       const routineCheckTypes = computed(() => routineCheckStore.getRoutineCheckTypes)
@@ -122,14 +112,6 @@
         showCheckDialog.value = true
       }
 
-      function showHistory(checkType) {
-        console.log('Show history for type:', checkType)
-        showHistoryDialog.value = true
-      }
-
-      function closeHistoryDialog() {
-        showHistoryDialog.value = false
-      }
 
       function deleteCheckType(checkType) {
         console.log('Delete check type:', checkType)
@@ -163,13 +145,10 @@
         selectedCheckType,
         selectedEditCheck,
         upsertCheckDialog,
-        showHistoryDialog,
         openDialog,
         closeDialog,
         addCheck,
         editCheckType,
-        showHistory,
-        closeHistoryDialog,
         deleteCheckType,
         closeCheckDialog
       }

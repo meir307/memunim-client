@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="showDialog" max-width="1000px" persistent>
+  <v-dialog :model-value="showDialog" @update:model-value="$emit('close-history')" max-width="1000px" persistent>
     <v-card class="history-card">
       <v-card-title class="popup-title d-flex align-center justify-space-between">
-        היסטורית בדיקות דודי קיטור
+        היסטורית בדיקות - {{ checkTypeName }}
         <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
       </v-card-title>
       
@@ -112,18 +112,32 @@
 </template>
 
 <script>
+import { useRoutineCheckStore } from '@/stores/RoutineCheckStore';
+import { useUserStore } from '@/stores/UserStore';
+
 export default {
   name: 'HistoryChecks',
   props: {
     checkTypeId: {
       type: [String, Number],
       required: true
+    },
+    checkTypeName: {
+      type: String,
+      required: true
+    },
+    id: {
+      type: [String, Number],
+      required: true
+    },
+    showDialog: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['close-history'],
   data() {
     return {
-      showDialog: true,
       checkHistory: [],
       selectedCheck: null,
       selectedRemark: ''
@@ -132,33 +146,41 @@ export default {
   mounted() {
     console.log('Props:', this.$props)
     console.log('CheckTypeId:', this.checkTypeId)
-    this.loadCheckHistory()
+    console.log('CheckTypeName:', this.checkTypeName)
+    console.log('Id:', this.id)
+    // Defer loading history until dialog opens
+    if (this.showDialog) {
+      this.loadCheckHistory()
+    }
+  },
+  watch: {
+    showDialog(newVal) {
+      if (newVal) {
+        this.loadCheckHistory()
+      }
+    }
   },
   methods: {
     // Function to load check history from store
-    loadCheckHistory() {
-      // TODO: Replace with actual store method call
-      // Example: this.checkHistory = await store.getCheckHistory(this.checkTypeId)
-      console.log('Loading check history for checkTypeId:', this.checkTypeId)
-      
-      // Mock data for demonstration
-      this.checkHistory = [
-        {
-          checkDate: '2024-01-15',
-          remark: 'בדיקה תקינה, כל המערכות פועלות כשורה',
-          fileNames: ['דוח_בדיקה_15012024.pdf', 'תמונות_דוד_1.jpg', 'תמונות_דוד_2.jpg']
-        },
-        {
-          checkDate: '2024-01-01',
-          remark: 'נמצאו ליקויים קלים במערכת הבטיחות',
-          fileNames: ['דוח_בדיקה_01012024.pdf', 'תיקון_ליקויים.docx']
-        },
-        {
-          checkDate: '2023-12-15',
-          remark: 'בדיקה שגרתית - הכל תקין',
-          fileNames: ['דוח_בדיקה_15122023.pdf']
-        }
-      ]
+    async loadCheckHistory() {
+      try {
+        const userStore = useUserStore()
+        const routineCheckStore = useRoutineCheckStore()
+        
+        this.checkHistory = await routineCheckStore.getCheckHistory(this.id, this.checkTypeId, userStore.selectedFactory.id)
+        console.log('Loading check history for checkTypeId:', this.checkTypeId)
+        console.log('Check type name:', this.checkTypeName)
+        console.log('Factory id:', userStore.selectedFactory.id)
+      } catch (error) {
+        console.error('Error loading check history:', error)
+        this.checkHistory = []
+      }
+     
+     
+          // checkDate: '2024-01-01',
+          // remark: 'נמצאו ליקויים קלים במערכת הבטיחות',
+          // fileNames: ['דוח_בדיקה_01012024.pdf', 'תיקון_ליקויים.docx']
+     
       
       // Auto-select the first check if available
       if (this.checkHistory.length > 0) {
@@ -221,7 +243,6 @@ export default {
     },
 
     closeDialog() {
-      this.showDialog = false
       this.$emit('close-history')
     }
   }

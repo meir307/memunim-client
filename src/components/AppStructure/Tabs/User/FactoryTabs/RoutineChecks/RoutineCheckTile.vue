@@ -1,102 +1,116 @@
 <template>
-  <v-card class="routine-check-tile" elevation="2" style="width: 100%;">
-    <v-card-text>
-      <div class="tile-content">
-        <div class="info-column">
-          <h3 class="check-type-name">{{ checkType.checkTypeName }}</h3>
-        </div>
+  <div>
+    <v-card class="routine-check-tile" elevation="2" style="width: 100%;">
+      <v-card-text>
+        <div class="tile-content">
+          <div class="info-column">
+            <h3 class="check-type-name">{{ checkType.checkTypeName }}</h3>
+          </div>
 
-        <div class="info-column">
-          <v-icon class="info-icon">mdi-calendar</v-icon>
-          <span class="info-label">תאריך בדיקה:</span>
-          <span class="info-value">{{ formatDate(checkDate) }}</span>
-        </div>
+          <div class="info-column">
+            <v-icon class="info-icon">mdi-calendar</v-icon>
+            <span class="info-label">תאריך בדיקה:</span>
+            <span class="info-value">{{ formatDate(checkDate) }}</span>
+          </div>
 
-        <div class="info-column">
-          <v-icon class="info-icon">mdi-calendar-clock</v-icon>
-          <span class="info-label">תאריך בדיקה הבאה:</span>
-          <span class="info-value">{{ formatDate(nextCheckDate) }}</span>
-        </div>
+          <div class="info-column">
+            <v-icon class="info-icon">mdi-calendar-clock</v-icon>
+            <span class="info-label">תאריך בדיקה הבאה:</span>
+            <span class="info-value">{{ formatDate(nextCheckDate) }}</span>
+          </div>
 
-        <div class="info-column">
-          <v-icon class="info-icon">mdi-clock-outline</v-icon>
-          <span class="info-label">תדירות (חודשים):</span>
-          <span class="info-value">{{ checkPeriodInMonth }}</span>
-        </div>
+          <div class="info-column">
+            <v-icon class="info-icon">mdi-clock-outline</v-icon>
+            <span class="info-label">תדירות (חודשים):</span>
+            <span class="info-value">{{ checkPeriodInMonth }}</span>
+          </div>
 
-        <div class="info-column menu-column">
-          <v-menu>
-            <template v-slot:activator="{ props }">
-              <v-btn
-                icon="mdi-dots-vertical"
-                variant="text"
-                size="small"
-                v-bind="props"
-                class="menu-btn"
-              ></v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="addCheck">
-                <v-list-item-title>
-                  הוסף בדיקה חדשה
-                  <v-icon left> mdi-plus</v-icon>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="editCheck">
-                <v-list-item-title>
-                  עדכן בדיקה
-                  <v-icon left> mdi-pencil</v-icon>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="history">
-                <v-list-item-title>
-                  הצג הסטוריה
-                  <v-icon left>  mdi-history</v-icon>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="deleteCheck">
-                <v-list-item-title>
-                  מחק
-                  <v-icon left>mdi-delete</v-icon>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <div class="info-column menu-column">
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  icon="mdi-dots-vertical"
+                  variant="text"
+                  size="small"
+                  v-bind="props"
+                  class="menu-btn"
+                ></v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="addCheck">
+                  <v-list-item-title>
+                    הוסף בדיקה חדשה
+                    <v-icon left> mdi-plus</v-icon>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="editCheck">
+                  <v-list-item-title>
+                    עדכן בדיקה
+                    <v-icon left> mdi-pencil</v-icon>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="showHistory">
+                  <v-list-item-title>
+                    הצג הסטוריה
+                    <v-icon left>  mdi-history</v-icon>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="deleteCheck">
+                  <v-list-item-title>
+                    מחק
+                    <v-icon left>mdi-delete</v-icon>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
         </div>
-      </div>
-      
-      <div class="remark-section">
-        <div class="remark-container">
-          <v-btn
-            @click="saveRemark"
-            color="primary"
-            size="small"
-            class="save-btn"
-          >
-            <v-icon left>mdi-check</v-icon>
-            שמור
-          </v-btn>
-          <v-textarea
-            v-model="localRemark"
-            placeholder="הזן הערה..."
-            rows="1"
-            variant="outlined"
-            density="compact"
-            class="remark-input"
-          ></v-textarea>
+        
+        <div class="remark-section">
+          <div class="remark-container">
+            <v-btn
+              @click="saveRemark"
+              color="primary"
+              size="small"
+              class="save-btn"
+            >
+              <v-icon left>mdi-check</v-icon>
+              שמור
+            </v-btn>
+            <v-textarea
+              v-model="localRemark"
+              placeholder="הזן הערה..."
+              rows="1"
+              variant="outlined"
+              density="compact"
+              class="remark-input"
+            ></v-textarea>
+          </div>
         </div>
-      </div>
-    </v-card-text>
-  </v-card>
+      </v-card-text>
+    </v-card>
+
+    <!-- History Checks Dialog -->
+    <HistoryChecks 
+      :showDialog="showHistoryDialog"
+      :checkTypeId="checkType.checkTypeId"
+      :checkTypeName="checkType.checkTypeName"
+      :id="checkType.id"
+      @close-history="closeHistoryDialog"
+    />
+  </div>
 </template>
 
 <script>
 import { ref, watch } from 'vue'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
-
+import HistoryChecks from './HistoryChecks.vue'
 
 export default {
   name: 'RoutineCheckTile',
+  components: {
+    HistoryChecks
+  },
   props: {
     id: {
       type: String,
@@ -123,10 +137,12 @@ export default {
       required: false
     }
   },
-  emits: ['add-check', 'edit-check', 'history', 'delete-check'],
+  emits: ['add-check', 'edit-check', 'delete-check'],
   setup(props, { emit }) {
     const routineCheckStore = useRoutineCheckStore()
     
+    // History dialog state
+    const showHistoryDialog = ref(false)
     
     // Create a local reactive copy of the remark
     const localRemark = ref(props.checkType.remark || '')
@@ -135,6 +151,7 @@ export default {
     watch(() => props.checkType.remark, (newRemark) => {
       localRemark.value = newRemark || ''
     })
+    
     function formatDate(dateString) {
       if (!dateString) return 'לא נקבע'
       const date = new Date(dateString)
@@ -149,8 +166,12 @@ export default {
       emit('edit-check', props)
     }
 
-    function history() {
-      emit('history', props)
+    function showHistory() {
+      showHistoryDialog.value = true
+    }
+
+    function closeHistoryDialog() {
+      showHistoryDialog.value = false
     }
 
     function deleteCheck() {
@@ -159,19 +180,17 @@ export default {
 
     function saveRemark() {
       // Handle save logic internally
-   
-      
-      
-        routineCheckStore.updateRoutineCheckType( props.id,  { remark: localRemark.value })
-      
+      routineCheckStore.updateRoutineCheckType(props.id, { remark: localRemark.value })
     }
 
     return {
+      showHistoryDialog,
       localRemark,
       formatDate,
       addCheck,
       editCheck,
-      history,
+      showHistory,
+      closeHistoryDialog,
       deleteCheck,
       saveRemark
     }
