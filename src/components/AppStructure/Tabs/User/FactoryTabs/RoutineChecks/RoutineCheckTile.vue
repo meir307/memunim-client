@@ -49,7 +49,7 @@
                     <v-icon left>  mdi-history</v-icon>
                   </v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="deleteCheck">
+                <v-list-item @click="deleteCheckType">
                   <v-list-item-title>
                     מחק
                     <v-icon left>mdi-delete</v-icon>
@@ -131,7 +131,7 @@ export default {
       required: false
     }
   },
-  emits: ['add-check', 'delete-check'],
+  emits: ['add-check', 'delete-check-type'],
   setup(props, { emit }) {
     const routineCheckStore = useRoutineCheckStore()
     
@@ -165,8 +165,15 @@ export default {
       showHistoryDialog.value = false
     }
 
-    function deleteCheck() {
-      alert('deleteCheck')
+    function deleteCheckType() {
+      // Prevent deletion if check date is not set
+      if (props.checkDate !='') {
+        alert('לא ניתן למחוק סוג בדיקה שמקושרות לו בדיקות')
+        return
+      }
+      
+     emit('delete-check-type', props.id)
+     
     }
 
     function saveRemark() {
@@ -181,7 +188,7 @@ export default {
       addCheck,
       showHistory,
       closeHistoryDialog,
-      deleteCheck,
+      deleteCheckType,
       saveRemark
     }
   }

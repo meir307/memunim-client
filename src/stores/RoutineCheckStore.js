@@ -23,7 +23,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
     async fetchRoutineChecks(factoryId) {
       this.error = null
       const loaderStore = useLoaderStore()
-      loaderStore.show() 
+      loaderStore.show()
 
       try {
         const commonStore = useCommonStore()
@@ -171,14 +171,14 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
         await axios.post(commonStore.apiUrl + 'routineChecks/updateCheckTypeRemark', {
-          id:id,
+          id: id,
           remark: updateData.remark
         }, {
           headers: {
             'sessionid': userStore.user.sessionId
           }
         })
-        
+
       } catch (error) {
         console.error('API Error:', error)
         const errorMessage = error.response?.data?.message
@@ -191,7 +191,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
 
     // Get check history for a specific check type
     async getCheckHistory(id, checkTypeId, factoryId) {
-      
+
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -229,12 +229,12 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        
+
         // Create FormData for file upload
         const formData = new FormData()
         formData.append('checkId', checkId)
         formData.append('factoryId', userStore.selectedFactory.id)
-        
+
         // Append all selected files
         files.forEach((file) => {
           formData.append('files', file)
@@ -279,7 +279,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
 
         return true
       } catch (error) {
-        
+
         const errorMessage = error.response?.data?.message || 'Failed to update check remark'
         this.error = errorMessage
         alert(errorMessage)
@@ -319,7 +319,36 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
         loaderStore.hide()
       }
     },
+    // Delete routine check type
+    async deleteRoutineCheckType(id) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
 
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/deleteCheckType', {
+          id
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        // Remove the check type from local state
+        this.routineCheckTypes = this.routineCheckTypes.filter(checkType => checkType.id !== id)
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to delete routine check type'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
     // Clear error
     clearError() {
       this.error = null

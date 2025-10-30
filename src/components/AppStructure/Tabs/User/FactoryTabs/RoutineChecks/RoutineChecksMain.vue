@@ -14,7 +14,7 @@
         <v-card-text class="pa-0">
           <div class="tiles-container">
             <div v-if="routineCheckTypes.length === 0" class="no-data">
-              אין סוגי בדיקות תקופתיות
+             לא הוגדרו בדיקות תקופתיות
             </div>
             <RoutineCheckTile
               v-for="checkType in routineCheckTypes"
@@ -26,6 +26,7 @@
               :check-period-in-month="checkType.checkPeriodInMonth"
               :next-check-date="checkType.nextCheck || ''"
               @add-check="addCheck"
+              @delete-check-type="deleteCheckType"
             />
           </div>
         </v-card-text>
@@ -110,9 +111,17 @@
       }
 
 
-      function deleteCheckType(checkType) {
-        console.log('Delete check type:', checkType)
-        // TODO: Implement delete functionality
+      async function deleteCheckType(checkTypeId) {
+
+
+        try {
+          await routineCheckStore.deleteRoutineCheckType(checkTypeId)
+          // Refresh the list
+          await routineCheckStore.fetchRoutineChecks(userStore.selectedFactory.id)
+        } catch (error) {
+          console.error('Failed to delete check type:', error)
+          alert('שגיאה במחיקת סוג הבדיקה')
+        }
       }
 
       function closeCheckDialog() {
