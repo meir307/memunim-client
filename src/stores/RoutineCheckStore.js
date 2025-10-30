@@ -220,6 +220,44 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
+    // Add files to a specific check
+    async addCheckFiles(checkId, files) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        
+        // Create FormData for file upload
+        const formData = new FormData()
+        formData.append('checkId', checkId)
+        formData.append('factoryId', userStore.selectedFactory.id)
+        
+        // Append all selected files
+        files.forEach((file) => {
+          formData.append('files', file)
+        })
+
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/addCheckFiles', formData, {
+          headers: {
+            'sessionid': userStore.user.sessionId,
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+
+        return response.data.checkFiles
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to upload files'
+        this.error = errorMessage
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Clear error
     clearError() {
       this.error = null

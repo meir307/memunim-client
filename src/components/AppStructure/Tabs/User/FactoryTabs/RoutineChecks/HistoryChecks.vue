@@ -5,7 +5,7 @@
         היסטורית בדיקות - {{ checkTypeName }}
         <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
       </v-card-title>
-      
+
       <v-card-text class="pa-4">
         <v-row class="history-content">
 
@@ -16,13 +16,9 @@
               </div>
               <div class="panel-content dates-panel">
                 <div v-if="checkHistory && checkHistory.length > 0" class="dates-list">
-                  <div 
-                    v-for="(check, index) in checkHistory" 
-                    :key="index" 
-                    class="date-item"
+                  <div v-for="(check, index) in checkHistory" :key="index" class="date-item"
                     :class="{ 'selected': selectedCheck && selectedCheck.checkDate === check.checkDate }"
-                    @click="selectCheck(check)"
-                  >
+                    @click="selectCheck(check)">
                     <v-icon class="date-icon">mdi-calendar</v-icon>
                     <span class="date-text">{{ formatDate(check.checkDate) }}</span>
                   </div>
@@ -38,29 +34,19 @@
             <div class="panel-container">
               <div class="panel-title-with-button">
                 <h3 class="panel-title">הקבצים שמקושרים לבדיקה</h3>
-                <v-btn 
-                  size="small" 
-                  color="primary" 
-                  @click="addFile"
-                  class="add-file-btn"
-                >
+                <v-btn size="small" color="primary" @click="addFiles" class="add-file-btn">
                   <v-icon left>mdi-plus</v-icon>
                   הוסף קובץ
                 </v-btn>
               </div>
               <div class="panel-content files-panel">
-                <div v-if="selectedCheck && selectedCheck.fileNames && selectedCheck.fileNames.length > 0" class="files-list">
+                <div v-if="selectedCheck && selectedCheck.fileNames && selectedCheck.fileNames.length > 0"
+                  class="files-list">
                   <div v-for="(fileName, index) in selectedCheck.fileNames" :key="index" class="file-item">
                     <v-icon class="file-icon">mdi-file-document</v-icon>
                     <span class="file-name">{{ fileName }}</span>
-                    <v-btn
-                      icon="mdi-delete"
-                      size="small"
-                      color="error"
-                      variant="text"
-                      @click="deleteFile(index)"
-                      class="delete-file-btn"
-                    ></v-btn>
+                    <v-btn icon="mdi-delete" size="small" color="error" variant="text" @click="deleteFile(index)"
+                      class="delete-file-btn"></v-btn>
                   </div>
                 </div>
                 <div v-else class="placeholder-text">
@@ -71,7 +57,7 @@
           </v-col>
 
           <!-- Right Panel - Check Dates -->
-         
+
         </v-row>
 
         <!-- Remarks Section -->
@@ -79,20 +65,10 @@
           <v-col cols="12">
             <div class="remarks-section">
               <div class="remarks-container">
-                <v-textarea
-                  v-model="selectedRemark"
-                  label="הערות על הבדיקה המסומנת"
-                  rows="1"
-                  reverse
-                  variant="outlined"
+                <v-textarea v-model="selectedRemark" label="הערות על הבדיקה המסומנת" rows="1" reverse variant="outlined"
                   class="remarks-field"
-                  :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר בדיקה להצגת הערות'"
-                ></v-textarea>
-                <v-btn 
-                  color="primary" 
-                  @click="saveRemarks" 
-                  :disabled="!selectedCheck"
-                >
+                  :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר בדיקה להצגת הערות'"></v-textarea>
+                <v-btn color="primary" @click="saveRemarks" :disabled="!selectedCheck">
                   <v-icon left>mdi-content-save</v-icon>
                   שמור
                 </v-btn>
@@ -101,22 +77,30 @@
           </v-col>
         </v-row>
       </v-card-text>
-      
-      
-        <div class="popup-btn-row">
-          <v-btn @click="closeDialog" class="close-btn">סגור</v-btn>
-        </div>
-      
+
+
+      <div class="popup-btn-row">
+        <v-btn @click="closeDialog" class="close-btn">סגור</v-btn>
+      </div>
+
     </v-card>
   </v-dialog>
+
+  <!-- Add Check Files Dialog -->
+  <AddCheckFilesDialog :showDialog="showAddFilesDialog" :checkId="selectedCheck?.checkId"
+    :checkDate="selectedCheck?.checkDate" @close-dialog="closeAddFilesDialog" @checkFilesChanged="checkFilesChanged" />
 </template>
 
 <script>
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore';
 import { useUserStore } from '@/stores/UserStore';
+import AddCheckFilesDialog from './AddCheckFilesDialog.vue';
 
 export default {
   name: 'HistoryChecks',
+  components: {
+    AddCheckFilesDialog
+  },
   props: {
     checkTypeId: {
       type: [String, Number],
@@ -140,7 +124,8 @@ export default {
     return {
       checkHistory: [],
       selectedCheck: null,
-      selectedRemark: ''
+      selectedRemark: '',
+      showAddFilesDialog: false
     }
   },
   mounted() {
@@ -166,7 +151,7 @@ export default {
       try {
         const userStore = useUserStore()
         const routineCheckStore = useRoutineCheckStore()
-        
+
         this.checkHistory = await routineCheckStore.getCheckHistory(this.id, this.checkTypeId, userStore.selectedFactory.id)
         console.log('Loading check history for checkTypeId:', this.checkTypeId)
         console.log('Check type name:', this.checkTypeName)
@@ -175,68 +160,97 @@ export default {
         console.error('Error loading check history:', error)
         this.checkHistory = []
       }
-     
-     
-          // checkDate: '2024-01-01',
-          // remark: 'נמצאו ליקויים קלים במערכת הבטיחות',
-          // fileNames: ['דוח_בדיקה_01012024.pdf', 'תיקון_ליקויים.docx']
-     
-      
+
+
+      // checkDate: '2024-01-01',
+      // remark: 'נמצאו ליקויים קלים במערכת הבטיחות',
+      // fileNames: ['דוח_בדיקה_01012024.pdf', 'תיקון_ליקויים.docx']
+
+
       // Auto-select the first check if available
       if (this.checkHistory.length > 0) {
         this.selectCheck(this.checkHistory[0])
       }
     },
-    
+
     // Function to select a check and display its details
     selectCheck(check) {
       this.selectedCheck = check
       this.selectedRemark = check.remark || ''
     },
-    
+
     // Function to format date for display
     formatDate(dateString) {
       const date = new Date(dateString)
-      return date.toLocaleDateString('he-IL', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      })
+      const day = date.getDate().toString().padStart(2, '0')
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const year = date.getFullYear()
+      return `${day}/${month}/${year}`
     },
-    
+
     // Function to save remarks only
     saveRemarks() {
       if (this.selectedCheck) {
         // TODO: Replace with actual store method call
         // Example: await store.updateCheckRemark(this.selectedCheck.checkDate, this.selectedRemark)
-        
+
         // Update only the remark in local data
         this.selectedCheck.remark = this.selectedRemark
-        
+
         // Show success message or handle response
         console.log('Remarks saved for check:', this.selectedCheck.checkDate, 'New remark:', this.selectedRemark)
-        
+
         // Optional: Show success notification
         // You can add a toast notification here if you have one
       }
     },
-    
-    addFile() {
-      // TODO: Implement file upload functionality
-      console.log('Add file clicked for check:', this.selectedCheck?.checkDate)
-      // You can implement file upload logic here
+
+    addFiles() {
+      if (!this.selectedCheck) {
+        alert('אנא בחר בדיקה קודם')
+        return
+      }
+      this.showAddFilesDialog = true
     },
-    
+
+    closeAddFilesDialog() {
+      this.showAddFilesDialog = false
+    },
+
+    checkFilesChanged(checkFiles) {
+      if (this.selectedCheck && checkFiles) {
+        const checkIndex = this.checkHistory.findIndex(
+          check => check.checkId === this.selectedCheck.checkId
+        );
+        if (checkIndex !== -1) {
+          const updated = {
+            ...this.checkHistory[checkIndex],
+            fileNames: checkFiles.fileNames || [],
+            fileLinks: checkFiles.fileLinks || []
+          };
+          this.checkHistory.splice(checkIndex, 1, updated);
+        }
+
+        this.selectedCheck = {
+          ...this.selectedCheck,
+          fileNames: checkFiles.fileNames || [],
+          fileLinks: checkFiles.fileLinks || []
+        };
+
+        alert('הקבצים הועלו בהצלחה!');
+      }
+    },
+
     deleteFile(fileIndex) {
       if (this.selectedCheck && this.selectedCheck.fileNames) {
         // Remove the file from the array
         this.selectedCheck.fileNames.splice(fileIndex, 1)
-        
+
         // TODO: Replace with actual store method call to delete file from backend
         // Example: await store.deleteCheckFile(this.selectedCheck.checkDate, fileIndex)
-        
+
         console.log('File deleted at index:', fileIndex, 'for check:', this.selectedCheck.checkDate)
-        
+
         // Optional: Show success notification
         // You can add a toast notification here if you have one
       }
@@ -323,7 +337,7 @@ export default {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid #e8eaf6;
 }
 
@@ -364,7 +378,7 @@ export default {
   background: white;
   border: 1px solid #ddd;
   border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   border-bottom: 1px solid #e8eaf6;
   gap: 8px;
@@ -433,21 +447,23 @@ export default {
   .history-content {
     flex-direction: column;
   }
-  
+
   .panel-content {
     height: 250px;
   }
-  
+
   .panel-title {
     font-size: 0.9rem;
     padding: 10px 12px;
   }
-  
-  .date-item, .file-item {
+
+  .date-item,
+  .file-item {
     padding: 10px 12px;
   }
-  
-  .date-text, .file-name {
+
+  .date-text,
+  .file-name {
     font-size: 0.9rem;
   }
 }
