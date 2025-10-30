@@ -53,6 +53,14 @@ export default {
             selectedFiles: []
         }
     },
+    watch: {
+        showDialog(newVal) {
+            if (newVal) {
+                // Reset files whenever the dialog is opened
+                this.selectedFiles = []
+            }
+        }
+    },
     methods: {
         closeDialog() {
             this.$emit('close-dialog')

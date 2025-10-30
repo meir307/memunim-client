@@ -258,6 +258,37 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
+    // Delete file from a specific check
+    async deleteCheckFile(checkId, fileName) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+
+        await axios.post(commonStore.apiUrl + 'routineChecks/deleteCheckFile', {
+          checkId,
+          fileName,
+          factoryId: userStore.selectedFactory.id
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        return true
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to delete file'
+        this.error = errorMessage
+        return false
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Clear error
     clearError() {
       this.error = null

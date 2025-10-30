@@ -36,16 +36,21 @@
                 <h3 class="panel-title">הקבצים שמקושרים לבדיקה</h3>
                 <v-btn size="small" color="primary" @click="addFiles" class="add-file-btn">
                   <v-icon left>mdi-plus</v-icon>
-                  הוסף קובץ
+                  הוסף קבצים
                 </v-btn>
               </div>
               <div class="panel-content files-panel">
                 <div v-if="selectedCheck && selectedCheck.fileNames && selectedCheck.fileNames.length > 0"
                   class="files-list">
-                  <div v-for="(fileName, index) in selectedCheck.fileNames" :key="index" class="file-item">
+                  <div 
+                    v-for="(fileName, index) in selectedCheck.fileNames" 
+                    :key="index" 
+                    class="file-item file-item-clickable"
+                    @click="openFile(index)"
+                  >
                     <v-icon class="file-icon">mdi-file-document</v-icon>
                     <span class="file-name">{{ fileName }}</span>
-                    <v-btn icon="mdi-delete" size="small" color="error" variant="text" @click="deleteFile(index)"
+                    <v-btn icon="mdi-delete"   @click.stop="deleteFile(index)"
                       class="delete-file-btn"></v-btn>
                   </div>
                 </div>
@@ -237,22 +242,54 @@ export default {
           fileLinks: checkFiles.fileLinks || []
         };
 
-        alert('הקבצים הועלו בהצלחה!');
+
       }
     },
 
-    deleteFile(fileIndex) {
+    async deleteFile(fileIndex) {
       if (this.selectedCheck && this.selectedCheck.fileNames) {
-        // Remove the file from the array
+        const fileName = this.selectedCheck.fileNames[fileIndex]
+        const confirmed = confirm(`האם למחוק את הקובץ "${fileName}"?`)
+        if (!confirmed) return
+
+        const routineCheckStore = useRoutineCheckStore()
+        const success = await routineCheckStore.deleteCheckFile(this.selectedCheck.checkId, fileName)
+        if (!success) {
+          alert('שגיאה במחיקת הקובץ')
+          return
+        }
+
+        // Remove from selectedCheck (names and links if present)
         this.selectedCheck.fileNames.splice(fileIndex, 1)
+        if (Array.isArray(this.selectedCheck.fileLinks)) {
+          this.selectedCheck.fileLinks.splice(fileIndex, 1)
+        }
 
-        // TODO: Replace with actual store method call to delete file from backend
-        // Example: await store.deleteCheckFile(this.selectedCheck.checkDate, fileIndex)
+        // Also update the corresponding entry in checkHistory reactively
+        const checkIndex = this.checkHistory.findIndex(check => check.checkId === this.selectedCheck.checkId)
+        if (checkIndex !== -1) {
+          const updated = {
+            ...this.checkHistory[checkIndex],
+            fileNames: [...this.selectedCheck.fileNames],
+            fileLinks: Array.isArray(this.selectedCheck.fileLinks) ? [...this.selectedCheck.fileLinks] : this.checkHistory[checkIndex].fileLinks
+          }
+          this.checkHistory.splice(checkIndex, 1, updated)
+        }
+      }
+    },
 
-        console.log('File deleted at index:', fileIndex, 'for check:', this.selectedCheck.checkDate)
-
-        // Optional: Show success notification
-        // You can add a toast notification here if you have one
+    openFile(index) {
+      if (!this.selectedCheck) return
+      const links = this.selectedCheck.fileLinks
+      const names = this.selectedCheck.fileNames
+      const url = Array.isArray(links) && links[index] ? links[index] : null
+      if (url) {
+        window.open(url, '_blank')
+      } else if (names && names[index]) {
+        // If only file name exists, try opening by name (backend/static path may handle it)
+        window.open(names[index], '_blank')
+      } else {
+        alert('לא נמצא קישור לקובץ')
       }
     },
 
@@ -383,6 +420,10 @@ export default {
   border-bottom: 1px solid #e8eaf6;
   gap: 8px;
   justify-content: space-between;
+}
+
+.file-item-clickable {
+  cursor: pointer;
 }
 
 .file-item:hover {
