@@ -43,12 +43,6 @@
                     <v-icon left> mdi-plus</v-icon>
                   </v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="editCheck">
-                  <v-list-item-title>
-                    עדכן בדיקה
-                    <v-icon left> mdi-pencil</v-icon>
-                  </v-list-item-title>
-                </v-list-item>
                 <v-list-item @click="showHistory">
                   <v-list-item-title>
                     הצג הסטוריה
@@ -137,7 +131,7 @@ export default {
       required: false
     }
   },
-  emits: ['add-check', 'edit-check', 'delete-check'],
+  emits: ['add-check', 'delete-check'],
   setup(props, { emit }) {
     const routineCheckStore = useRoutineCheckStore()
     
@@ -162,9 +156,6 @@ export default {
       emit('add-check', props)
     }
 
-    function editCheck() {
-      emit('edit-check', props)
-    }
 
     function showHistory() {
       showHistoryDialog.value = true
@@ -175,7 +166,7 @@ export default {
     }
 
     function deleteCheck() {
-      emit('delete-check', props)
+      alert('deleteCheck')
     }
 
     function saveRemark() {
@@ -188,7 +179,6 @@ export default {
       localRemark,
       formatDate,
       addCheck,
-      editCheck,
       showHistory,
       closeHistoryDialog,
       deleteCheck,

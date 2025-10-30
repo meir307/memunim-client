@@ -26,8 +26,6 @@
               :check-period-in-month="checkType.checkPeriodInMonth"
               :next-check-date="checkType.nextCheck || ''"
               @add-check="addCheck"
-              @edit-check="editCheckType"
-              @delete-check="deleteCheckType"
             />
           </div>
         </v-card-text>
@@ -45,7 +43,6 @@
         ref="upsertCheckDialog"
         :show-dialog="showCheckDialog" 
         :check-type="selectedCheckType"
-        :edit-check="selectedEditCheck"
         @close-dialog="closeCheckDialog" 
       />
 

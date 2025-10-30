@@ -133,7 +133,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
     },
 
     // Delete routine check
-    async deleteRoutineCheck(checkId) {
+    async deleteHistoryCheck(checkId) {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -141,7 +141,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'routineChecks/deleteCheck', { checkId }, {
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/deleteHistoryCheck', { checkId }, {
           headers: {
             'sessionid': userStore.user.sessionId
           }

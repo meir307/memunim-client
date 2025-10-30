@@ -17,10 +17,18 @@
               <div class="panel-content dates-panel">
                 <div v-if="checkHistory && checkHistory.length > 0" class="dates-list">
                   <div v-for="(check, index) in checkHistory" :key="index" class="date-item"
-                    :class="{ 'selected': selectedCheck && selectedCheck.checkDate === check.checkDate }"
+                    :class="{ 'selected': selectedCheck && selectedCheck.checkId === check.checkId }"
                     @click="selectCheck(check)">
                     <v-icon class="date-icon">mdi-calendar</v-icon>
                     <span class="date-text">{{ formatDate(check.checkDate) }}</span>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      icon="mdi-delete"
+                      variant="text"
+
+                      class="date-delete-btn"
+                      @click.stop="deleteHistoryCheck(check, index)"
+                    ></v-btn>
                   </div>
                 </div>
                 <div v-else class="placeholder-text">
@@ -323,6 +331,40 @@ export default {
       }
     },
 
+    async deleteHistoryCheck(check, index) {
+      const confirmed = confirm(`האם למחוק את הבדיקה מתאריך ${this.formatDate(check.checkDate)}?`)
+      if (!confirmed) return
+
+      // Block deletion if there are attached files
+      const hasFiles = (Array.isArray(check.fileNames) && check.fileNames.length > 0) ||
+        (Array.isArray(check.fileLinks) && check.fileLinks.length > 0)
+      if (hasFiles) {
+        alert('לא ניתן למחוק בדיקה שיש לה קבצים מקושרים')
+        return
+      }
+
+
+      try {
+        const routineCheckStore = useRoutineCheckStore()
+        const ok = await routineCheckStore.deleteHistoryCheck(check.checkId)
+        if (!ok && ok !== undefined) {
+          alert('שגיאה במחיקת הבדיקה')
+          return
+        }
+
+        // Remove from list reactively
+        this.checkHistory.splice(index, 1)
+
+        // Clear or move selection
+        if (this.selectedCheck && this.selectedCheck.checkId === check.checkId) {
+          this.selectedCheck = this.checkHistory[0] || null
+          this.selectedRemark = this.selectedCheck ? (this.selectedCheck.description || this.selectedCheck.remark || '') : ''
+        }
+      } catch (e) {
+        alert('שגיאה במחיקת הבדיקה')
+      }
+    },
+
     closeDialog() {
       this.$emit('close-history')
     }
@@ -419,6 +461,14 @@ export default {
   color: white;
   border-color: #667eea;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Keep delete icon visible on selected row */
+.date-item .date-delete-btn .v-icon {
+  color: #ff5252;
+}
+.date-item.selected .date-delete-btn .v-icon {
+  color: #ff5252 !important;
 }
 
 .date-icon {
