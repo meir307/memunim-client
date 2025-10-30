@@ -55,7 +55,7 @@
                   </div>
                 </div>
                 <div v-else class="placeholder-text">
-                  כאן יוצגו הקבצים שמקושרים לבדיקה המסומנת
+                 אין קבצים מקושרים לבדיקה המסומנת
                 </div>
               </div>
             </div>
@@ -181,7 +181,8 @@ export default {
     // Function to select a check and display its details
     selectCheck(check) {
       this.selectedCheck = check
-      this.selectedRemark = check.remark || ''
+      // Prefer description if present; fallback to remark
+      this.selectedRemark = (check.description || check.remark || '')
     },
 
     // Function to format date for display
@@ -194,22 +195,51 @@ export default {
     },
 
     // Function to save remarks only
-    saveRemarks() {
-      if (this.selectedCheck) {
-        // TODO: Replace with actual store method call
-        // Example: await store.updateCheckRemark(this.selectedCheck.checkDate, this.selectedRemark)
+    async saveRemarks() {
+      if (!this.selectedCheck) return
 
-        // Update only the remark in local data
-        this.selectedCheck.remark = this.selectedRemark
+      const routineCheckStore = useRoutineCheckStore()
 
-        // Show success message or handle response
-        console.log('Remarks saved for check:', this.selectedCheck.checkDate, 'New remark:', this.selectedRemark)
+      // Keep previous values for potential rollback
+      const prevRemark = this.selectedCheck.remark
+      const prevDescription = this.selectedCheck.description
 
-        // Optional: Show success notification
-        // You can add a toast notification here if you have one
+      // Optimistically update selected check locally
+      this.selectedCheck = {
+        ...this.selectedCheck,
+        description: this.selectedRemark
+      }
+
+      // Update in checkHistory reactively
+      const idx = this.checkHistory.findIndex(c => c.checkId === this.selectedCheck.checkId)
+      if (idx !== -1) {
+        const updated = {
+          ...this.checkHistory[idx],
+          description: this.selectedRemark
+        }
+        this.checkHistory.splice(idx, 1, updated)
+      }
+
+      // Persist on server
+      const ok = await routineCheckStore.updateCheckRemark(this.selectedCheck.checkId, this.selectedRemark)
+      if (!ok) {
+        // Rollback on failure
+        this.selectedCheck = {
+          ...this.selectedCheck,
+          remark: prevRemark,
+          description: prevDescription
+        }
+        if (idx !== -1) {
+          const reverted = {
+            ...this.checkHistory[idx],
+            remark: prevRemark,
+            description: prevDescription
+          }
+          this.checkHistory.splice(idx, 1, reverted)
+        }
       }
     },
-
+    
     addFiles() {
       if (!this.selectedCheck) {
         alert('אנא בחר בדיקה קודם')

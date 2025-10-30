@@ -258,6 +258,37 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
+    // Update remark for a specific check
+    async updateCheckRemark(checkId, remark) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+
+        await axios.post(commonStore.apiUrl + 'routineChecks/updateCheckRemark', {
+          checkId,
+          remark
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        return true
+      } catch (error) {
+        
+        const errorMessage = error.response?.data?.message || 'Failed to update check remark'
+        this.error = errorMessage
+        alert(errorMessage)
+        return false
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Delete file from a specific check
     async deleteCheckFile(checkId, fileName) {
       this.error = null
