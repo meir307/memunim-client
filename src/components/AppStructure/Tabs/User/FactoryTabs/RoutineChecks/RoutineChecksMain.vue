@@ -79,8 +79,37 @@
       const upsertCheckDialog = ref(null)
       
 
-      // Computed property for routine check types
-      const routineCheckTypes = computed(() => routineCheckStore.getRoutineCheckTypes)
+      // Helper function to calculate days remaining
+      const getDaysRemaining = (checkType) => {
+        if (!checkType.nextCheck || checkType.nextCheck === '' || checkType.nextCheck === 'לא נקבע') {
+          return null
+        }
+        const nextDate = new Date(checkType.nextCheck)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        nextDate.setHours(0, 0, 0, 0)
+        const diffTime = nextDate - today
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      }
+
+      // Computed property for routine check types - sorted by days remaining
+      const routineCheckTypes = computed(() => {
+        const types = routineCheckStore.getRoutineCheckTypes
+        
+        // Create a copy and sort by days remaining
+        return [...types].sort((a, b) => {
+          const daysA = getDaysRemaining(a)
+          const daysB = getDaysRemaining(b)
+          
+          // Handle null values (no date) - put them at the end
+          if (daysA === null && daysB === null) return 0
+          if (daysA === null) return 1
+          if (daysB === null) return -1
+          
+          // Sort ascending (most urgent/lowest days first, including overdue)
+          return daysA - daysB
+        })
+      })
 
       function openDialog() {
         console.log('Opening dialog to add new routine check type')
