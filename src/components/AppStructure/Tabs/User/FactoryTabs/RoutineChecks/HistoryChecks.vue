@@ -132,7 +132,7 @@ export default {
       default: false
     }
   },
-  emits: ['close-history'],
+  emits: ['close-history', 'check-deleted'],
   data() {
     return {
       checkHistory: [],
@@ -360,6 +360,9 @@ export default {
           this.selectedCheck = this.checkHistory[0] || null
           this.selectedRemark = this.selectedCheck ? (this.selectedCheck.description || this.selectedCheck.remark || '') : ''
         }
+
+        // Emit event to refresh parent tile list
+        this.$emit('check-deleted')
       } catch (e) {
         alert('שגיאה במחיקת הבדיקה')
       }

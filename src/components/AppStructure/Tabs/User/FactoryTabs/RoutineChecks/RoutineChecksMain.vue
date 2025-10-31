@@ -27,6 +27,7 @@
               :next-check-date="checkType.nextCheck || ''"
               @add-check="addCheck"
               @delete-check-type="deleteCheckType"
+              @refresh-tiles="refreshTiles"
             />
           </div>
         </v-card-text>
@@ -159,6 +160,15 @@
         selectedEditCheck.value = null
       }
 
+      async function refreshTiles() {
+        try {
+          const factoryId = userStore.selectedFactory.id
+          await routineCheckStore.fetchRoutineChecks(factoryId)
+        } catch (error) {
+          console.error('Failed to refresh routine checks:', error)
+        }
+      }
+
       onMounted(async () => {
         console.log('RoutineChecksMain component mounted')
         try {
@@ -185,7 +195,8 @@
         addCheck,
         editCheckType,
         deleteCheckType,
-        closeCheckDialog
+        closeCheckDialog,
+        refreshTiles
       }
     }
   }

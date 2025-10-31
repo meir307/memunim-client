@@ -97,6 +97,7 @@
       :checkTypeName="checkType.checkTypeName"
       :id="checkType.id"
       @close-history="closeHistoryDialog"
+      @check-deleted="handleCheckDeleted"
     />
   </div>
 </template>
@@ -137,7 +138,7 @@ export default {
       required: false
     }
   },
-  emits: ['add-check', 'delete-check-type'],
+  emits: ['add-check', 'delete-check-type', 'refresh-tiles'],
   setup(props, { emit }) {
     const routineCheckStore = useRoutineCheckStore()
     
@@ -172,6 +173,10 @@ export default {
 
     function closeHistoryDialog() {
       showHistoryDialog.value = false
+    }
+
+    function handleCheckDeleted() {
+      emit('refresh-tiles')
     }
 
     function deleteCheckType() {
@@ -236,6 +241,7 @@ export default {
       addCheck,
       showHistory,
       closeHistoryDialog,
+      handleCheckDeleted,
       deleteCheckType,
       saveRemark,
       daysRemaining,
