@@ -8,6 +8,9 @@
                         <v-btn icon="mdi-close" variant="text" @click="$emit('btnClose')"></v-btn>
                     </v-card-title>
                     <v-card-text>
+                        <p class="text-center mb-4" style="color: #666; font-size: 16px; font-weight: bold;">
+                            ההרשמה למערכת היא עבור ממוני בטיחות מוסמכים בלבד.
+                        </p>
                         <!-- <v-form ref="form"> -->
                         <v-text-field v-model="user.fullName" :rules="validationRules.fullNameRules" label="שם מלא"
                             type="text" reverse></v-text-field>
@@ -18,11 +21,27 @@
                         </v-text-field>
 
 
-                        <v-text-field v-model="user.password" :rules="validationRules.passwordRules" label="סיסמה"
-                            type="password" reverse>
+                        <v-text-field 
+                            v-model="user.password" 
+                            :rules="validationRules.passwordRules" 
+                            label="סיסמה"
+                            :type="showPassword ? 'text' : 'password'"
+                            reverse
+                            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            @click:append-inner="showPassword = !showPassword"
+                        >
                         </v-text-field>
 
-
+                        <v-text-field 
+                            v-model="confirmPassword" 
+                            :rules="passwordConfirmRules" 
+                            label="אימות סיסמה"
+                            :type="showConfirmPassword ? 'text' : 'password'"
+                            reverse
+                            :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                            @click:append-inner="showConfirmPassword = !showConfirmPassword"
+                        >
+                        </v-text-field>
 
                         <div class="popup-btn-row">
                             <v-btn @click="regUser" color="primary">הרשם</v-btn>
@@ -55,7 +74,18 @@ export default {
                 role: 1
             },
             validationRules,
-            loaderStore: useLoaderStore()
+            loaderStore: useLoaderStore(),
+            showPassword: false,
+            showConfirmPassword: false,
+            confirmPassword: ''
+        }
+    },
+    computed: {
+        passwordConfirmRules() {
+            return [
+                this.validationRules.required,
+                (v) => v === this.user.password || 'הסיסמאות אינן תואמות'
+            ]
         }
     },
     methods: {
@@ -64,13 +94,14 @@ export default {
             const passwordValid = this.validationRules.passwordRules.every(rule => rule(this.user.password) === true);
             const fullNameValid = this.validationRules.fullNameRules.every(rule => rule(this.user.fullName) === true);
             const phoneValid = this.validationRules.phoneRules.every(rule => rule(this.user.phone) === true);
+            const passwordConfirmValid = this.passwordConfirmRules.every(rule => rule(this.confirmPassword) === true);
 
-            if (emailValid && passwordValid && fullNameValid && phoneValid) {
+            if (emailValid && passwordValid && fullNameValid && phoneValid && passwordConfirmValid) {
                 this.loaderStore.show()
                 try {
                     const commonStore = useCommonStore()
                     const response = await axios.post(commonStore.apiUrl + 'user/register', this.user)
-                    alert('Registration successful!')
+                    alert('הרשמה בוצעה בהצלחה. ניתן להתחיל ולהתחבר עכשיו למערכת.')
                     console.log(response)
                     this.$emit('btnClose')
                 } catch (error) {

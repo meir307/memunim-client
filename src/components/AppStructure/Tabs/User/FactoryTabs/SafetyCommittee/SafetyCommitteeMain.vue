@@ -4,8 +4,8 @@
             <v-card-title class="modern-title" style="height: 55px; display: flex; align-items: center;" >
                 <div class="title-container">
                     <v-tabs v-model="activeTab" class="tabs-in-title">
-                        <v-tab value="committee">נאמני בטיחות</v-tab>
                         <v-tab value="meetings">פגישות ועדה</v-tab>
+                        <v-tab value="committee">נאמני בטיחות</v-tab>
                     </v-tabs>
                      <div class="title-section">
                          <h1 class="title-text">{{ titleText }}</h1>
@@ -62,7 +62,7 @@ import { useUserStore } from '@/stores/UserStore'
 const safetyCommitteeStore = useSafetyCommitteeStore()
 const userStore = useUserStore()
 
-const activeTab = ref('committee')
+const activeTab = ref('meetings')
 const showDialog = ref(false)
 const showMeetingDialog = ref(false)
 const safetyTrusteesDialog = ref(null)
