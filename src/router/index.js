@@ -55,7 +55,7 @@ const routes = [
       {
         path: 'safety-procedures',
         name: 'safety-procedures',
-        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SafetyProcedures/SafetyProcedures.vue')
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SafetyProcedures/SafetyProceduresMain.vue')
       }
           ]
   },

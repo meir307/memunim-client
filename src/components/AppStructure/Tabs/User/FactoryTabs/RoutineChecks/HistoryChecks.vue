@@ -2,7 +2,7 @@
   <v-dialog :model-value="showDialog" @update:model-value="$emit('close-history')" max-width="1000px" persistent>
     <v-card class="history-card">
       <v-card-title class="popup-title d-flex align-center justify-space-between">
-        היסטורית בדיקות - {{ checkTypeName }}
+        היסטורית פעילות - {{ checkTypeName }}
         <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
       </v-card-title>
 

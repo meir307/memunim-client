@@ -104,13 +104,13 @@ export default {
                  },
                  {
                      key: 'routine-checks',
-                     title: 'בדיקות תקופתיות',
+                     title: 'פעילות שותפת',
                      icon: 'mdi-alarm',
                      route: 'routine-checks'
                  },
                  {
                      key: 'safety-procedures',
-                     title: 'נהלי בטיחות',
+                     title: 'נהלים והדרכות',
                      icon: 'mdi-comment-text-outline',
                      route: 'safety-procedures'
                  },

@@ -2,7 +2,7 @@
     <v-dialog :model-value="showDialog" @update:model-value="$emit('close-dialog')" max-width="600px" persistent>
         <v-card>
             <v-card-title class="popup-title d-flex align-center justify-space-between">
-                העלאת קבצים עבור הבדיקה מתאריך - {{ formatDate(checkDate) }}
+                העלאת קבצים עבור הפעילות מתאריך - {{ formatDate(checkDate) }}
                 <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
             </v-card-title>
             <v-card-text>

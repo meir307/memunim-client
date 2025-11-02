@@ -1,53 +1,41 @@
 <template>
   <div>
-    <v-card class="modern-card">
-      <v-card-title class="modern-title">
-        <div class="title-container">
-          <h1 class="title-text">נהל נהלי בטיחות</h1>
-          <v-btn color="primary" @click="openDialog" class="add-btn">
-            <v-icon left>mdi-plus</v-icon>
-            הוסף נהל בטיחות
-          </v-btn>
-        </div>
-      </v-card-title>
-
-      <v-card-text class="pa-0">
-        <div class="table-wrapper">
-          <v-data-table
-            :headers="headers"
-            :items="procedures"
-            :loading="loading"
-            class="modern-table"
-            no-data-text="אין נהלי בטיחות"
-            loading-text="טוען נתונים..."
-          >
-            <template #item="{ item, columns }">
-              <tr>
-                <td v-for="column in columns" :key="column.key">
-                  <div v-if="column.key === 'name'" class="procedure-info">
-                    <a :href="item.fileName" target="_blank" class="procedure-link">
-                      {{ item.name }}
-                    </a>
-                  </div>
-                  <span v-else-if="column.key === 'createdAt'">{{ formatDate(item.createdAt) }}</span>
-                  <span v-else-if="column.key === 'actions'">
-                    <v-btn icon size="small" @click="editProcedure(item)" color="primary" class="action-btn">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon size="small" @click="deleteProcedure(item)" color="error" class="action-btn">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                    <input type="file" :ref="`fileInput-${item.id}`" style="display: none"
-                      @change="handleFileUpload($event, item)" accept=".pdf,.doc,.docx" />
-                  </span>
-                  <span v-else>{{ item[column.key] }}</span>
-                </td>
-              </tr>
-            </template>
-          </v-data-table>
-        </div>
-      </v-card-text>
-    </v-card>
+    <v-card-text class="pa-0">
+      <div class="table-wrapper">
+        <v-data-table
+          :headers="headers"
+          :items="procedures"
+          :loading="loading"
+          class="modern-table"
+          no-data-text="אין נהלי בטיחות"
+          loading-text="טוען נתונים..."
+        >
+          <template #item="{ item, columns }">
+            <tr>
+              <td v-for="column in columns" :key="column.key">
+                <div v-if="column.key === 'name'" class="procedure-info">
+                  <a :href="item.fileName" target="_blank" class="procedure-link">
+                    {{ item.name }}
+                  </a>
+                </div>
+                <span v-else-if="column.key === 'createdAt'">{{ formatDate(item.createdAt) }}</span>
+                <span v-else-if="column.key === 'actions'">
+                  <v-btn icon size="small" @click="editProcedure(item)" color="primary" class="action-btn">
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-btn>
+                  <v-btn icon size="small" @click="deleteProcedure(item)" color="error" class="action-btn">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                  <input type="file" :ref="`fileInput-${item.id}`" style="display: none"
+                    @change="handleFileUpload($event, item)" accept=".pdf,.doc,.docx" />
+                </span>
+                <span v-else>{{ item[column.key] }}</span>
+              </td>
+            </tr>
+          </template>
+        </v-data-table>
+      </div>
+    </v-card-text>
 
     <!-- Add New Procedure Dialog -->
     <v-dialog v-model="dialog" max-width="500px">
@@ -84,7 +72,6 @@ const userStore = useUserStore()
 
 // Use store state
 const procedures = computed(() => safetyProceduresStore.getProcedures)
-
 
 const dialog = ref(false)
 const loading = ref(false)
@@ -224,7 +211,7 @@ function formatDate(dateString) {
 }
 
 onMounted(async () => {
-  console.log('SafetyProcedures component mounted')
+  console.log('SafetyProceduresContent component mounted')
   loading.value = true
   try {
     const factoryId = userStore.selectedFactory.id
@@ -236,7 +223,16 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+// Expose methods for parent component
+// eslint-disable-next-line no-undef
+defineExpose({
+  openDialog,
+  editProcedure,
+  deleteProcedure
+})
 </script>
 
 <style scoped>
 </style>
+

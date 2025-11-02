@@ -182,7 +182,7 @@ export default {
     function deleteCheckType() {
       // Prevent deletion if check date is not set
       if (props.checkDate !='') {
-        alert('לא ניתן למחוק סוג בדיקה שמקושרות לו בדיקות')
+        alert('לא ניתן למחוק סוג פעילות שמקושרת לו פעילות')
         return
       }
       
@@ -283,16 +283,6 @@ export default {
   background-color: #e8f5e9 !important;
 }
 
-.check-type-name {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #06488a;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .title-menu-row {
   display: flex;
   flex-direction: row;
@@ -310,8 +300,9 @@ export default {
 }
 
 .title-column {
-  flex: 1;
-  min-width: 0;
+  flex: 3 !important;
+  min-width: 400px !important;
+  max-width: 80% !important;
 }
 
 .menu-btn {
@@ -334,7 +325,28 @@ export default {
   gap: 8px;
   flex: 1;
   min-width: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.info-column.title-column {
+  flex: 3 !important;
+  min-width: 400px !important;
+  max-width: 80% !important;
+  flex-wrap: nowrap !important;
+}
+
+.check-type-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #06488a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  width: 100%;
+  display: block;
 }
 
 .info-icon {
@@ -348,12 +360,15 @@ export default {
   color: #333;
   min-width: 100px;
   font-size: 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .info-value {
   color: #666;
   font-weight: 600;
   font-size: 1.1rem;
+  white-space: nowrap;
 }
 
 .days-remaining {
@@ -465,6 +480,13 @@ export default {
 
   .title-column {
     flex: 1;
+    min-width: 200px !important;
+  }
+  
+  .info-column.title-column {
+    flex: 1 !important;
+    min-width: 200px !important;
+    max-width: 100% !important;
   }
 
   .info-label {

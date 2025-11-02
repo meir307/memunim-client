@@ -3,10 +3,10 @@
       <v-card class="modern-card">
         <v-card-title class="modern-title">
           <div class="title-container">
-            <h2 class="title-text">בדיקות תקופתיות</h2>
+            <h2 class="title-text">פעילות שותפת</h2>
             <v-btn color="primary" @click="openDialog" class="add-btn">
               <v-icon left>mdi-plus</v-icon>
-              הוסף סוג בדיקה תקופתית
+              הוסף סוג פעילות שותפת
             </v-btn>
           </div>
         </v-card-title>
@@ -14,7 +14,7 @@
         <v-card-text class="pa-0">
           <div class="tiles-container">
             <div v-if="routineCheckTypes.length === 0" class="no-data">
-             לא הוגדרו בדיקות תקופתיות
+             לא הוגדרה פעילות שותפת
             </div>
             <RoutineCheckTile
               v-for="checkType in routineCheckTypes"
@@ -150,7 +150,7 @@
           await routineCheckStore.fetchRoutineChecks(userStore.selectedFactory.id)
         } catch (error) {
           console.error('Failed to delete check type:', error)
-          alert('שגיאה במחיקת סוג הבדיקה')
+          alert('שגיאה במחיקת סוג הפעילות')
         }
       }
 

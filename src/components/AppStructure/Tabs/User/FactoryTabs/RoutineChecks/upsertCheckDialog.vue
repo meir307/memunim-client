@@ -40,7 +40,7 @@
                 type="number"
                 readonly
                 reverse
-                hint="נקבע על פי סוג הבדיקה"
+                hint="נקבע על פי סוג הפעילות"
                 persistent-hint
               ></v-text-field>
             </v-col>
@@ -48,7 +48,7 @@
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="formattedNextCheck"
-                label="תאריך בדיקה הבאה"
+                label="תאריך הפעולה הבאה"
                 readonly
                 reverse
                 hint="מחושב אוטומטית"

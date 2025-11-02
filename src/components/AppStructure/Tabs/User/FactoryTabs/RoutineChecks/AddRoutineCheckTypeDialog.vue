@@ -11,10 +11,10 @@
                     <v-select 
                         v-model="editedItem.checkType" 
                         :items="checkTypeOptions" 
-                        label="סוג הבדיקה" 
+                        label="סוג פעילות" 
                         required 
                         reverse
-                        :rules="[v => !!v || 'סוג הבדיקה חובה']"
+                        :rules="[v => !!v || 'סוג פעילות חובה']"
                     ></v-select>
                     
                     <v-textarea 
@@ -22,7 +22,7 @@
                         label="הערות" 
                         reverse
                         rows="4"
-                        placeholder="הוסף הערות לגבי הבדיקה..."
+                        placeholder="הוסף הערות לגבי הפעילות..."
                     ></v-textarea>
                 </v-form>
                 <div class="popup-btn-row">
@@ -72,7 +72,7 @@ export default {
         })
 
         const formTitle = computed(() => {
-            return 'הוסף סוג בדיקה תקופתית'
+            return 'הוסף סוג פעילות שותפת'
         })
 
         // Watch for prop changes
@@ -109,7 +109,7 @@ export default {
                 
                 // Validate required fields
                 if (!rawData.checkType) {
-                    alert('סוג הבדיקה חובה')
+                    alert('סוג הפעילות חובה')
                     return
                 }
 
@@ -117,7 +117,7 @@ export default {
                 const selectedCheckType = checkTypeOptions.value.find(type => type.value === rawData.checkType)
                 
                 if (!selectedCheckType) {
-                    alert('סוג הבדיקה שנבחר לא נמצא')
+                    alert('סוג הפעילות שנבחר לא נמצא')
                     return
                 }
 

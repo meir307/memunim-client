@@ -7,11 +7,13 @@ import { useUserStore } from './UserStore'
 export const useSafetyProceduresStore = defineStore('safetyProcedures', {
   state: () => ({
     procedures: [],
+    guides: [],
     error: null
   }),
 
   getters: {
     getProcedures: (state) => state.procedures,
+    getGuides: (state) => state.guides,
     getError: (state) => state.error
   },
 
@@ -34,6 +36,30 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
         return response.data.procedures
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to fetch safety procedures'
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Fetch all safety guides
+    async fetchGuides(factoryId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+      
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'safetyprocedures/getGuides', {'factoryId': factoryId}, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+        this.guides = response.data.guides
+        return response.data.guides
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch safety guides'
         throw error
       } finally {
         loaderStore.hide()
@@ -126,6 +152,94 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
       }
     },
 
+    // Add new safety guide
+    async addGuide(guideData) {
+
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+      
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'safetyprocedures/addGuide', guideData, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+            // Don't set Content-Type - let browser handle it automatically for FormData
+          }
+        })
+        
+        // Add the new guide to the local state
+        this.guides.push(response.data.guide)
+        return response.data.guide
+      } catch (error) {
+        this.error = error.response?.data?.message || 'תקלה בשמירת המדריך'
+        alert(this.error)
+        throw this.error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Update existing safety guide
+    async updateGuide(guideData) {
+      
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+      
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'safetyprocedures/updateGuide', guideData, {
+            headers: {
+              'sessionid': userStore.user.sessionId
+            }
+          })
+   
+        // Update the guide in local state
+        const index = this.guides.findIndex(guide => guide.id == response.data.guide.id )
+        if (index !== -1) {
+          this.guides[index] = response.data.guide
+        }
+        
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.message 
+        alert(this.error)
+        throw this.error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Delete safety guide
+    async deleteGuide(guide) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+      
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const res = await axios.post(commonStore.apiUrl + 'safetyprocedures/deleteGuide', guide, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+        
+        // Remove the guide from local state
+        this.guides = this.guides.filter(guide => res.data.guideId !== guide.id)
+        
+        return true
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to delete safety guide'
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Upload file for procedure
     async uploadProcedureFile(procedureId, file) {
       this.error = null
@@ -207,6 +321,7 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
     // Reset store state
     reset() {
       this.procedures = []
+      this.guides = []
       this.error = null
     }
   }
