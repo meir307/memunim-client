@@ -104,7 +104,7 @@ export default {
                  },
                  {
                      key: 'routine-checks',
-                     title: 'פעילות שותפת',
+                     title: 'פעילות שוטפת',
                      icon: 'mdi-alarm',
                      route: 'routine-checks'
                  },

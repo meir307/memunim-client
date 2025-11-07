@@ -72,7 +72,7 @@ export default {
         })
 
         const formTitle = computed(() => {
-            return 'הוסף סוג פעילות שותפת'
+            return 'הוסף סוג פעילות שוטפת'
         })
 
         // Watch for prop changes

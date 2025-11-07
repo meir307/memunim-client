@@ -54,7 +54,7 @@
             <span class="info-value">{{ formatDate(nextCheckDate) }}</span>
           </div>
 
-          <div class="info-column">
+          <div class="info-column  info-column-spaced">
             <v-icon class="info-icon">mdi-clock-outline</v-icon>
             <span class="info-label">תדירות (חודשים):</span>
             <span class="info-value">{{ checkPeriodInMonth }}</span>
@@ -327,6 +327,10 @@ export default {
   min-width: 0;
   flex-wrap: nowrap;
   white-space: nowrap;
+}
+
+.info-column-spaced {
+  margin-right: 28px;
 }
 
 .info-column.title-column {

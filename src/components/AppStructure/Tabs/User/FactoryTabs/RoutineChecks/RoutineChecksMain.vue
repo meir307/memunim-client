@@ -3,10 +3,10 @@
       <v-card class="modern-card">
         <v-card-title class="modern-title">
           <div class="title-container">
-            <h2 class="title-text">פעילות שותפת</h2>
+            <h2 class="title-text">פעילות שוטפת</h2>
             <v-btn color="primary" @click="openDialog" class="add-btn">
               <v-icon left>mdi-plus</v-icon>
-              הוסף סוג פעילות שותפת
+              הוסף סוג פעילות שוטפת
             </v-btn>
           </div>
         </v-card-title>
@@ -14,7 +14,7 @@
         <v-card-text class="pa-0">
           <div class="tiles-container">
             <div v-if="routineCheckTypes.length === 0" class="no-data">
-             לא הוגדרה פעילות שותפת
+             לא הוגדרה פעילות שוטפת
             </div>
             <RoutineCheckTile
               v-for="checkType in routineCheckTypes"
