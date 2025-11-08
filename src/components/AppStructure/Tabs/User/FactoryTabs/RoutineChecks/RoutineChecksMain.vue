@@ -4,7 +4,7 @@
         <v-card-title class="modern-title">
           <div class="title-container">
             <h2 class="title-text">פעילות שוטפת</h2>
-            <v-btn color="primary" @click="openDialog" class="add-btn">
+            <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
               <v-icon left>mdi-plus</v-icon>
               הוסף סוג פעילות שוטפת
             </v-btn>
@@ -229,9 +229,17 @@
     font-size: 1.1rem;
   }
 
+  .hide-on-mobile {
+    display: block;
+  }
+
   @media (max-width: 768px) {
     .tiles-container {
       padding: 8px;
+    }
+    
+    .hide-on-mobile {
+      display: none !important;
     }
   }
   </style>

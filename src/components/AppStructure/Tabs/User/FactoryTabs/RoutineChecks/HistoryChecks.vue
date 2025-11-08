@@ -5,7 +5,7 @@
         היסטורית פעילות - {{ checkTypeName }}
         <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
       </v-card-title>
-
+      
       <v-card-text class="pa-4">
         <v-row class="history-content">
 
@@ -70,7 +70,7 @@
           </v-col>
 
           <!-- Right Panel - Check Dates -->
-
+         
         </v-row>
 
         <!-- Remarks Section -->
@@ -90,12 +90,12 @@
           </v-col>
         </v-row>
       </v-card-text>
-
-
-      <div class="popup-btn-row">
-        <v-btn @click="closeDialog" class="close-btn">סגור</v-btn>
-      </div>
-
+      
+      
+        <div class="popup-btn-row">
+          <v-btn @click="closeDialog" class="close-btn">סגור</v-btn>
+        </div>
+      
     </v-card>
   </v-dialog>
 
@@ -179,20 +179,20 @@ export default {
       // remark: 'נמצאו ליקויים קלים במערכת הבטיחות',
       // fileNames: ['דוח_בדיקה_01012024.pdf', 'תיקון_ליקויים.docx']
 
-
+      
       // Auto-select the first check if available
       if (this.checkHistory.length > 0) {
         this.selectCheck(this.checkHistory[0])
       }
     },
-
+    
     // Function to select a check and display its details
     selectCheck(check) {
       this.selectedCheck = check
       // Prefer description if present; fallback to remark
       this.selectedRemark = (check.description || check.remark || '')
     },
-
+    
     // Function to format date for display
     formatDate(dateString) {
       const date = new Date(dateString)
@@ -377,7 +377,7 @@ export default {
 
 <style scoped>
 .history-content {
-  min-height: 400px;
+  min-height: 300px;
 }
 
 .panel-container {
@@ -560,6 +560,10 @@ export default {
   text-align: right;
 }
 
+.popup-btn-row {
+  margin-top: -15px;
+}
+
 .close-btn {
   padding: 12px 24px !important;
   min-width: 80px;
@@ -571,21 +575,21 @@ export default {
   .history-content {
     flex-direction: column;
   }
-
+  
   .panel-content {
     height: 250px;
   }
-
+  
   .panel-title {
     font-size: 0.9rem;
     padding: 10px 12px;
   }
-
+  
   .date-item,
   .file-item {
     padding: 10px 12px;
   }
-
+  
   .date-text,
   .file-name {
     font-size: 0.9rem;
