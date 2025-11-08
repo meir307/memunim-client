@@ -301,7 +301,7 @@ export default {
 
 .title-column {
   flex: 3 !important;
-  min-width: 400px !important;
+  min-width: 300px !important;
   max-width: 80% !important;
 }
 
@@ -314,7 +314,7 @@ export default {
 .tile-content {
   display: flex;
   flex-direction: row;
-  gap: 32px;
+  gap: 24px;
   align-items: center;
   justify-content: space-between;
 }
@@ -335,7 +335,7 @@ export default {
 
 .info-column.title-column {
   flex: 3 !important;
-  min-width: 400px !important;
+  min-width: 300px !important;
   max-width: 80% !important;
   flex-wrap: nowrap !important;
 }
@@ -362,7 +362,7 @@ export default {
 .info-label {
   font-weight: 500;
   color: #333;
-  min-width: 100px;
+  min-width: 80px;
   font-size: 1rem;
   white-space: nowrap;
   flex-shrink: 0;
@@ -458,6 +458,65 @@ export default {
 
 .day-left-value.normal {
   font-weight: 400;
+}
+
+/* Responsive design for laptop screens */
+@media (max-width: 1366px) {
+  .tile-content {
+    gap: 8px;
+  }
+  
+  .info-column.title-column {
+    min-width: 150px !important;
+    flex: 2 !important;
+  }
+  
+  .info-label {
+    min-width: 50px;
+    font-size: 0.8rem;
+  }
+  
+  .info-value {
+    font-size: 0.9rem;
+  }
+  
+  .check-type-name {
+    font-size: 1.1rem;
+  }
+  
+  .info-icon {
+    font-size: 14px;
+    min-width: 16px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .tile-content {
+    gap: 6px;
+  }
+  
+  .info-column.title-column {
+    min-width: 120px !important;
+    flex: 1.5 !important;
+  }
+  
+  .info-label {
+    min-width: 40px;
+    font-size: 0.75rem;
+  }
+  
+  .info-value {
+    font-size: 0.85rem;
+  }
+  
+  .check-type-name {
+    font-size: 1rem;
+  }
+  
+  .info-icon {
+    font-size: 12px;
+    min-width: 14px;
+  }
 }
 
 /* Responsive design */
