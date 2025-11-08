@@ -5,6 +5,8 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import { loadFonts } from './plugins/webfontloader'
 import './assets/Global.css'
+// Import axios interceptor (must be after other imports, but before app.use(pinia) is fine since interceptor callback runs later)
+import './utils/axios'
 
 loadFonts()
 
