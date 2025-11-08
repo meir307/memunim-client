@@ -11,11 +11,10 @@
                      class="d-md-none me-1"
                  ></v-btn>
                  
-                 <h1 class="me-9 text-truncate d-md-none" style="max-width: 200px;">{{ factory?.name || 'שם המפעל' }}</h1>
-                 <h1 class="me-9 d-none d-md-block">{{ factory?.name || 'שם המפעל' }}</h1>
+                <h1 class="me-9 text-truncate d-md-none" style="max-width: 200px;">{{ factory?.name || 'שם המפעל' }}</h1>
+                <h1 class="me-9 d-none d-md-block">{{ factory?.name || 'שם המפעל' }}</h1>
  
-                 <p class="text-h6 text-medium-emphasis mb-0 text-truncate d-md-none" style="max-width: 100px;">{{ factory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
-                 <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block">{{ factory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
+                <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block">{{ factory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
              </div>
  
              <div class="d-flex align-center">
