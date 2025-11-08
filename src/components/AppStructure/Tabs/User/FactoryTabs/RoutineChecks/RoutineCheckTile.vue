@@ -7,39 +7,33 @@
             <div class="info-column title-column">
               <h2 class="check-type-name">{{ checkType.checkTypeName }}</h2>
             </div>
-            <div class="info-column menu-column">
-            <v-menu>
-              <template v-slot:activator="{ props }">
-                <v-btn
-                  icon="mdi-dots-vertical"
-                  variant="text"
-                  size="small"
-                  v-bind="props"
-                  class="menu-btn"
-                ></v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="addCheck">
-                  <v-list-item-title>
-                    הוסף בדיקה חדשה
-                    <v-icon left> mdi-plus</v-icon>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="showHistory">
-                  <v-list-item-title>
-                    הצג הסטוריה
-                    <v-icon left>  mdi-history</v-icon>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="deleteCheckType">
-                  <v-list-item-title>
-                    מחק
-                    <v-icon left>mdi-delete</v-icon>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
+            <div class="info-column menu-column hide-on-mobile">
+              <v-menu>
+                <template v-slot:activator="{ props }">
+                  <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" class="menu-btn"></v-btn>
+                </template>
+                <v-list>
+                  <v-list-item @click="addCheck">
+                    <v-list-item-title>
+                      הוסף בדיקה חדשה
+                      <v-icon left> mdi-plus</v-icon>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="showHistory">
+                    <v-list-item-title>
+                      הצג הסטוריה
+                      <v-icon left> mdi-history</v-icon>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="deleteCheckType">
+                    <v-list-item-title>
+                      מחק
+                      <v-icon left>mdi-delete</v-icon>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
           </div>
 
           <div class="info-column">
@@ -54,51 +48,40 @@
             <span class="info-value">{{ formatDate(nextCheckDate) }}</span>
           </div>
 
-          <div class="info-column  info-column-spaced">
+          <div class="info-column  info-column-spaced hide-on-mobile">
             <v-icon class="info-icon">mdi-clock-outline</v-icon>
             <span class="info-label">תדירות (חודשים):</span>
             <span class="info-value">{{ checkPeriodInMonth }}</span>
           </div>
         </div>
-        
+
         <div class="remark-section">
-          <div class="remark-container">
-            <v-btn
-              @click="saveRemark"
-              color="primary"
-              size="small"
-              class="save-btn"
-            >
-              <v-icon left>mdi-check</v-icon>
-              שמור
-            </v-btn>
-            <v-textarea
-              v-model="localRemark"
-              placeholder="הזן הערה..."
-              rows="1"
-              variant="outlined"
-              density="compact"
-              class="remark-input"
-            ></v-textarea>
-          </div>
-          <div class="day-left-container">
-            <span class="day-left-text">ימים שנותרו:</span>
-            <span v-if="daysRemaining !== null" class="day-left-value" :class="daysRemainingClass">{{ daysRemainingText }}</span>
-            <span v-else class="day-left-value">-</span>
+          <div class="remark-section-content">
+            <div class="remark-container hide-on-mobile">
+             
+              <v-textarea v-model="localRemark" placeholder="הזן הערה..." rows="1" variant="outlined" density="compact"
+                class="remark-input"></v-textarea>
+            </div>
+             <v-btn @click="saveRemark" color="primary" size="small" class="save-btn  hide-on-mobile">
+                <v-icon left>mdi-check</v-icon>
+                שמור
+              </v-btn>
+            <div class="day-left-container">
+              <span class="day-left-text">ימים שנותרו:</span>
+              <span v-if="daysRemaining !== null" class="day-left-value" :class="daysRemainingClass">{{
+                daysRemainingText
+                }}</span>
+              <span v-else class="day-left-value">-</span>
+            </div>
           </div>
         </div>
       </v-card-text>
     </v-card>
 
     <!-- History Checks Dialog -->
-    <HistoryChecks 
-      :showDialog="showHistoryDialog"
-      :checkTypeId="checkType.checkTypeId"
-      :checkTypeName="checkType.checkTypeName"
-      :id="checkType.id"
-      @close-history="closeHistoryDialog"
-      @check-deleted="handleCheckDeleted"
-    />
+    <HistoryChecks :showDialog="showHistoryDialog" :checkTypeId="checkType.checkTypeId"
+      :checkTypeName="checkType.checkTypeName" :id="checkType.id" @close-history="closeHistoryDialog"
+      @check-deleted="handleCheckDeleted" />
   </div>
 </template>
 
@@ -141,18 +124,18 @@ export default {
   emits: ['add-check', 'delete-check-type', 'refresh-tiles'],
   setup(props, { emit }) {
     const routineCheckStore = useRoutineCheckStore()
-    
+
     // History dialog state
     const showHistoryDialog = ref(false)
-    
+
     // Create a local reactive copy of the remark
     const localRemark = ref(props.checkType.remark || '')
-    
+
     // Watch for changes in the prop and update local copy
     watch(() => props.checkType.remark, (newRemark) => {
       localRemark.value = newRemark || ''
     })
-    
+
     function formatDate(dateString) {
       if (!dateString) return 'לא נקבע'
       const date = new Date(dateString)
@@ -181,13 +164,13 @@ export default {
 
     function deleteCheckType() {
       // Prevent deletion if check date is not set
-      if (props.checkDate !='') {
+      if (props.checkDate != '') {
         alert('לא ניתן למחוק סוג פעילות שמקושרת לו פעילות')
         return
       }
-      
-     emit('delete-check-type', props.id)
-     
+
+      emit('delete-check-type', props.id)
+
     }
 
     function saveRemark() {
@@ -406,28 +389,58 @@ export default {
   gap: 16px;
 }
 
+.remark-section-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: 100%;
+  min-width: 0;
+  flex-direction: row;
+}
+
 .remark-container {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
-  flex-direction: row-reverse;
+  flex-direction: row;
   justify-content: flex-end;
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  flex-wrap: nowrap;
 }
 
 .save-btn {
   flex-shrink: 0;
+  margin: 0 !important;
   align-self: center;
-  margin-top: 0px;
 }
 
 .remark-input {
-  width: 400px !important;
-  max-width: 400px;
-  min-width: 400px;
-  flex-shrink: 0;
-  flex-grow: 0;
-  align-self: center;
-  margin-top: 14px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 150px;
+  flex: 1;
+  margin: 0 !important;
+  margin-top: 12px !important;
+}
+
+.remark-input ::v-deep(.v-field) {
+  margin: 0 !important;
+}
+
+.remark-input ::v-deep(.v-field__input) {
+  padding: 8px 12px !important;
+  min-height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.remark-input ::v-deep(.v-field__input textarea) {
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
 }
 
 .day-left-container {
@@ -436,6 +449,7 @@ export default {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .day-left-text {
@@ -465,25 +479,25 @@ export default {
   .tile-content {
     gap: 8px;
   }
-  
+
   .info-column.title-column {
     min-width: 150px !important;
     flex: 2 !important;
   }
-  
+
   .info-label {
     min-width: 50px;
     font-size: 0.8rem;
   }
-  
+
   .info-value {
     font-size: 0.9rem;
   }
-  
+
   .check-type-name {
     font-size: 1.1rem;
   }
-  
+
   .info-icon {
     font-size: 14px;
     min-width: 16px;
@@ -494,28 +508,39 @@ export default {
   .tile-content {
     gap: 6px;
   }
-  
+
   .info-column.title-column {
     min-width: 120px !important;
     flex: 1.5 !important;
   }
-  
+
   .info-label {
     min-width: 40px;
     font-size: 0.75rem;
   }
-  
+
   .info-value {
     font-size: 0.85rem;
   }
-  
+
   .check-type-name {
     font-size: 1rem;
   }
-  
+
   .info-icon {
     font-size: 12px;
     min-width: 14px;
+  }
+}
+
+/* Hide elements on mobile */
+.hide-on-mobile {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
   }
 }
 
@@ -545,7 +570,7 @@ export default {
     flex: 1;
     min-width: 200px !important;
   }
-  
+
   .info-column.title-column {
     flex: 1 !important;
     min-width: 200px !important;
