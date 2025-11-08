@@ -9,6 +9,7 @@
           class="modern-table"
           no-data-text="אין מדריכי בטיחות"
           loading-text="טוען נתונים..."
+          hide-default-footer
         >
           <template #item="{ item, columns }">
             <tr>
@@ -273,5 +274,46 @@ defineExpose({
 </script>
 
 <style scoped>
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Hide createdAt, createdBy, and actions columns on mobile */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .modern-table {
+    min-width: 100%;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  .modern-table ::v-deep(thead th:nth-child(2)),
+  .modern-table ::v-deep(thead th:nth-child(3)),
+  .modern-table ::v-deep(thead th:nth-child(4)) {
+    display: none !important;
+  }
+  
+  .modern-table ::v-deep(tbody td:nth-child(2)),
+  .modern-table ::v-deep(tbody td:nth-child(3)),
+  .modern-table ::v-deep(tbody td:nth-child(4)) {
+    display: none !important;
+  }
+  
+  .modern-table ::v-deep(table) {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+  }
+}
 </style>
 

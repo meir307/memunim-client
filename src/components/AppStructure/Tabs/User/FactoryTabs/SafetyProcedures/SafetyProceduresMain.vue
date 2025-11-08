@@ -11,7 +11,7 @@
             <h1 class="title-text">{{ titleText }}</h1>
           </div>
           
-          <v-btn color="primary" @click="openDialog" class="add-btn">
+          <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
             <v-icon left>{{ addButtonIcon }}</v-icon>
             {{ addButtonText }}
           </v-btn>
@@ -125,12 +125,35 @@ function deleteGuide(guide) {
   align-items: center;
   width: 100%;
   height: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tabs-in-title {
   background: transparent;
   min-height: auto;
   margin: 0 2px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .title-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  
+  .title-section {
+    display: none;
+  }
+  
+  .tabs-in-title {
+    flex: 0 0 auto;
+    margin: 0 2px;
+  }
+  
+  .tabs-in-title ::v-deep .v-tabs {
+    justify-content: flex-start;
+  }
 }
 
 .tabs-in-title ::v-deep .v-tab {
@@ -138,6 +161,26 @@ function deleteGuide(guide) {
   font-size: 0.9rem;
   min-width: auto;
   padding: 2px 8px;
+}
+
+@media (max-width: 768px) {
+  .tabs-in-title {
+    align-items: center;
+  }
+  
+  .tabs-in-title ::v-deep .v-tabs {
+    align-items: center;
+  }
+  
+  .tabs-in-title ::v-deep .v-tab {
+    height: auto;
+    min-height: auto;
+    align-self: center;
+  }
+  
+  .tabs-in-title ::v-deep .v-tab__content {
+    transform: translateY(-2px);
+  }
 }
 
 .tabs-in-title ::v-deep .v-tab--selected {
@@ -148,6 +191,16 @@ function deleteGuide(guide) {
 
 .tabs-in-title ::v-deep .v-tabs-slider {
   background: white;
+}
+
+.hide-on-mobile {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
 }
 </style>
 
