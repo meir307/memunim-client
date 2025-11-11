@@ -67,6 +67,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useSafetyProceduresStore } from '@/stores/SafetyProceduresStore'
 import { useUserStore } from '@/stores/UserStore'
+import '@/assets/DataTable.css'
 
 const safetyProceduresStore = useSafetyProceduresStore()
 const userStore = useUserStore()
@@ -87,9 +88,10 @@ const dialogTitle = ref('הוסף נהל בטיחות חדש')
 
 const headers = [
   { title: 'שם הנהל', key: 'name', sortable: true },
-  { title: 'תאריך', key: 'createdAt', sortable: true },
+ 
   { title: 'הועלה על ידי', key: 'createdBy', sortable: false },
-  { title: 'פעולות', key: 'actions', sortable: false, align: 'center' }
+  { title: 'תאריך', key: 'createdAt', sortable: true },
+  { title: '', key: 'actions', sortable: false, align: 'center' }
 ]
 
 function openDialog() {
@@ -207,8 +209,12 @@ async function deleteProcedure(procedure) {
 }
 
 function formatDate(dateString) {
+  if (!dateString) return ''
   const date = new Date(dateString)
-  return date.toLocaleDateString('he-IL')
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
 }
 
 onMounted(async () => {
@@ -235,29 +241,8 @@ defineExpose({
 </script>
 
 <style scoped>
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.modern-table {
-  width: 100%;
-  max-width: 100%;
-}
-
-/* Hide createdAt, createdBy, and actions columns on mobile */
+/* Component-specific mobile column hiding */
 @media (max-width: 768px) {
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .modern-table {
-    min-width: 100%;
-    width: 100%;
-    max-width: 100vw;
-  }
-  
   .modern-table ::v-deep(thead th:nth-child(2)),
   .modern-table ::v-deep(thead th:nth-child(3)),
   .modern-table ::v-deep(thead th:nth-child(4)) {
@@ -268,12 +253,6 @@ defineExpose({
   .modern-table ::v-deep(tbody td:nth-child(3)),
   .modern-table ::v-deep(tbody td:nth-child(4)) {
     display: none !important;
-  }
-  
-  .modern-table ::v-deep(table) {
-    width: 100%;
-    max-width: 100%;
-    table-layout: fixed;
   }
 }
 </style>

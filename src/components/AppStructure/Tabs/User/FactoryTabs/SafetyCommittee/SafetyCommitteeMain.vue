@@ -7,11 +7,9 @@
                         <v-tab value="meetings">פגישות ועדה</v-tab>
                         <v-tab value="committee">נאמני בטיחות</v-tab>
                     </v-tabs>
-                     <div class="title-section">
-                         <h1 class="title-text">{{ titleText }}</h1>
-                     </div>
+                   
                     
-                    <v-btn color="primary" @click="openDialog" class="add-btn">
+                    <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
                         <v-icon left>{{ addButtonIcon }}</v-icon>
                         {{ addButtonText }}
                     </v-btn>
@@ -68,16 +66,7 @@ const showMeetingDialog = ref(false)
 const safetyTrusteesDialog = ref(null)
 const committeeMeetingDialog = ref(null)
 
-const titleText = computed(() => {
-    switch (activeTab.value) {
-        case 'committee':
-            return '' //'הגדר מי הם נאמני הבטיחות במפעל והאם הם חברי ועדת הבטיחות'
-        case 'meetings':
-            return '' //'נהל פגישות ועדת הבטיחות'
-        default:
-            return 'הגדר מי הם נאמני הבטיחות במפעל והאם הם חברי ועדת הבטיחות'
-    }
-})
+
 
 const addButtonText = computed(() => {
     switch (activeTab.value) {
@@ -190,6 +179,16 @@ onMounted(async () => {
 
 .tabs-in-title ::v-deep .v-tabs-slider {
     background: white;
+}
+
+.hide-on-mobile {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
 }
 
 </style>
