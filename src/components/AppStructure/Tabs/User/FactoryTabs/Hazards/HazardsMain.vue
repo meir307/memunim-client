@@ -4,6 +4,7 @@
       <v-card-title class="modern-title">
         <div class="title-container">
           <h2 class="title-text">מפגעים</h2>
+          <v-spacer></v-spacer>
           <v-btn color="primary" @click="openDialog" class="add-btn">
             <v-icon left>mdi-plus</v-icon>
             הוסף מפגע
@@ -145,14 +146,44 @@ export default {
 
 <style scoped>
 .title-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
   width: 100%;
+  flex-wrap: nowrap !important;
+  flex-direction: row !important;
+  gap: 16px;
+}
+
+.title-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 !important;
+  font-size: 1.2rem !important;
 }
 
 .add-btn {
-  margin-left: 16px;
+  flex-shrink: 0 !important;
+  min-width: auto;
+}
+
+@media (max-width: 768px) {
+  .title-container {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+  }
+  
+  .title-text {
+    text-align: left !important;
+    margin-right: 16px !important;
+  }
+  
+  .add-btn {
+    flex-shrink: 0 !important;
+  }
 }
 
 .tiles-container {

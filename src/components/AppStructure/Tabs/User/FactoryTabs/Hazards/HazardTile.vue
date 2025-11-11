@@ -11,12 +11,6 @@
               <div class="title-box">
                 <span class="title-text">{{ hazard.title }}</span>
               </div>
-              <v-btn 
-                icon="mdi-check" 
-                class="resolve-btn-icon" 
-                @click="resolveHazard"
-                size="small"
-              ></v-btn>
             </div>
             <div class="top-center">
               <div class="created-info">
@@ -80,6 +74,22 @@
                   <v-icon left>mdi-check</v-icon>
                   שמור
                 </v-btn>
+                <!-- Mobile image icon button -->
+                <v-btn
+                  v-if="hazardImage"
+                  icon="mdi-image"
+                  size="small"
+                  class="mobile-image-btn"
+                  @click="openImage(hazardImage)"
+                  color="primary"
+                ></v-btn>
+                <!-- Resolve button -->
+                <v-btn 
+                  icon="mdi-check" 
+                  class="resolve-btn-icon" 
+                  @click="resolveHazard"
+                  size="small"
+                ></v-btn>
               </div>
             </div>
           </div>
@@ -87,7 +97,7 @@
 
         <!-- Image Side (right in RTL) -->
         <div class="image-side">
-          <div v-if="hazardImage" class="image-thumbnail">
+          <div v-if="hazardImage" class="image-thumbnail hide-on-mobile">
             <img 
               :src="getImageUrl(hazardImage)"
               alt="תמונה"
@@ -95,7 +105,7 @@
               @click="openImage(hazardImage)"
             />
           </div>
-          <div v-else class="image-placeholder">
+          <div v-else class="image-placeholder hide-on-mobile">
             <v-icon size="48" color="#ccc">mdi-image-off</v-icon>
           </div>
         </div>
@@ -517,12 +527,16 @@ export default {
   font-weight: 600;
   color: #06488a;
   margin: 0;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
   width: 100%;
-  display: block;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  line-height: 1.4;
+  max-height: calc(1.4rem * 1.4 * 2);
 }
 
 .created-info {
@@ -552,8 +566,9 @@ export default {
 
 .buttons-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
+  align-items: center;
 }
 
 .save-btn {
@@ -592,10 +607,15 @@ export default {
 
 .description-textarea {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .description-textarea ::v-deep(.v-field) {
   padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .description-textarea ::v-deep(.v-field__input) {
@@ -603,24 +623,37 @@ export default {
   min-height: 80px !important;
   text-align: right;
   font-size: 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .hazard-tile {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .tile-wrapper {
     flex-direction: column-reverse;
+    gap: 12px;
   }
 
   .image-side {
     width: 100%;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
   }
 
   .image-thumbnail,
   .image-placeholder {
-    width: 100px;
-    height: 100px;
+    display: none;
+  }
+
+  .mobile-image-btn {
+    display: flex !important;
   }
 
   .top-section {
@@ -649,6 +682,37 @@ export default {
 
   .description-box {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .description-textarea {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .description-textarea ::v-deep(.v-field) {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .description-textarea ::v-deep(.v-field__input) {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+.hide-on-mobile {
+  display: block;
+}
+
+.mobile-image-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
   }
 }
 </style>

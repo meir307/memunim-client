@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div class="pa-2">
                  <!-- Sticky Header -->
          <div class="sticky-header d-flex align-center justify-space-between mb-4">
              <div class="d-flex align-center">
@@ -11,8 +11,8 @@
                      class="d-md-none me-1"
                  ></v-btn>
                  
-                <h1 class="me-9 text-truncate d-md-none" style="max-width: 200px;">{{ factory?.name || 'שם המפעל' }}</h1>
-                <h1 class="me-9 d-none d-md-block">{{ factory?.name || 'שם המפעל' }}</h1>
+                <h2 class="me-9 text-truncate d-md-none" style="max-width: 150px;">{{ factory?.name || 'שם המפעל' }}</h2>
+                <h2 class="me-9 d-none d-md-block">{{ factory?.name || 'שם המפעל' }}</h2>
  
                 <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block">{{ factory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
              </div>
@@ -153,3 +153,11 @@ export default {
      }
 }
 </script>
+
+<style scoped>
+.sticky-header {
+  margin-bottom: calc(1rem - 8px);
+  padding: 7px;
+  line-height: 1.2;
+}
+</style>

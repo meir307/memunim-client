@@ -14,8 +14,10 @@ axios.interceptors.response.use(
       
       const userStore = useUserStore()
       userStore.logout()
-      router.push('/regulations')
-      alert('התנתקת מהמערכת. אנא התחבר מחדש.')
+      router.push('/regulations').then(() => {
+        alert('התנתקת מהמערכת. אנא התחבר מחדש.')
+        userStore.showLoginDialog = true
+      })
     }
     
     return Promise.reject(error)

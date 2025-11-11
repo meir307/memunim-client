@@ -112,8 +112,8 @@ export const useUserStore = defineStore('UserStore', {
         localStorage.setItem('user', JSON.stringify(this.user))
         
       } catch (error) {
-        alert(error.message)
-        this.error = error.message
+        alert(error.response.data.message)
+        this.error = error.response.data.message
       } finally {
         this.postAction()
       }

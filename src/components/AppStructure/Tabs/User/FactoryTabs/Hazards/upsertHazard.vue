@@ -13,7 +13,9 @@
             label="כותרת"
             required
             reverse
-            :rules="[v => !!v || 'כותרת חובה']"
+            maxlength="34"
+            counter
+            :rules="[v => !!v || 'כותרת חובה', v => (v && v.length <= 34) || 'כותרת לא יכולה לעלות על 34 תווים']"
           ></v-text-field>
 
           <v-row>
