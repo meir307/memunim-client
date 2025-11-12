@@ -60,10 +60,10 @@ export default {
         })
 
         const headers = [
-            { title: 'כותרת הפגישה', key: 'title', sortable: true },
-            { title: 'תאריך יצירה', key: 'createdAt', sortable: true, width: '130px' },
-            { title: 'נוצר על ידי', key: 'createdBy', sortable: false },
-            { title: 'סיכום', key: 'summary', sortable: false },
+            { title: 'כותרת הפגישה', key: 'title', sortable: true, width: '200px' },
+            { title: 'תאריך', key: 'createdAt', sortable: true, width: '130px' },
+            { title: 'נוצר על ידי', key: 'createdBy', sortable: false, width: '120px' },
+            { title: 'סיכום', key: 'summary', sortable: false, width: '300px' },
             { title: '', key: 'actions', sortable: false, align: 'center', width: '120px' }
             
         ]
@@ -130,10 +130,18 @@ export default {
 }
 
 .summary-text {
-    max-width: 200px;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* Make the title column width (1st column) */
+.modern-table ::v-deep(thead th:nth-child(1)),
+.modern-table ::v-deep(tbody td:nth-child(1)) {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
 }
 
 /* Make the date column width (2nd column) */
@@ -142,6 +150,22 @@ export default {
     width: 130px !important;
     min-width: 130px !important;
     max-width: 130px !important;
+}
+
+/* Make the createdBy column width (3rd column) */
+.modern-table ::v-deep(thead th:nth-child(3)),
+.modern-table ::v-deep(tbody td:nth-child(3)) {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+}
+
+/* Make the summary column width (4th column) */
+.modern-table ::v-deep(thead th:nth-child(4)),
+.modern-table ::v-deep(tbody td:nth-child(4)) {
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
 }
 
 /* Component-specific mobile column hiding */

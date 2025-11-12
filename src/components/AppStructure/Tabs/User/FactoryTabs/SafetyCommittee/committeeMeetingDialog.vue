@@ -16,13 +16,34 @@
                         :rules="[v => !!v || 'כותרת הפגישה חובה']"
                     ></v-text-field>
                     
+                    <v-text-field
+                        v-model="formattedMeetingDate"
+                        label="תאריך הפגישה"
+                        required
+                        reverse
+                        :rules="[v => !!v || 'תאריך הפגישה חובה', dateFormatRule]"
+                        @input="handleMeetingDateChange"
+                        placeholder="dd/MM/yyyy"
+                        prepend-icon="mdi-calendar"
+                        readonly
+                        @click:prepend="showDatePicker = true"
+                    ></v-text-field>
+                    
+                    <v-dialog v-model="showDatePicker" max-width="290">
+                        <v-date-picker
+                            v-model="datePickerValue"
+                            @update:model-value="handleDatePickerChange"
+                            locale="he"
+                            :first-day-of-week="0"
+                        ></v-date-picker>
+                    </v-dialog>
+                    
                     <v-textarea 
                         v-model="editedItem.summary" 
-                        label="סיכום הפגישה" 
+                        label="הערות נוספות" 
                         required 
                         reverse
-                        rows="4"
-                        :rules="[v => !!v || 'סיכום הפגישה חובה']"
+                        rows="1"
                     ></v-textarea>
                     
                     <v-file-input
@@ -59,6 +80,12 @@
 import { ref, computed, watch } from 'vue'
 import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 import { useUserStore } from '@/stores/UserStore'
+import {
+    getDatePickerValue,
+    getDisplayValue,
+    getTodayDDMMYYYY,
+    dateFormatRule
+} from '@/utils/DateFormater'
 
 export default {
     name: 'CommitteeMeetingDialog',
@@ -75,6 +102,9 @@ export default {
         const dialog = ref(false)
         const loading = ref(false)
         const editedIndex = ref(-1)
+        const showDatePicker = ref(false)
+        const datePickerValue = ref(null)
+        const formattedMeetingDate = ref('')
         const editedItem = ref({
             id: null,
             title: '',
@@ -91,19 +121,39 @@ export default {
             return isEditMode.value ? 'ערוך פגישת ועדה' : 'פגישת ועדה חדשה'
         })
 
+        function initializeForm() {
+            // Reset form for new meeting
+            if (editedIndex.value === -1) {
+                const today = getTodayDDMMYYYY()
+                editedItem.value.meetingDate = today
+                formattedMeetingDate.value = today
+                datePickerValue.value = getDatePickerValue(today)
+            }
+        }
+
         // Watch for prop changes
         watch(() => props.showDialog, (newVal) => {
             dialog.value = newVal
+            if (newVal) {
+                initializeForm()
+            }
         })
 
         // Watch for dialog changes and emit to parent
         watch(dialog, (newVal) => {
             if (!newVal) {
                 emit('close-dialog')
+            } else {
+                initializeForm()
             }
         })
 
         function openDialog() {
+            // Initialize date picker for new meeting with today's date
+            const today = getTodayDDMMYYYY()
+            editedItem.value.meetingDate = today
+            formattedMeetingDate.value = today
+            datePickerValue.value = getDatePickerValue(today)
             dialog.value = true
         }
 
@@ -118,13 +168,36 @@ export default {
                 meetingDate: meeting.meetingDate || null,
                 factoryId: meeting.factoryId || null
             }
+            // Set formatted date and date picker value
+            if (editedItem.value.meetingDate) {
+                formattedMeetingDate.value = editedItem.value.meetingDate
+                datePickerValue.value = getDatePickerValue(editedItem.value.meetingDate)
+            } else {
+                formattedMeetingDate.value = ''
+                datePickerValue.value = null
+            }
             dialog.value = true
+        }
+        
+        function handleMeetingDateChange() {
+            // Handle manual date input if needed
+        }
+        
+        function handleDatePickerChange(value) {
+            if (value) {
+                editedItem.value.meetingDate = getDisplayValue(value)
+                formattedMeetingDate.value = editedItem.value.meetingDate
+                showDatePicker.value = false
+            }
         }
 
 
         function closeDialog() {
             dialog.value = false
             editedIndex.value = -1
+            showDatePicker.value = false
+            datePickerValue.value = null
+            formattedMeetingDate.value = ''
             editedItem.value = {
                 id: null,
                 title: '',
@@ -146,9 +219,9 @@ export default {
                     alert('כותרת הפגישה חובה')
                     return
                 }
-                
-                if (!editedItem.value.summary.trim()) {
-                    alert('סיכום הפגישה חובה')
+            
+                if (!editedItem.value.meetingDate) {
+                    alert('תאריך הפגישה חובה')
                     return
                 }
                 
@@ -161,6 +234,7 @@ export default {
                 const formData = new FormData()
                 formData.append('title', editedItem.value.title)
                 formData.append('summary', editedItem.value.summary)
+                formData.append('meetingDate', editedItem.value.meetingDate)
                 formData.append('factoryId', factoryId)
                 
                 if (editedItem.value.file) {
@@ -194,10 +268,16 @@ export default {
             editedItem,
             isEditMode,
             formTitle,
+            showDatePicker,
+            datePickerValue,
+            formattedMeetingDate,
+            dateFormatRule,
             openDialog,
             editMeeting,
             closeDialog,
-            save
+            save,
+            handleMeetingDateChange,
+            handleDatePickerChange
         }
     }
 }
