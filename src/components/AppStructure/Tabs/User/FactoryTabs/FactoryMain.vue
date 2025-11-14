@@ -11,8 +11,8 @@
                      class="d-md-none me-1"
                  ></v-btn>
                  
-                <h2 class="me-9 text-truncate d-md-none" style="max-width: 150px;">{{ factory?.name || 'שם המפעל' }}</h2>
-                <h2 class="me-9 d-none d-md-block">{{ factory?.name || 'שם המפעל' }}</h2>
+                <h2 class="me-9 text-truncate d-md-none" style="max-width: 150px; padding-right: 16px;">{{ factory?.name || 'שם המפעל' }}</h2>
+                <h2 class="me-9 d-none d-md-block" style="padding-right: 45px;">{{ factory?.name || 'שם המפעל' }}</h2>
  
                 <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block">{{ factory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
              </div>

@@ -8,6 +8,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
   state: () => ({
     routineChecks: [],
     routineCheckTypes: [],
+    factoryCheckTypes: [],
     error: null
   }),
 
@@ -349,6 +350,35 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
         loaderStore.hide()
       }
     },
+
+
+    async getFactoryCheckTypes(factoryId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/getFactoryCheckTypes', { 'factoryId': factoryId }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+        this.factoryCheckTypes = response.data.factoryCheckTypes
+        return response.data.factoryCheckTypes
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to get factory check types'
+        this.error = errorMessage
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+
+    
     // Clear error
     clearError() {
       this.error = null

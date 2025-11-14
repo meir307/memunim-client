@@ -11,6 +11,8 @@
                     <v-select 
                         v-model="editedItem.checkType" 
                         :items="checkTypeOptions" 
+                        item-title="title"
+                        item-value="value"
                         label="סוג פעילות" 
                         required 
                         reverse
@@ -36,9 +38,8 @@
 </template>
 
 <script>
-import { ref, computed, watch, toRaw } from 'vue'
+import { ref, computed, watch, toRaw, onMounted } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
-import { useCommonStore } from '@/stores/CommonStore'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 
 export default {
@@ -52,7 +53,6 @@ export default {
     emits: ['close-dialog'],
     setup(props, { emit }) {
         const userStore = useUserStore()
-        const commonStore = useCommonStore()
         const routineCheckStore = useRoutineCheckStore()
 
         const dialog = ref(false)
@@ -62,14 +62,21 @@ export default {
             remark: ''
         })
 
-        const checkTypeOptions = computed(() => {
-            const types = commonStore.getRoutineCheckTypes
-            return types.map(type => ({
-                title: type.name,
-                value: type.id,
-                period: type.checkPeriodInMonth 
-            }))
-        })
+        const checkTypeOptions = ref([])
+
+        async function loadCheckTypes() {
+            try {
+                const types = await routineCheckStore.getFactoryCheckTypes(userStore.selectedFactory.id)
+                checkTypeOptions.value = types.map(type => ({
+                    title: type.mame || type.name || '',
+                    value: type.id,
+                    period: type.checkPeriodInMonth 
+                }))
+            } catch (error) {
+                console.error('Failed to load check types:', error)
+                checkTypeOptions.value = []
+            }
+        }
 
         const formTitle = computed(() => {
             return 'הוסף סוג פעילות שוטפת'
@@ -78,6 +85,9 @@ export default {
         // Watch for prop changes
         watch(() => props.showDialog, (newVal) => {
             dialog.value = newVal
+            if (newVal) {
+                loadCheckTypes()
+            }
         })
 
         // Watch for dialog changes and emit to parent
@@ -89,7 +99,12 @@ export default {
 
         function openDialog() {
             dialog.value = true
+            loadCheckTypes()
         }
+
+        onMounted(() => {
+            loadCheckTypes()
+        })
 
         function closeDialog() {
             dialog.value = false
