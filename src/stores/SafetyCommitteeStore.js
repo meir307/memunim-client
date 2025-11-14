@@ -210,7 +210,34 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       }
     },
 
+    // Delete safety committee meeting
+    async deleteMeeting(meetingId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
 
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const factoryId = userStore.selectedFactory.id
+
+        await axios.post(commonStore.apiUrl + 'safetycommittee/deleteMeeting', { 'meetingId': meetingId, 'factoryId': factoryId }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+
+        // Remove the meeting from local state
+        this.meetings = this.meetings.filter(meeting => meeting.id !== meetingId)
+
+        return true
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to delete safety committee meeting'
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
 
     // Clear error
     clearError() {

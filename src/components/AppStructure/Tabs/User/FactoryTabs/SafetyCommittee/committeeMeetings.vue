@@ -26,6 +26,9 @@
                                     <v-btn icon size="small" @click="editMeeting(item)" color="primary" class="action-btn">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
+                                    <v-btn icon size="small" @click="deleteMeeting(item)" color="error" class="action-btn">
+                                        <v-icon>mdi-delete</v-icon>
+                                    </v-btn>
                                 </span>
                                 <span v-else>{{ item[column.key] }}</span>
                             </td>
@@ -77,6 +80,22 @@ export default {
             return `${day}/${month}/${year}`
         }
 
+        async function deleteMeeting(meeting) {
+            const confirmed = confirm(`האם למחוק את פגישת הוועדה "${meeting.title}"?`)
+            if (!confirmed) return
+
+            try {
+                loading.value = true
+                await safetyCommitteeStore.deleteMeeting(meeting.id)
+                alert('פגישה נמחקה בהצלחה')
+            } catch (error) {
+                console.error('Failed to delete committee meeting:', error)
+                alert('שגיאה במחיקת הפגישה: ' + (error.response?.data?.message || error.message || 'שגיאה לא ידועה'))
+            } finally {
+                loading.value = false
+            }
+        }
+
         onMounted(async () => {
             try {
                 loading.value = true
@@ -93,7 +112,8 @@ export default {
             meetings,
             headers,
             loading,
-            formatDate
+            formatDate,
+            deleteMeeting
         }
     }
 }

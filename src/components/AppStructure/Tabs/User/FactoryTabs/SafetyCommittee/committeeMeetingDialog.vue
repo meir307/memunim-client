@@ -58,12 +58,12 @@
                     ></v-file-input>
                     
                     <!-- Show current file if editing -->
-                    <div v-if="isEditMode && editedItem.currentFileName" class="current-file-info">
+                    <!-- <div v-if="isEditMode && editedItem.currentFileName" class="current-file-info">
                         <v-chip color="info" variant="outlined">
                             <v-icon start>mdi-file-document</v-icon>
                             קובץ נוכחי: {{ editedItem.currentFileName }}
                         </v-chip>
-                    </div>
+                    </div> -->
                 </v-form>
                 <div class="popup-btn-row">
                     <v-btn @click="save" color="primary" :loading="loading">שמור</v-btn>
@@ -84,6 +84,7 @@ import {
     getDatePickerValue,
     getDisplayValue,
     getTodayDDMMYYYY,
+    formatToDDMMYYYY,
     dateFormatRule
 } from '@/utils/DateFormater'
 
@@ -122,7 +123,7 @@ export default {
         })
 
         function initializeForm() {
-            // Reset form for new meeting
+            // Reset form for new meeting only (not in edit mode)
             if (editedIndex.value === -1) {
                 const today = getTodayDDMMYYYY()
                 editedItem.value.meetingDate = today
@@ -134,7 +135,8 @@ export default {
         // Watch for prop changes
         watch(() => props.showDialog, (newVal) => {
             dialog.value = newVal
-            if (newVal) {
+            // Only initialize form for new meetings, not when editing
+            if (newVal && editedIndex.value === -1) {
                 initializeForm()
             }
         })
@@ -144,7 +146,10 @@ export default {
             if (!newVal) {
                 emit('close-dialog')
             } else {
-                initializeForm()
+                // Only initialize form for new meetings, not when editing
+                if (editedIndex.value === -1) {
+                    initializeForm()
+                }
             }
         })
 
@@ -158,21 +163,56 @@ export default {
         }
 
         function editMeeting(meeting) {
-            editedIndex.value = 0 // For now, we'll handle this differently
+            editedIndex.value = 0 // Set edit mode
+            
+            // Extract values from proxy object to ensure we get the actual values
+            const meetingId = meeting.id
+            const meetingTitle = meeting.title || ''
+            const meetingSummary = meeting.summary || ''
+            const meetingFileName = meeting.fileName || null
+            const meetingDateValue = meeting.meetingDate || meeting.createdAt || null
+            const meetingFactoryId = meeting.factoryId || null
+            
             editedItem.value = {
-                id: meeting.id,
-                title: meeting.title || '',
-                summary: meeting.summary || '',
+                id: meetingId,
+                title: meetingTitle,
+                summary: meetingSummary,
                 file: null,
-                currentFileName: meeting.fileName || null,
-                meetingDate: meeting.meetingDate || null,
-                factoryId: meeting.factoryId || null
+                currentFileName: meetingFileName,
+                meetingDate: meetingDateValue,
+                factoryId: meetingFactoryId
             }
+            
             // Set formatted date and date picker value
-            if (editedItem.value.meetingDate) {
-                formattedMeetingDate.value = editedItem.value.meetingDate
-                datePickerValue.value = getDatePickerValue(editedItem.value.meetingDate)
+            if (meetingDateValue) {
+                // Normalize the date to dd/MM/yyyy format first (handles ISO strings, YYYY-MM-DD, etc.)
+                let normalizedDate = formatToDDMMYYYY(meetingDateValue)
+                
+                // If normalization failed or returned empty, try parsing as Date object
+                if (!normalizedDate) {
+                    const dateObj = new Date(meetingDateValue)
+                    if (!isNaN(dateObj.getTime())) {
+                        normalizedDate = formatToDDMMYYYY(dateObj)
+                    }
+                }
+                
+                if (normalizedDate) {
+                    editedItem.value.meetingDate = normalizedDate
+                    formattedMeetingDate.value = normalizedDate
+                    const pickerValue = getDatePickerValue(normalizedDate)
+                    datePickerValue.value = pickerValue
+                    console.log('Edit meeting - Date set:', {
+                        original: meetingDateValue,
+                        normalized: normalizedDate,
+                        pickerValue: pickerValue
+                    })
+                } else {
+                    console.warn('Failed to normalize date:', meetingDateValue)
+                    formattedMeetingDate.value = ''
+                    datePickerValue.value = null
+                }
             } else {
+                console.warn('No meeting date found in meeting object:', meeting)
                 formattedMeetingDate.value = ''
                 datePickerValue.value = null
             }
@@ -249,7 +289,7 @@ export default {
                 }
                 
                 closeDialog()
-                alert(isEditMode.value ? 'פגישה עודכנה בהצלחה' : 'פגישה נוספה בהצלחה')
+                //alert(isEditMode.value ? 'פגישה עודכנה בהצלחה' : 'פגישה נוספה בהצלחה')
                 
             } catch (error) {
                 console.error('Failed to save meeting:', error)
