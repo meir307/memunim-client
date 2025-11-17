@@ -143,6 +143,7 @@ import {
   getDisplayValue,
   isValidDDMMYYYY
 } from '@/utils/DateFormater'
+import { compressImage } from '@/utils/ImageCompressor'
 
 export default {
   name: 'UpsertHazard',
@@ -272,7 +273,7 @@ export default {
       return ''
     }
 
-    function handleFilesChange(file) {
+    async function handleFilesChange(file) {
       // Clear previous preview
       if (newImagePreview.value && newImagePreview.value.url && newImagePreview.value.url.startsWith('blob:')) {
         URL.revokeObjectURL(newImagePreview.value.url)
@@ -280,9 +281,25 @@ export default {
 
       // Create new preview for single file
       if (file) {
-        newImagePreview.value = {
-          file: file,
-          url: URL.createObjectURL(file)
+        try {
+          // Compress the image to max 100KB
+          const compressedFile = await compressImage(file, 100)
+          
+          newImagePreview.value = {
+            file: compressedFile,
+            url: URL.createObjectURL(compressedFile)
+          }
+          
+          // Update the editedItem with compressed file
+          editedItem.value.files = compressedFile
+        } catch (error) {
+          console.error('Error compressing image:', error)
+          alert('שגיאה בדחיסת התמונה. נסה שוב.')
+          // Fallback to original file if compression fails
+          newImagePreview.value = {
+            file: file,
+            url: URL.createObjectURL(file)
+          }
         }
       } else {
         newImagePreview.value = null
