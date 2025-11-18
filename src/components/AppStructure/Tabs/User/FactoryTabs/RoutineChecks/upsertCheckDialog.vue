@@ -62,9 +62,9 @@
             <v-col cols="12">
               <v-text-field
                 v-model="editedItem.description"
-                label="תיאור"
+                label="הערה"
                 reverse
-                hint="תיאור אופציונלי"
+                hint= "הערה אופציונלית"
                 persistent-hint
               ></v-text-field>
             </v-col>

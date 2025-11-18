@@ -4,11 +4,21 @@
         <v-card-title class="modern-title">
           <div class="title-container">
             <h2 class="title-text">פעילות שוטפת</h2>
-            <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
-              <v-icon left>mdi-plus</v-icon>
-              הוסף סוג פעילות שוטפת
-            </v-btn>
+
+            <div class="buttons-group">
+              <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
+                <v-icon>mdi-plus</v-icon>
+                הוסף סוג פעילות שוטפת
+              </v-btn>
+
+              <v-btn color="primary" @click="openSettingsDialog" class="add-btn hide-on-mobile">
+                <v-icon>mdi-cog</v-icon>
+                הגדרות פעילות שוטפת
+              </v-btn>
+            </div>
+            
           </div>
+          
         </v-card-title>
 
         <v-card-text class="pa-0">
@@ -48,6 +58,14 @@
         @close-dialog="closeCheckDialog" 
       />
 
+      <!-- Factory Check Types Settings Dialog -->
+      <FactoryCheckTypesSettings 
+        :show-dialog="showSettingsDialog" 
+        @close-dialog="closeSettingsDialog"
+        @add-check-type="handleAddFromSettings"
+        @refresh-parent="refreshTiles"
+      />
+
     </div>
   </template>
   
@@ -56,6 +74,7 @@
   import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
   import RoutineCheckTile from './RoutineCheckTile.vue'
   import UpsertCheckDialog from './upsertCheckDialog.vue'
+  import FactoryCheckTypesSettings from './FactoryCheckTypes/FactoryCheckTypesSettings.vue'
   import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
   import { useUserStore } from '@/stores/UserStore'
   
@@ -64,7 +83,8 @@
     components: {
       AddRoutineCheckTypeDialog,
       RoutineCheckTile,
-      UpsertCheckDialog
+      UpsertCheckDialog,
+      FactoryCheckTypesSettings
     },
     setup() {
       const routineCheckStore = useRoutineCheckStore()
@@ -79,6 +99,8 @@
       const selectedEditCheck = ref(null)
       const upsertCheckDialog = ref(null)
       
+      // Settings dialog state
+      const showSettingsDialog = ref(false)
 
       // Helper function to calculate days remaining
       const getDaysRemaining = (checkType) => {
@@ -119,6 +141,22 @@
 
       function closeDialog() {
         showDialog.value = false
+      }
+
+      function openSettingsDialog() {
+        console.log('openSettingsDialog called, setting showSettingsDialog to true')
+        showSettingsDialog.value = true
+        console.log('showSettingsDialog value:', showSettingsDialog.value)
+      }
+
+      function closeSettingsDialog() {
+        showSettingsDialog.value = false
+      }
+
+      function handleAddFromSettings() {
+        // Close settings dialog and open add dialog
+        showSettingsDialog.value = false
+        openDialog()
       }
 
       function addCheck(tileProps) {
@@ -190,8 +228,12 @@
         selectedCheckType,
         selectedEditCheck,
         upsertCheckDialog,
+        showSettingsDialog,
         openDialog,
         closeDialog,
+        openSettingsDialog,
+        closeSettingsDialog,
+        handleAddFromSettings,
         addCheck,
         editCheckType,
         deleteCheckType,
@@ -210,8 +252,24 @@
     width: 100%;
   }
 
+  .buttons-group {
+    display: flex;
+    gap: 4px;
+    
+  }
+
   .add-btn {
-    margin-left: 16px;
+    margin-left: 10px;
+  }
+
+  .add-btn ::v-deep(.v-btn__content) {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .add-btn ::v-deep(.v-icon) {
+    margin: 0 !important;
   }
 
   .tiles-container {

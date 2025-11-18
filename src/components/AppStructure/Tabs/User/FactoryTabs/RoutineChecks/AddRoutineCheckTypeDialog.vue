@@ -21,10 +21,10 @@
                     
                     <v-textarea 
                         v-model="editedItem.remark" 
-                        label="הערות" 
+                        label="הערה" 
                         reverse
-                        rows="4"
-                        placeholder="הוסף הערות לגבי הפעילות..."
+                        rows="1"
+                        placeholder="הוסף הערה לגבי הפעילות..."
                     ></v-textarea>
                 </v-form>
                 <div class="popup-btn-row">

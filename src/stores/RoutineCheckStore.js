@@ -377,6 +377,111 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
       }
     },
 
+    // Add new factory check type
+    async AddNewFactoryCheckType(checkTypeData) {
+
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const factoryId = userStore.selectedFactory.id
+
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/addFactoryCheckType', {
+          factoryId: factoryId,
+          name: checkTypeData.checkTypeName,
+          checkPeriodInMonth: checkTypeData.checkPeriodInMonth
+        }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to add factory check type'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Delete factory check type
+    async DeleteFactoryCheckType(checkTypeId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const factoryId = userStore.selectedFactory.id
+
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/deleteFactoryCheckType', {
+          factoryId: factoryId,
+          checkTypeId: checkTypeId
+        }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+
+        // Refresh the factory check types list
+        await this.getFactoryCheckTypes(factoryId)
+
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to delete factory check type'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
+    // Update factory check type
+    async updateFactoryCheckType(checkTypeData) {
+
+
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const factoryId = userStore.selectedFactory.id
+
+        const response = await axios.post(commonStore.apiUrl + 'routineChecks/updateFactoryCheckType', {
+          factoryId: factoryId,
+          checkTypeId: checkTypeData.id,
+          name: checkTypeData.checkTypeName,
+          checkPeriodInMonth: checkTypeData.checkPeriodInMonth
+        }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to update factory check type'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
 
     
     // Clear error
