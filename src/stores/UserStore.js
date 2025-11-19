@@ -124,6 +124,54 @@ export const useUserStore = defineStore('UserStore', {
             // Clear localStorage
       localStorage.removeItem('user')
     },
+
+    async updateProfile(profileData) {
+      this.preAction()
+      try {
+        console.log('updateProfile')
+        const response = await axios.post(this.apiUrl + 'user/updateProfile', profileData, {
+          headers: {
+            'sessionId': this.user.sessionId || ''
+          }
+        })
+        // Update user data
+        this.user = { ...this.user, ...response.data.user }
+        // Save to localStorage
+        localStorage.setItem('user', JSON.stringify(this.user))
+      } catch (error) {
+        alert(error.response?.data?.message || error.message)
+        this.error = error.response?.data?.message || error.message
+        throw error
+      } finally {
+        this.postAction()
+      }
+    },
+
+    async changePassword(currentPassword, newPassword) {
+      this.preAction()
+      try {
+        console.log('changePassword')
+        await axios.post(
+          this.apiUrl + 'user/changePassword',
+          {
+            currentPassword: currentPassword,
+            newPassword: newPassword
+          },
+          {
+            headers: {
+              'sessionId': this.user.sessionId || ''
+            }
+          }
+        )
+        alert('הסיסמה שונתה בהצלחה')
+      } catch (error) {
+        alert(error.response?.data?.message || 'שגיאה בשינוי הסיסמה')
+        this.error = error.response?.data?.message || 'שגיאה בשינוי הסיסמה'
+        throw error
+      } finally {
+        this.postAction()
+      }
+    },
  
     preAction() {
       this.loaderStore.show()

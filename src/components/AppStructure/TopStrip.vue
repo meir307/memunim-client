@@ -61,9 +61,27 @@
 
         <!-- Authenticated User -->
         <div v-if="isAuthenticated" class="d-flex align-center">
-          <v-avatar size="32" class="mr-2">
-            <v-icon icon="mdi-account"></v-icon>
-          </v-avatar>
+          <v-menu v-model="userMenu" location="bottom end" :close-on-content-click="false">
+            <template v-slot:activator="{ props }">
+              <v-avatar size="32" class="mr-2" v-bind="props" style="cursor: pointer;">
+                <v-icon icon="mdi-account"></v-icon>
+              </v-avatar>
+            </template>
+            <v-list>
+              <v-list-item @click="updateProfile">
+                <v-list-item-title>
+                  עדכן פרופיל
+                  <v-icon left>mdi-account-edit</v-icon>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="changePassword">
+                <v-list-item-title>
+                  שנה סיסמא
+                  <v-icon left>mdi-lock-reset</v-icon>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <span class="text-white mr-4">שלום {{ userName }}</span>
           <v-btn variant="text" color="white" @click="logout" class="mr-2">
             התנתק
@@ -78,7 +96,15 @@
 
       <v-dialog v-model="showRegister" max-width="1000" width="90%" persistent>
         <Register @btnClose="showRegister = false" />
-  </v-dialog>
+      </v-dialog>
+
+      <v-dialog v-model="showChangePassword" max-width="1000" width="90%" persistent>
+        <ChangePassword @btnClose="showChangePassword = false" />
+      </v-dialog>
+
+      <v-dialog v-model="showUpdateProfile" max-width="1000" width="90%" persistent>
+        <UpdateProfile @btnClose="showUpdateProfile = false" />
+      </v-dialog>
     </v-app-bar>
 
     <!-- Mobile Navigation Drawer - Outside App Bar -->
@@ -108,15 +134,20 @@
 <script>
 import Login from '@/components/Authentication/Login.vue'
 import Register from '@/components/Authentication/Register.vue'
+import ChangePassword from '@/components/Authentication/ChangePassword.vue'
+import UpdateProfile from '@/components/Authentication/UpdateProfile.vue'
 import { useUserStore } from '@/stores/UserStore'
 
 export default {
   name: 'TopStrip',
-  components: { Login, Register },
+  components: { Login, Register, ChangePassword, UpdateProfile },
   data: () => ({
     showLogin: false,
     showRegister: false,
+    showChangePassword: false,
+    showUpdateProfile: false,
     drawer: false,
+    userMenu: false,
     activeTab: 0,
     tabs: [
       { id: 0, text: 'חוקים ותקנות', route: '/regulations' },
@@ -150,6 +181,14 @@ export default {
     syncActiveTab() {
       const tabIndex = this.visibleTabs.findIndex(tab => tab.route === this.$route.path)
       if (tabIndex !== -1) this.activeTab = tabIndex
+    },
+    updateProfile() {
+      this.userMenu = false
+      this.showUpdateProfile = true
+    },
+    changePassword() {
+      this.userMenu = false
+      this.showChangePassword = true
     }
   },
   watch: {
@@ -184,4 +223,5 @@ export default {
 :deep(.v-tab__content) {
   color: inherit;
 }
+
 </style>

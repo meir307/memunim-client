@@ -90,6 +90,13 @@
                   @click="resolveHazard"
                   size="small"
                 ></v-btn>
+                <!-- Delete button -->
+                <v-btn 
+                  icon="mdi-delete" 
+                  class="delete-btn-icon" 
+                  @click="deleteHazard"
+                  size="small"
+                ></v-btn>
               </div>
             </div>
           </div>
@@ -303,6 +310,12 @@ export default {
       emit('resolve-hazard', props.hazard.id)
     }
 
+    function deleteHazard() {
+      const confirmed = confirm(`האם למחוק את המפגע? "${props.hazard.title}"?`)
+      if (!confirmed) return
+      emit('delete-hazard', props.hazard.id)
+    }
+
     async function saveHazardRemark() {
       try {
         await hazardStore.saveHazardRemark({
@@ -338,6 +351,7 @@ export default {
       getImageUrl,
       openImage,
       resolveHazard,
+      deleteHazard,
       saveHazardRemark,
       saveSeverity,
       localSeverity
@@ -598,6 +612,28 @@ export default {
   font-size: 20px !important;
 }
 
+.delete-btn-icon {
+  background-color: #f44336 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  min-width: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+
+.delete-btn-icon:hover {
+  background-color: #d32f2f !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  transform: scale(1.1);
+}
+
+.delete-btn-icon ::v-deep(.v-icon) {
+  color: white !important;
+  font-size: 20px !important;
+}
 
 .description-box {
   display: flex;

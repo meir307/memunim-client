@@ -15,7 +15,7 @@
       <v-card-text class="pa-0">
         <div class="tiles-container">
           <div v-if="hazards.length === 0" class="no-data">
-            לא הוגדרו מפגעים
+            לא הוזנו מפגעים
           </div>
           <HazardTile
             v-for="hazard in hazards"
