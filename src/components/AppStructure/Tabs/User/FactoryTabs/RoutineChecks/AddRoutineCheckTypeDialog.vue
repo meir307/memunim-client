@@ -17,6 +17,7 @@
                         required 
                         reverse
                         :rules="[v => !!v || 'סוג פעילות חובה']"
+                        no-data-text="כל סוגי הפעילות שהוגדרו נמצאים בשימוש"
                     ></v-select>
                     
                     <v-textarea 
@@ -67,11 +68,25 @@ export default {
         async function loadCheckTypes() {
             try {
                 const types = await routineCheckStore.getFactoryCheckTypes(userStore.selectedFactory.id)
-                checkTypeOptions.value = types.map(type => ({
-                    title: type.mame || type.name || '',
-                    value: type.id,
-                    period: type.checkPeriodInMonth 
-                }))
+                
+                // Fetch routine check types that are already in use (if not already loaded)
+                if (!routineCheckStore.getRoutineCheckTypes || routineCheckStore.getRoutineCheckTypes.length === 0) {
+                    await routineCheckStore.fetchRoutineChecks(userStore.selectedFactory.id)
+                }
+                
+                // Get routine check types that are already in use
+                const usedCheckTypes = routineCheckStore.getRoutineCheckTypes || []
+                const usedCheckTypeIds = new Set(usedCheckTypes.map(check => check.checkTypeId).filter(id => id != null))
+                
+                // Filter out check types that are already in use
+                checkTypeOptions.value = types
+                    .filter(type => !usedCheckTypeIds.has(type.id))
+                    .map(type => ({
+                        title: type.mame || type.name || '',
+                        value: type.id,
+                        period: type.checkPeriodInMonth 
+                    }))
+
             } catch (error) {
                 console.error('Failed to load check types:', error)
                 checkTypeOptions.value = []

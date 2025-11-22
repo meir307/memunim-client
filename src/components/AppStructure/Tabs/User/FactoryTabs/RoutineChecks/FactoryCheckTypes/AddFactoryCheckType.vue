@@ -3,7 +3,7 @@
     <v-dialog :model-value="showDialog" @update:model-value="$emit('close-dialog')" max-width="750px" persistent>
         <v-card>
             <v-card-title class="popup-title d-flex align-center justify-space-between">
-                הוסף סוג פעילות שוטפת
+                הגדר סוג פעילות שוטפת
                 <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
             </v-card-title>
             <v-card-text>

@@ -97,7 +97,12 @@ export default {
                     checkTypeName: localCheckTypeName.value,
                     checkPeriodInMonth: localCheckPeriodInMonth.value
                 })
-                // List will be refreshed automatically by the store method
+                // Emit save event so parent can handle closing the dialog
+                emit('save', {
+                    id: props.id,
+                    checkTypeName: localCheckTypeName.value,
+                    checkPeriodInMonth: localCheckPeriodInMonth.value
+                })
             } catch (error) {
                 console.error('Failed to update factory check type:', error)
                 // Error message is already shown by the store
