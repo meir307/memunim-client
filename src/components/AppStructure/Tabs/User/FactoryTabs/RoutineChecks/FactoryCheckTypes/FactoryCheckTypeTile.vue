@@ -3,6 +3,7 @@
         <div class="tile-content">
             <span class="label">שם</span>
             <v-text-field
+                ref="nameInputRef"
                 v-model="localCheckTypeName"
                 density="compact"
                 variant="outlined"
@@ -56,6 +57,7 @@ export default {
         const localCheckTypeName = ref(props.checkTypeName)
         const localCheckPeriodInMonth = ref(props.checkPeriodInMonth || 12)
         const showDeleteButton = computed(() => props.id !== 0)
+        const nameInputRef = ref(null)
         // Update local values when props change
         watch(() => props.checkTypeName, (newVal) => {
             localCheckTypeName.value = newVal
@@ -108,13 +110,24 @@ export default {
             })
         }
 
+        function focusName() {
+            if (nameInputRef.value && nameInputRef.value.$el) {
+                const input = nameInputRef.value.$el.querySelector('input')
+                if (input) {
+                    input.focus()
+                }
+            }
+        }
+
         return {
-       localCheckTypeName,
-       localCheckPeriodInMonth,
-       showDeleteButton,
-       handleSave,
-       handleDelete
-   }
+            localCheckTypeName,
+            localCheckPeriodInMonth,
+            showDeleteButton,
+            nameInputRef,
+            handleSave,
+            handleDelete,
+            focusName
+        }
     }
 }
 </script>

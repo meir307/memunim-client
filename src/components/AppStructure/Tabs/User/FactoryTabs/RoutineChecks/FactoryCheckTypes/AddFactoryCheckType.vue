@@ -8,6 +8,7 @@
             </v-card-title>
             <v-card-text>
                 <FactoryCheckTypeTile
+                    ref="tileRef"
                     :key="tileKey"
                     :check-type-name="''"
                     :check-period-in-month="0"
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 import FactoryCheckTypeTile from './FactoryCheckTypeTile.vue'
 
@@ -39,10 +40,18 @@ export default {
     setup(props, { emit }) {
         const routineCheckStore = useRoutineCheckStore()
         const tileKey = ref(0)
+        const tileRef = ref(null)
 
-        watch(() => props.showDialog, (newVal) => {
+        watch(() => props.showDialog, async (newVal) => {
             if (newVal) {
                 tileKey.value++
+                // Wait for the component to be rendered and then focus
+                await nextTick()
+                setTimeout(() => {
+                    if (tileRef.value && tileRef.value.focusName) {
+                        tileRef.value.focusName()
+                    }
+                }, 100)
             }
         })
 
@@ -63,6 +72,7 @@ export default {
 
         return {
             tileKey,
+            tileRef,
             closeDialog,
             handleSave
         }
