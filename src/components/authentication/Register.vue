@@ -101,7 +101,7 @@ export default {
                 try {
                     const commonStore = useCommonStore()
                     const response = await axios.post(commonStore.apiUrl + 'user/register', this.user)
-                    alert('הרשמה בוצעה בהצלחה. ניתן להתחיל ולהתחבר עכשיו למערכת.')
+                    alert('הרשמה בוצעה בהצלחה.\nנשלח אליך מייל עם קישור להפעלת החשבון.\nיש להפעיל את החשבון כדי להתחיל להשתמש במערכת.')
                     console.log(response)
                     this.$emit('btnClose')
                 } catch (error) {
