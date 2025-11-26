@@ -24,8 +24,13 @@
                 <p class="mb-4">ניתן להתחבר עכשיו למערכת</p>
               </div>
               <div class="login-wrapper">
-                <Login @btnClose="handleLoginClose" />
+                <Login @btnClose="handleLoginClose" @forgot-password="handleForgotPassword" />
               </div>
+              
+              <!-- Forgot Password Dialog -->
+              <v-dialog v-model="showForgotPassword" max-width="1000" width="90%" persistent>
+                <ForgotPassword @btnClose="showForgotPassword = false" />
+              </v-dialog>
             </div>
             
             <div v-else-if="error" class="mb-4">
@@ -49,11 +54,13 @@ import axios from 'axios'
 import { useCommonStore } from '@/stores/CommonStore'
 import { useLoaderStore } from '@/stores/LoaderStore'
 import Login from './Login.vue'
+import ForgotPassword from './ForgotPassword.vue'
 
 export default {
   name: 'ActivateAccount',
   components: {
-    Login
+    Login,
+    ForgotPassword
   },
   setup() {
     const route = useRoute()
@@ -65,6 +72,7 @@ export default {
     const success = ref(false)
     const error = ref(false)
     const errorMessage = ref('')
+    const showForgotPassword = ref(false)
 
     async function activateAccount() {
       const activationCode = route.query.code
@@ -105,6 +113,10 @@ export default {
       router.push('/regulations')
     }
 
+    function handleForgotPassword() {
+      showForgotPassword.value = true
+    }
+
     function goToHome() {
       router.push('/regulations')
     }
@@ -118,7 +130,9 @@ export default {
       success,
       error,
       errorMessage,
+      showForgotPassword,
       handleLoginClose,
+      handleForgotPassword,
       goToHome
     }
   }

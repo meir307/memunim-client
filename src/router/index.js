@@ -68,6 +68,16 @@ const routes = [
     path: '/activate',
     name: 'activate',
     component: () => import('../components/Authentication/Activate.vue')
+  },
+  {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('../components/Authentication/ResetPassword.vue')
+  },
+  {
+    path: '/resetPassword',
+    name: 'resetPassword',
+    component: () => import('../components/Authentication/ResetPassword.vue')
   }
 ]
 

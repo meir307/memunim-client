@@ -91,7 +91,7 @@
 
       <!-- Dialogs -->
       <v-dialog v-model="showLogin" max-width="1000" width="90%" persistent>
-        <Login @btnClose="showLogin = false" />
+        <Login @btnClose="showLogin = false" @forgot-password="handleForgotPassword" />
   </v-dialog>
 
       <v-dialog v-model="showRegister" max-width="1000" width="90%" persistent>
@@ -104,6 +104,10 @@
 
       <v-dialog v-model="showUpdateProfile" max-width="1000" width="90%" persistent>
         <UpdateProfile @btnClose="showUpdateProfile = false" />
+      </v-dialog>
+
+      <v-dialog v-model="showForgotPassword" max-width="1000" width="90%" persistent>
+        <ForgotPassword @btnClose="showForgotPassword = false" />
       </v-dialog>
     </v-app-bar>
 
@@ -136,16 +140,18 @@ import Login from '@/components/Authentication/Login.vue'
 import Register from '@/components/Authentication/Register.vue'
 import ChangePassword from '@/components/Authentication/ChangePassword.vue'
 import UpdateProfile from '@/components/Authentication/UpdateProfile.vue'
+import ForgotPassword from '@/components/Authentication/ForgotPassword.vue'
 import { useUserStore } from '@/stores/UserStore'
 
 export default {
   name: 'TopStrip',
-  components: { Login, Register, ChangePassword, UpdateProfile },
+  components: { Login, Register, ChangePassword, UpdateProfile, ForgotPassword },
   data: () => ({
     showLogin: false,
     showRegister: false,
     showChangePassword: false,
     showUpdateProfile: false,
+    showForgotPassword: false,
     drawer: false,
     userMenu: false,
     activeTab: 0,
@@ -189,6 +195,10 @@ export default {
     changePassword() {
       this.userMenu = false
       this.showChangePassword = true
+    },
+    handleForgotPassword() {
+      this.showLogin = false
+      this.showForgotPassword = true
     }
   },
   watch: {

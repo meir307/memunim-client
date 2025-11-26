@@ -172,6 +172,47 @@ export const useUserStore = defineStore('UserStore', {
         this.postAction()
       }
     },
+
+    async forgotPassword(email) {
+      this.preAction()
+      try {
+        console.log('forgotPassword')
+        await axios.post(
+          this.apiUrl + 'user/forgotPassword',
+          {
+            email: email
+          }
+        )
+        // Success message will be shown by the component
+      } catch (error) {
+        alert(error.response?.data?.message || 'שגיאה בשליחת מייל לאיפוס סיסמה')
+        this.error = error.response?.data?.message || 'שגיאה בשליחת מייל לאיפוס סיסמה'
+        throw error
+      } finally {
+        this.postAction()
+      }
+    },
+
+    async resetPassword(resetCode, newPassword) {
+      this.preAction()
+      try {
+        console.log('resetPassword')
+        await axios.post(
+          this.apiUrl + 'user/resetPassword',
+          {
+            code: resetCode,
+            newPassword: newPassword
+          }
+        )
+        
+      } catch (error) {
+        alert(error.response?.data?.message || 'שגיאה באיפוס הסיסמה')
+        this.error = error.response?.data?.message || 'שגיאה באיפוס הסיסמה'
+        throw error
+      } finally {
+        this.postAction()
+      }
+    },
  
     preAction() {
       this.loaderStore.show()

@@ -14,6 +14,12 @@
             <v-text-field ref="passwordField" v-model="password" reverse label="סיסמה" type="password" required
               @keyup.enter="login"></v-text-field>
               
+            <div class="text-right mt-2 mb-4">
+              <a href="#" @click.prevent="openForgotPassword" class="forgot-password-link">
+                שכחתי סיסמה
+              </a>
+            </div>
+              
             <div class="popup-btn-row">
 
               <v-btn @click="login" color="primary">התחבר</v-btn>
@@ -42,11 +48,15 @@ import { useUserStore } from '@/stores/UserStore'
 
 export default {
   name: 'LoginComponent',
+  emits: ['btnClose', 'forgot-password'],
   data: () => ({
     email: '',
     password: ''
   }),
   methods: {
+    openForgotPassword() {
+      this.$emit('forgot-password')
+    },
     focusPassword() {
       this.$nextTick(() => {
         this.$refs.passwordField.focus()
@@ -90,4 +100,15 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.forgot-password-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+</style>
