@@ -20,7 +20,13 @@ export default {
   components: { AppLoader, TopStrip },
   setup() {
     const route = useRoute()
-    const isActivatePage = computed(() => route.path === '/activate' || route.path === '/reset-password' || route.path === '/resetPassword')
+    const isActivatePage = computed(() => 
+      route.path === '/activate' || 
+      route.path === '/reset-password' || 
+      route.path === '/resetPassword' ||
+      route.path === '/activate-trustee' ||
+      route.path === '/activateTrustee'
+    )
     
     return {
       isActivatePage

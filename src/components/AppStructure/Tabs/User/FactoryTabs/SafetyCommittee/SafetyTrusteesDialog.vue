@@ -147,11 +147,13 @@ function closeDelete() {
 
 async function save() {
     const factoryId = userStore.selectedFactory.id
+    const factoryName = userStore.selectedFactory.name
        
     // Convert boolean to integer for API
     const dataToSend = {
         ...editedItem.value,
-        isCommitteeMember: editedItem.value.isCommitteeMember ? 1 : 0
+        isCommitteeMember: editedItem.value.isCommitteeMember ? 1 : 0,
+        factoryName: factoryName
     }
     
     try {

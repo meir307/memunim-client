@@ -108,6 +108,11 @@ export default {
   },
   async created() {
     await this.userStore.getFactories()
+    
+    // If user role is 2, automatically view the first factory
+    if (this.userStore.user.role === 2 && this.userStore.factories && this.userStore.factories.length > 0) {
+      this.viewFactory(this.userStore.factories[0])
+    }
   },
   beforeRouteEnter(to, from, next) {
     // Check if user is authenticated

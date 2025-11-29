@@ -78,6 +78,16 @@ const routes = [
     path: '/resetPassword',
     name: 'resetPassword',
     component: () => import('../components/Authentication/ResetPassword.vue')
+  },
+  {
+    path: '/activate-trustee',
+    name: 'activate-trustee',
+    component: () => import('../components/Authentication/ActivateTrustee.vue')
+  },
+  {
+    path: '/activateTrustee',
+    name: 'activateTrustee',
+    component: () => import('../components/Authentication/ActivateTrustee.vue')
   }
 ]
 
