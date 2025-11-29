@@ -22,7 +22,7 @@
                                 </div>
                                 <span v-else-if="column.key === 'createdAt'">{{ formatDate(item.createdAt) }}</span>
                                 <div v-else-if="column.key === 'summary'" class="summary-text">{{ item.summary }}</div>
-                                <span v-else-if="column.key === 'actions'">
+                                <span v-else-if="column.key === 'actions' && userStore.user.role === 1">
                                     <v-btn icon size="small" @click="editMeeting(item)" color="primary" class="action-btn">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
@@ -56,20 +56,28 @@ export default {
     },
     setup() {
         const safetyCommitteeStore = useSafetyCommitteeStore()
+        const userStore = useUserStore()
         const loading = ref(false)
 
         const meetings = computed(() => {
             return safetyCommitteeStore.getMeetings
         })
 
-        const headers = [
-            { title: 'כותרת הפגישה', key: 'title', sortable: true, width: '200px' },
-            { title: 'תאריך', key: 'createdAt', sortable: true, width: '130px' },
-            { title: 'נוצר על ידי', key: 'createdBy', sortable: false, width: '120px' },
-            { title: 'סיכום', key: 'summary', sortable: false, width: '300px' },
-            { title: '', key: 'actions', sortable: false, align: 'center', width: '120px' }
+        const headers = computed(() => {
+            const baseHeaders = [
+                { title: 'כותרת הפגישה', key: 'title', sortable: true, width: '200px' },
+                { title: 'תאריך', key: 'createdAt', sortable: true, width: '130px' },
+                { title: 'נוצר על ידי', key: 'createdBy', sortable: false, width: '120px' },
+                { title: 'סיכום', key: 'summary', sortable: false, width: '300px' }
+            ]
             
-        ]
+            // Only add actions column if user role is 1
+            if (userStore.user.role === 1) {
+                baseHeaders.push({ title: '', key: 'actions', sortable: false, align: 'center', width: '120px' })
+            }
+            
+            return baseHeaders
+        })
 
         function formatDate(dateString) {
             if (!dateString) return ''
@@ -112,6 +120,7 @@ export default {
             meetings,
             headers,
             loading,
+            userStore,
             formatDate,
             deleteMeeting
         }

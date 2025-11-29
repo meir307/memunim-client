@@ -20,7 +20,7 @@
                   </a>
                 </div>
                 <span v-else-if="column.key === 'createdAt'">{{ formatDate(item.createdAt) }}</span>
-                <span v-else-if="column.key === 'actions'">
+                <span v-else-if="column.key === 'actions' && userStore.user.role === 1">
                   <v-btn icon size="small" @click="editProcedure(item)" color="primary" class="action-btn">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -86,13 +86,20 @@ var dialogMode = ref('add')
 
 const dialogTitle = ref('הוסף נהל בטיחות חדש')
 
-const headers = [
-  { title: 'שם הנהל', key: 'name', sortable: true },
- 
-  { title: 'הועלה על ידי', key: 'createdBy', sortable: false },
-  { title: 'תאריך', key: 'createdAt', sortable: true },
-  { title: '', key: 'actions', sortable: false, align: 'center' }
-]
+const headers = computed(() => {
+  const baseHeaders = [
+    { title: 'שם הנהל', key: 'name', sortable: true },
+    { title: 'הועלה על ידי', key: 'createdBy', sortable: false },
+    { title: 'תאריך', key: 'createdAt', sortable: true }
+  ]
+  
+  // Only add actions column if user role is 1
+  if (userStore.user.role === 1) {
+    baseHeaders.push({ title: '', key: 'actions', sortable: false, align: 'center' })
+  }
+  
+  return baseHeaders
+})
 
 function openDialog() {
   console.log('Opening dialog to add new procedure')

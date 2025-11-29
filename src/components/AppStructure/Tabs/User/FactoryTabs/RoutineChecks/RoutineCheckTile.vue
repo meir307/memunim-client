@@ -7,7 +7,7 @@
             <div class="info-column title-column">
               <h2 class="check-type-name">{{ checkType.checkTypeName }}</h2>
             </div>
-            <div class="info-column menu-column hide-on-mobile">
+            <div v-if="userStore.user.role === 1" class="info-column menu-column hide-on-mobile">
               <v-menu>
                 <template v-slot:activator="{ props }">
                   <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" class="menu-btn"></v-btn>
@@ -62,7 +62,7 @@
               <v-textarea v-model="localRemark" placeholder="הזן הערה..." rows="1" variant="outlined" density="compact"
                 class="remark-input"></v-textarea>
             </div>
-             <v-btn @click="saveRemark" color="primary" size="small" class="save-btn  hide-on-mobile">
+             <v-btn v-if="userStore.user.role === 1" @click="saveRemark" color="primary" size="small" class="save-btn  hide-on-mobile">
                 <v-icon left>mdi-check</v-icon>
                 שמור
               </v-btn>
@@ -88,6 +88,7 @@
 <script>
 import { ref, watch, computed } from 'vue'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
+import { useUserStore } from '@/stores/UserStore'
 import HistoryChecks from './HistoryChecks.vue'
 
 export default {
@@ -124,6 +125,7 @@ export default {
   emits: ['add-check', 'delete-check-type', 'refresh-tiles'],
   setup(props, { emit }) {
     const routineCheckStore = useRoutineCheckStore()
+    const userStore = useUserStore()
 
     // History dialog state
     const showHistoryDialog = ref(false)
@@ -218,6 +220,7 @@ export default {
     })
 
     return {
+      userStore,
       showHistoryDialog,
       localRemark,
       formatDate,

@@ -5,7 +5,7 @@
           <div class="title-container">
             <h2 class="title-text">פעילות שוטפת</h2>
 
-            <div class="buttons-group">
+            <div v-if="userStore.user.role === 1" class="buttons-group">
               <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
                 <v-icon>mdi-plus</v-icon>
                 הוסף סוג פעילות שוטפת
@@ -221,6 +221,7 @@
       })
 
       return {
+        userStore,
         showDialog,
         routineCheckTypeDialog,
         routineCheckTypes,

@@ -9,7 +9,7 @@
                     </v-tabs>
                    
                     
-                    <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
+                    <v-btn v-if="userStore.user.role === 1" color="primary" @click="openDialog" class="add-btn hide-on-mobile">
                         <v-icon left>{{ addButtonIcon }}</v-icon>
                         {{ addButtonText }}
                     </v-btn>

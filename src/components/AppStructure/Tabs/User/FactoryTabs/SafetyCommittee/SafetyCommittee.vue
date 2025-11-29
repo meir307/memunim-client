@@ -27,7 +27,7 @@
                                 <div v-else-if="column.key === 'fullName'" class="user-info">
                                     <span class="user-name">{{ item.fullName }}</span>
                                 </div>
-                                <span v-else-if="column.key === 'actions'">
+                                <span v-else-if="column.key === 'actions' && userStore.user.role === 1">
                                     <v-btn icon size="small" @click="editUser(item)" color="primary" class="action-btn">
                                         <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
@@ -64,6 +64,7 @@ export default {
     },
     setup() {
         const safetyCommitteeStore = useSafetyCommitteeStore()
+        const userStore = useUserStore()
         const loading = ref(false)
 
         // Use store state
@@ -78,14 +79,21 @@ export default {
             }))
         })
 
-        const headers = [
-            { title: 'חבר ועדה', key: 'isCommitteeMember', sortable: false, align: 'right', width: '50px' },
-            { title: 'שם', key: 'fullName', sortable: true, width: '150px' },
-            { title: 'אימייל', key: 'email', sortable: false, width: '150px'  },
-            { title: 'טלפון', key: 'phone', sortable: false, width: '150px' },
-            { title: '', key: 'actions', sortable: false, align: 'center', width: '420px' }
+        const headers = computed(() => {
+            const baseHeaders = [
+                { title: 'חבר ועדה', key: 'isCommitteeMember', sortable: false, align: 'right', width: '50px' },
+                { title: 'שם', key: 'fullName', sortable: true, width: '150px' },
+                { title: 'אימייל', key: 'email', sortable: false, width: '150px'  },
+                { title: 'טלפון', key: 'phone', sortable: false, width: '150px' }
+            ]
             
-        ]
+            // Only add actions column if user role is 1
+            if (userStore.user.role === 1) {
+                baseHeaders.push({ title: '', key: 'actions', sortable: false, align: 'center', width: '420px' })
+            }
+            
+            return baseHeaders
+        })
 
         onMounted(async () => {
             try {
@@ -110,6 +118,7 @@ export default {
             users,
             headers,
             loading,
+            userStore,
             handleCommitteeStatusChange
         }
     }
