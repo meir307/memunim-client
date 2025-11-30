@@ -248,6 +248,38 @@ export const useHazardStore = defineStore('hazard', {
       }
     },
 
+    // Resolve hazard
+    async resolveHazard(hazardId) {
+      alert('resolveHazard')
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        await axios.post(commonStore.apiUrl + 'hazards/resolveHazard', { 
+          id: hazardId,
+          factoryId: userStore.selectedFactory.id 
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        // Remove the hazard from the local state
+        this.hazards = this.hazards.filter(hazard => hazard.id !== hazardId)
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to resolve hazard'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Clear error
     clearError() {
       this.error = null

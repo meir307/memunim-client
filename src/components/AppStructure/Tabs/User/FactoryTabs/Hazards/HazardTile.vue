@@ -26,6 +26,7 @@
                   density="compact"
                   hide-details
                   class="severity-radios"
+                  :disabled="!canEditHazard"
                 >
                   <v-radio
                     :value="1"
@@ -59,6 +60,7 @@
                   rows="3"
                   class="description-textarea"
                   placeholder="אין תיאור"
+                  :readonly="!canEditHazard"
                 ></v-textarea>
               </div>
             </div>
@@ -70,6 +72,7 @@
                   color="primary"
                   size="small"
                   class="save-btn"
+                  :disabled="!canEditHazard"
                 >
                   <v-icon left>mdi-check</v-icon>
                   שמור
@@ -89,6 +92,7 @@
                   class="resolve-btn-icon" 
                   @click="resolveHazard"
                   size="small"
+                  :disabled="!canEditHazard"
                 ></v-btn>
                 <!-- Delete button -->
                 <v-btn 
@@ -96,6 +100,7 @@
                   class="delete-btn-icon" 
                   @click="deleteHazard"
                   size="small"
+                  :disabled="!canEditHazard"
                 ></v-btn>
               </div>
             </div>
@@ -125,6 +130,7 @@
 <script>
 import { computed, ref, watch } from 'vue'
 import { useHazardStore } from '@/stores/HazardStore'
+import { useUserStore } from '@/stores/UserStore'
 
 export default {
   name: 'HazardTile',
@@ -137,6 +143,7 @@ export default {
   emits: ['edit-hazard', 'delete-hazard', 'resolve-hazard'],
   setup(props, { emit }) {
     const hazardStore = useHazardStore()
+    const userStore = useUserStore()
     
     // Local reactive state for severity (visual only, no API calls)
     const localSeverity = ref(props.hazard.severity || 2)
@@ -261,6 +268,27 @@ export default {
       return props.hazard.createdBy || props.hazard.createdByName || 'לא ידוע'
     })
 
+    // Check if user can edit/delete: admin (role == 1) or creator
+    const canEditHazard = computed(() => {
+      const userRole = userStore.user.role
+      const currentUserId = userStore.user.id 
+      const hazardCreatorId = props.hazard.createdById 
+      
+      console.log(userRole, currentUserId, hazardCreatorId)
+
+      // Admin can always edit
+      if (userRole === 1) {
+        return true
+      }
+      
+      // Creator can edit their own hazard
+      if (hazardCreatorId && currentUserId && hazardCreatorId == currentUserId) {
+        return true
+      }
+      
+      return false
+    })
+
     const hazardImage = computed(() => {
       // First check if files array exists
       if (props.hazard.files) {
@@ -354,7 +382,8 @@ export default {
       deleteHazard,
       saveHazardRemark,
       saveSeverity,
-      localSeverity
+      localSeverity,
+      canEditHazard
     }
   }
 }

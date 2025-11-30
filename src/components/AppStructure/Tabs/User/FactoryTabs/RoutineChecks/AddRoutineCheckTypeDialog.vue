@@ -8,17 +8,28 @@
             </v-card-title>
             <v-card-text>
                 <v-form @submit.prevent="save">
-                    <v-select 
-                        v-model="editedItem.checkType" 
-                        :items="checkTypeOptions" 
-                        item-title="title"
-                        item-value="value"
-                        label="סוג פעילות" 
-                        required 
-                        reverse
-                        :rules="[v => !!v || 'סוג פעילות חובה']"
-                        no-data-text="כל סוגי הפעילות שהוגדרו נמצאים בשימוש"
-                    ></v-select>
+                    <div class="select-with-button">
+                        <v-select 
+                            v-model="editedItem.checkType" 
+                            :items="checkTypeOptions" 
+                            item-title="title"
+                            item-value="value"
+                            label="סוג פעילות" 
+                            required 
+                            reverse
+                            :rules="[v => !!v || 'סוג פעילות חובה']"
+                            no-data-text="כל סוגי הפעילות שהוגדרו נמצאים בשימוש"
+                            class="select-field"
+                        ></v-select>
+                        <v-btn 
+                            icon="mdi-plus-circle-outline" 
+                            variant="flat" 
+                            size="small"
+                            class="select-button"
+                            color="success"
+                            @click="AddFactoryCheckType"
+                        ></v-btn>
+                    </div>
                     
                     <v-textarea 
                         v-model="editedItem.remark" 
@@ -36,15 +47,25 @@
             </v-card-text>
         </v-card>
     </v-dialog>
+
+    <!-- Add Factory Check Type Dialog -->
+    <AddFactoryCheckType 
+        :show-dialog="showAddFactoryCheckTypeDialog"
+        @close-dialog="closeAddFactoryCheckTypeDialog"
+    />
 </template>
 
 <script>
 import { ref, computed, watch, toRaw, onMounted } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
+import AddFactoryCheckType from './FactoryCheckTypes/AddFactoryCheckType.vue'
 
 export default {
     name: 'AddRoutineCheckTypeDialog',
+    components: {
+        AddFactoryCheckType
+    },
     props: {
         showDialog: {
             type: Boolean,
@@ -58,6 +79,7 @@ export default {
 
         const dialog = ref(false)
         const loading = ref(false)
+        const showAddFactoryCheckTypeDialog = ref(false)
         const editedItem = ref({
             checkType: '',
             remark: ''
@@ -129,6 +151,16 @@ export default {
             }
         }
 
+        function AddFactoryCheckType() {
+            showAddFactoryCheckTypeDialog.value = true
+        }
+
+        function closeAddFactoryCheckTypeDialog() {
+            showAddFactoryCheckTypeDialog.value = false
+            // Refresh the check types list after adding a new factory check type
+            loadCheckTypes()
+        }
+
         async function save() {
             loading.value = true
             const factoryId = userStore.selectedFactory.id
@@ -176,12 +208,15 @@ export default {
         return {
             dialog,
             loading,
+            showAddFactoryCheckTypeDialog,
             editedItem,
             formTitle,
             checkTypeOptions,
             openDialog,
             closeDialog,
-            save
+            save,
+            AddFactoryCheckType,
+            closeAddFactoryCheckTypeDialog
         }
     }
 }
@@ -207,6 +242,35 @@ export default {
     gap: 16px;
     margin-top: 24px;
     margin-bottom: 8px;
+}
+
+.select-with-button {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    direction: rtl;
+}
+
+.select-field {
+    flex: 1;
+}
+
+.select-button {
+    margin-top: 2px;
+    background-color: #4caf50 !important;
+    color: white !important;
+    font-weight: bold;
+}
+
+.select-button :deep(.v-icon) {
+    color: white !important;
+    font-weight: bold;
+    font-size: 28px !important;
+}
+
+.select-button:hover {
+    background-color: #45a049 !important;
+    transform: scale(1.1);
 }
 </style>
 

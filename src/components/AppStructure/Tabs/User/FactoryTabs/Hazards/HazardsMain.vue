@@ -92,7 +92,7 @@ export default {
       if (confirm('האם אתה בטוח שברצונך לסמן את המפגע כפתור?')) {
         try {
           // TODO: Implement resolve hazard API call
-          // await hazardStore.resolveHazard(hazardId)
+          await hazardStore.resolveHazard(hazardId)
           console.log('Resolving hazard:', hazardId)
           alert('המפגע סומן כפתור בהצלחה')
           refreshHazards()
