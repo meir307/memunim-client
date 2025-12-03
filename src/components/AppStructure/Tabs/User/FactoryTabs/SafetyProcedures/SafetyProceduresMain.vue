@@ -244,15 +244,5 @@ function deleteGuide(guide) {
   height: 2px;
   opacity: 1;
 }
-
-.hide-on-mobile {
-  display: block;
-}
-
-@media (max-width: 768px) {
-  .hide-on-mobile {
-    display: none !important;
-  }
-}
 </style>
 

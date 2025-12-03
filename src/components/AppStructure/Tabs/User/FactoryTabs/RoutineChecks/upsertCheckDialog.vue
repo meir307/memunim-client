@@ -33,7 +33,7 @@
               </v-dialog>
             </v-col>
             
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="4" class="hide-on-mobile">
               <v-text-field
                 v-model="editedItem.checkFrequency"
                 label="תדירות בדיקה (חודשים)"
@@ -45,7 +45,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="4" class="hide-on-mobile">
               <v-text-field
                 v-model="formattedNextCheck"
                 label="תאריך הפעולה הבאה"

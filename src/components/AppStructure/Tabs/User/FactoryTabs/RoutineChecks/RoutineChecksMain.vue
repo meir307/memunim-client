@@ -288,17 +288,9 @@
     font-size: 1.1rem;
   }
 
-  .hide-on-mobile {
-    display: block;
-  }
-
   @media (max-width: 768px) {
     .tiles-container {
       padding: 8px;
-    }
-    
-    .hide-on-mobile {
-      display: none !important;
     }
   }
   </style>

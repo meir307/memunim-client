@@ -180,15 +180,4 @@ onMounted(async () => {
 .tabs-in-title ::v-deep .v-tabs-slider {
     background: white;
 }
-
-.hide-on-mobile {
-    display: block;
-}
-
-@media (max-width: 768px) {
-    .hide-on-mobile {
-        display: none !important;
-    }
-}
-
 </style>

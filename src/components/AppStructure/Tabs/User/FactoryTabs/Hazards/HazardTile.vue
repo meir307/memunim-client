@@ -767,17 +767,10 @@ export default {
   }
 }
 
-.hide-on-mobile {
-  display: block;
-}
-
 .mobile-image-btn {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .hide-on-mobile {
-    display: none !important;
-  }
 }
 </style>

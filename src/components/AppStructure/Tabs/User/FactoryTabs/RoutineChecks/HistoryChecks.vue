@@ -1,15 +1,16 @@
 <template>
-  <v-dialog :model-value="showDialog" @update:model-value="$emit('close-history')" max-width="1000px" persistent>
+  <v-dialog :model-value="showDialog" @update:model-value="$emit('close-history')" max-width="750px" persistent>
     <v-card class="history-card">
       <v-card-title class="popup-title d-flex align-center justify-space-between">
         היסטורית פעילות - {{ checkTypeName }}
         <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
       </v-card-title>
       
-      <v-card-text class="pa-4">
-        <v-row class="history-content">
+      <v-card-text class="pt-4 px-4" style="padding-bottom: 0;">
+        <div class="panels-wrapper">
+          <div class="history-content">
 
-          <v-col cols="6">
+            <div class="panel-column">
             <div class="panel-container">
               <div class="panel-title-with-button">
                 <h3 class="panel-title">הסטורית בדיקות</h3>
@@ -36,9 +37,9 @@
                 </div>
               </div>
             </div>
-          </v-col>
+          </div>
           <!-- Left Panel - Files -->
-          <v-col cols="6">
+          <div class="panel-column">
             <div class="panel-container">
               <div class="panel-title-with-button">
                 <h3 class="panel-title">הקבצים שמקושרים לבדיקה</h3>
@@ -67,28 +68,24 @@
                 </div>
               </div>
             </div>
-          </v-col>
+          </div>
 
           <!-- Right Panel - Check Dates -->
          
-        </v-row>
-
+          </div>
+        </div>
         <!-- Remarks Section -->
-        <v-row class="mt-4">
-          <v-col cols="12">
-            <div class="remarks-section">
-              <div class="remarks-container">
-                <v-textarea v-model="selectedRemark" label="הערות על הבדיקה המסומנת" rows="1" reverse variant="outlined"
-                  class="remarks-field"
-                  :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר בדיקה להצגת הערות'"></v-textarea>
-                <v-btn color="primary" @click="saveRemarks" :disabled="!selectedCheck">
-                  <v-icon left>mdi-content-save</v-icon>
-                  שמור
-                </v-btn>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
+        <div class="remarks-section">
+          <div class="remarks-container">
+            <v-textarea v-model="selectedRemark" label="הערות על הבדיקה המסומנת" rows="1" reverse variant="outlined"
+              class="remarks-field"
+              :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר בדיקה להצגת הערות'"></v-textarea>
+            <v-btn color="primary" @click="saveRemarks" :disabled="!selectedCheck">
+              <v-icon left>mdi-content-save</v-icon>
+              שמור
+            </v-btn>
+          </div>
+        </div>
       </v-card-text>
       
       
@@ -376,14 +373,32 @@ export default {
 </script>
 
 <style scoped>
+.panels-wrapper {
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 .history-content {
   min-height: 300px;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.panel-column {
+  flex: 1;
+  min-width: 0;
 }
 
 .panel-container {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .panel-title-with-button {
@@ -394,7 +409,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 5px;
 }
 
 .panel-title {
@@ -416,7 +431,7 @@ export default {
 .panel-content {
   border: 2px solid #333;
   border-top: none;
-  height: 350px;
+  height: 200px;
   overflow-y: auto;
   background: #fafafa;
   display: flex;
@@ -541,10 +556,25 @@ export default {
   background-color: rgba(244, 67, 54, 0.1) !important;
 }
 
+.remarks-section {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-bottom: 10px !important;
+}
+
 .remarks-container {
+  padding-top: 10px !important;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
+
+}
+
+.remarks-container :deep(.v-textarea) {
+  
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .remarks-field {
@@ -561,11 +591,11 @@ export default {
 }
 
 .popup-btn-row {
-  margin-top: -15px;
+  margin-top: 0px;
 }
 
 .close-btn {
-  padding: 12px 24px !important;
+  padding: 12px 4px !important;
   min-width: 80px;
   height: 40px;
 }
@@ -593,6 +623,10 @@ export default {
   .date-text,
   .file-name {
     font-size: 0.9rem;
+  }
+  
+  .remarks-section {
+    margin-top: 16px;
   }
 }
 </style>

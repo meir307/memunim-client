@@ -7,7 +7,7 @@
             <div class="info-column title-column">
               <h2 class="check-type-name">{{ checkType.checkTypeName }}</h2>
             </div>
-            <div v-if="userStore.user.role === 1" class="info-column menu-column hide-on-mobile">
+            <div v-if="userStore.user.role === 1" class="info-column menu-column">
               <v-menu>
                 <template v-slot:activator="{ props }">
                   <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" class="menu-btn"></v-btn>
@@ -533,17 +533,6 @@ export default {
   .info-icon {
     font-size: 12px;
     min-width: 14px;
-  }
-}
-
-/* Hide elements on mobile */
-.hide-on-mobile {
-  display: block;
-}
-
-@media (max-width: 768px) {
-  .hide-on-mobile {
-    display: none !important;
   }
 }
 
