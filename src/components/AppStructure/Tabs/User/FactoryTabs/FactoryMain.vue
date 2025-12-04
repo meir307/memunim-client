@@ -120,6 +120,12 @@ export default {
                      title: 'ועדת בטיחות',
                      icon: 'mdi-account-group',
                      route: 'safety-committee'
+                 },
+                 {
+                     key: 'factory-tools',
+                     title: 'עוד על המפעל',
+                     icon: 'mdi-factory',
+                     route: 'factory-tools'
                  }
              ]
          }
