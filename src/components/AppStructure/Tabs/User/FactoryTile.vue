@@ -6,91 +6,88 @@
     dir="rtl"
     :width="$vuetify.display.mdAndUp ? '800' : '98%'"
   >
-    <v-card-title class="d-flex align-center justify-space-between pa-4">
-      <div class="d-flex align-center">
-        <v-avatar
-          color="primary"
-          size="40"
-          class="me-3"
-        >
-          <v-icon color="white">mdi-factory</v-icon>
-        </v-avatar>
-        <div>
-          <h3 class="text-h6 mb-1">{{ factory.name }}</h3>
-          <p class="text-caption text-medium-emphasis mb-0">ח.פ.      {{ factory.hetpei }}</p>
+    <v-card-text class="pa-3">
+      <div class="factory-content">
+        <!-- Line 1: Name and Menu -->
+        <div class="factory-line-1 d-flex align-center justify-space-between">
+          <div class="d-flex align-center flex-grow-1">
+            <v-avatar
+              color="primary"
+              size="32"
+              class="me-2"
+            >
+              <v-icon color="white" size="18">mdi-factory</v-icon>
+            </v-avatar>
+            <h3 class="text-h6 mb-0 me-2 font-weight-bold">{{ factory.name }}</h3>
+            <span class="text-caption text-medium-emphasis">ח.פ. {{ factory.hetpei }}</span>
+          </div>
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                icon="mdi-dots-vertical"
+                variant="text"
+                v-bind="props"
+                size="small"
+                density="compact"
+              ></v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                prepend-icon="mdi-pencil"
+                title="ערוך"
+                @click="$emit('edit', factory)"
+              ></v-list-item>
+              <v-list-item
+                prepend-icon="mdi-delete"
+                title="מחק"
+                @click="$emit('delete', factory)"
+              ></v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+
+        <!-- Line 2: Address and Description -->
+        <div class="factory-line-2 text-body-2 text-medium-emphasis">
+          <span v-if="factory.address" class="me-3">
+            <v-icon size="14" class="me-1">mdi-map-marker</v-icon>{{ factory.address }}
+          </span>
+          <span v-if="factory.description" class="text-truncate d-inline-block" style="max-width: 400px;">
+            {{ factory.description }}
+          </span>
+        </div>
+
+        <!-- Line 3: Employees, Hours, and Actions -->
+        <div class="factory-line-3 d-flex align-center justify-space-between">
+          <div class="d-flex align-center gap-3">
+            <span v-if="factory.employees" class="text-body-2">
+              <v-icon size="14" class="me-1">mdi-account-group</v-icon>{{ factory.employees }} עובדים
+            </span>
+            <span v-if="factory.memuneHours" class="text-body-2">
+              <v-icon size="14" class="me-1">mdi-clock-outline</v-icon>{{ factory.memuneHours }} שעות ממונה
+            </span>
+          </div>
+          <div class="d-flex gap-2">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              prepend-icon="mdi-factory"
+              size="small"
+              @click="$emit('view', factory)"
+            >
+              פעילות
+            </v-btn>
+            <v-btn
+              color="primary"
+              prepend-icon="mdi-pencil"
+              size="small"
+              @click="$emit('edit', factory)"
+            >
+              ערוך
+            </v-btn>
+          </div>
         </div>
       </div>
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-btn
-            icon="mdi-dots-vertical"
-            variant="text"
-            v-bind="props"
-            size="small"
-          ></v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            prepend-icon="mdi-pencil"
-            title="ערוך"
-            @click="$emit('edit', factory)"
-          ></v-list-item>
-          <v-list-item
-            prepend-icon="mdi-delete"
-            title="מחק"
-            @click="$emit('delete', factory)"
-          ></v-list-item>
-        </v-list>
-      </v-menu>
-    </v-card-title>
-
-    <v-divider></v-divider>
-
-    <v-card-text class="pa-4">
-             <v-row>
-         <v-col cols="7">
-           <div class="mb-3">
-             <div class="text-caption text-medium-emphasis mb-1">כתובת</div>
-             <div class="text-body-2">{{ factory.address || 'לא צוין' }}</div>
-           </div>
-           
-           <div class="mb-3">
-             <div class="text-caption text-medium-emphasis mb-1">תאור המפעל</div>
-             <div class="text-body-2">{{ factory.description || 'לא צוין' }}</div>
-           </div>
-         </v-col>
-         
-         <v-col cols="5">
-           <div class="mb-3">
-             <div class="text-caption text-medium-emphasis mb-1">מספר עובדים</div>
-             <div class="text-body-2">{{ factory.employees || 'לא צוין' }}</div>
-           </div>
-           <div class="mb-3">
-             <div class="text-caption text-medium-emphasis mb-1">שעות ממונה בחודש</div>
-             <div class="text-body-2">{{ factory.memuneHours || 'לא צוין' }}</div>
-           </div>
-         </v-col>
-       </v-row>
     </v-card-text>
-
-    <v-card-actions class="pa-4 pt-0">
-      <v-spacer></v-spacer>
-      <v-btn
-        color="primary"
-        variant="outlined"
-        prepend-icon="mdi-factory"
-        @click="$emit('view', factory)"
-      >
-        פעילות
-      </v-btn>
-      <v-btn
-        color="primary"
-        prepend-icon="mdi-pencil"
-        @click="$emit('edit', factory)"
-      >
-        ערוך
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -126,16 +123,49 @@ export default {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* RTL specific adjustments */
-.factory-tile :deep(.v-card-title) {
-  direction: rtl;
+.factory-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
+.factory-line-1,
+.factory-line-2,
+.factory-line-3 {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.factory-line-2 {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+/* RTL specific adjustments */
 .factory-tile :deep(.v-card-text) {
   direction: rtl;
+  padding: 12px !important;
 }
 
-.factory-tile :deep(.v-card-actions) {
-  direction: rtl;
+@media (max-width: 768px) {
+  .factory-line-3 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .factory-line-3 > div:last-child {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 </style>
