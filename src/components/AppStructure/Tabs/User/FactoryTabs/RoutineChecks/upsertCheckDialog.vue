@@ -112,6 +112,7 @@ import {
   getDisplayValue,
   isValidDDMMYYYY
 } from '@/utils/DateFormater'
+import { processFiles } from '@/utils/ImageCompressor'
 
 export default {
   name: 'UpsertCheckDialog',
@@ -239,6 +240,7 @@ export default {
       }
     }
 
+
     function closeDialog() {
       dialog.value = false
       resetForm()
@@ -267,6 +269,9 @@ export default {
         // Get raw data to avoid proxy issues
         const rawData = toRaw(editedItem.value)
         
+        // Process files to compress images before uploading
+        const processedDocuments = await processFiles(rawData.documents)
+        
         // Create FormData for file uploads
         const formData = new FormData()
         formData.append('checkTypeId', props.checkType.checkTypeId)
@@ -275,16 +280,16 @@ export default {
         formData.append('description', rawData.description || '')
         formData.append('factoryId', factoryId)
         
-        // Add documents if any - THIS IS WHERE FILES ARE ATTACHED
-        if (rawData.documents) {
-          if (Array.isArray(rawData.documents)) {
+        // Add processed documents if any
+        if (processedDocuments) {
+          if (Array.isArray(processedDocuments)) {
             // Multiple files
-            rawData.documents.forEach((file) => {
+            processedDocuments.forEach((file) => {
               formData.append(`documents`, file)
             })
           } else {
             // Single file
-            formData.append('documents', rawData.documents)
+            formData.append('documents', processedDocuments)
           }
         }
         

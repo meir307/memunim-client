@@ -30,6 +30,7 @@
 
 <script>
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
+import { processFiles } from '@/utils/ImageCompressor'
 
 export default {
     name: 'AddCheckFilesDialog',
@@ -80,8 +81,11 @@ export default {
             }
 
             try {
+                // Process files to compress images before uploading
+                const processedFiles = await processFiles(this.selectedFiles, 100)
+                
                 const routineCheckStore = useRoutineCheckStore()
-                const checkFiles = await routineCheckStore.addCheckFiles(this.checkId, this.selectedFiles)
+                const checkFiles = await routineCheckStore.addCheckFiles(this.checkId, processedFiles)
 
                 this.$emit('checkFilesChanged', checkFiles)
 
