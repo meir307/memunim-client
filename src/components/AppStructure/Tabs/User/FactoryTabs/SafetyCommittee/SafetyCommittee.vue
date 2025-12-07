@@ -6,6 +6,7 @@
                     :headers="headers"
                     :items="users"
                     :loading="loading"
+                    :items-per-page="-1"
                     class="modern-table"
                     no-data-text="אין נאמני בטיחות"
                     loading-text="טוען נתונים..."

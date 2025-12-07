@@ -6,6 +6,7 @@
                     :headers="headers"
                     :items="meetings"
                     :loading="loading"
+                    :items-per-page="-1"
                     class="modern-table"
                     no-data-text="אין פגישות ועדה"
                     loading-text="טוען נתונים..."

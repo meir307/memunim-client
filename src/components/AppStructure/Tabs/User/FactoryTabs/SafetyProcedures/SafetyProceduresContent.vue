@@ -6,6 +6,7 @@
           :headers="headers"
           :items="procedures"
           :loading="loading"
+          :items-per-page="-1"
           class="modern-table"
           no-data-text="אין נהלי בטיחות"
           loading-text="טוען נתונים..."

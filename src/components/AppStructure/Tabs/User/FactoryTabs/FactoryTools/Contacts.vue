@@ -6,6 +6,7 @@
           :headers="headers"
           :items="contacts"
           :loading="loading"
+          :items-per-page="-1"
           class="modern-table"
           no-data-text="אין אנשי קשר"
           loading-text="טוען נתונים..."

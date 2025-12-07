@@ -21,11 +21,11 @@
                         <v-data-table
                             :headers="headers"
                             :items="factoryCheckTypes"
+                            :items-per-page="-1"
                             class="modern-table"
                             no-data-text="אין סוגי פעילות שוטפת יחודיים"
                             loading-text="טוען נתונים..."
                             hide-default-footer
-                            style="height: 100%;"
                         >
                             <template #item="{ item, columns }">
                                 <tr>
@@ -260,23 +260,19 @@ export default {
 }
 
 .table-wrapper {
-    flex: 1;
+    width: 100%;
     min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: block;
 }
 
 .table-wrapper :deep(.v-data-table) {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+    display: block;
     padding: 5px !important;
 }
 
 .table-wrapper :deep(.v-data-table__wrapper) {
-    flex: 1;
-    overflow-y: auto;
+    overflow: visible !important;
     padding: 0 !important;
 }
 
@@ -297,11 +293,11 @@ export default {
 }
 
 .table-wrapper :deep(.v-data-table__wrapper table th) {
-    padding: 0 !important;
+    padding: 8px 12px !important;
 }
 
 .table-wrapper :deep(.v-data-table__wrapper table td) {
-    padding: 0 !important;
+    padding: 8px 12px !important;
 }
 
 .settings-content > * {
