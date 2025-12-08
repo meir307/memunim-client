@@ -102,11 +102,11 @@ export function getTodayYYYYMMDD() {
 /**
  * Add months to a date and return in dd/MM/yyyy format
  * @param {Date|string} date - The base date
- * @param {number} months - Number of months to add
+ * @param {number} months - Number of months to add (can be negative to subtract)
  * @returns {string} - New date in dd/MM/yyyy format
  */
 export function addMonthsToDate(date, months) {
-  if (!date || !months || months <= 0) return ''
+  if (!date || months === undefined || months === null || isNaN(months)) return ''
   
   let dateObj
   if (typeof date === 'string') {
@@ -256,13 +256,25 @@ export function isPastDate(date) {
 
 /**
  * Check if a date is in the future
- * @param {Date|string} date - The date to check
+ * @param {Date|string} date - The date to check (supports dd/MM/yyyy format)
  * @returns {boolean} - True if the date is in the future
  */
 export function isFutureDate(date) {
   if (!date) return false
   
-  const dateObj = typeof date === 'string' ? new Date(date) : date
+  let dateObj
+  if (typeof date === 'string') {
+    // Try parsing as dd/MM/yyyy format first
+    if (date.includes('/')) {
+      dateObj = parseFromDDMMYYYY(date)
+    } else {
+      // Try standard Date parsing
+      dateObj = new Date(date)
+    }
+  } else {
+    dateObj = date
+  }
+  
   if (!dateObj || isNaN(dateObj.getTime())) return false
   
   const today = new Date()

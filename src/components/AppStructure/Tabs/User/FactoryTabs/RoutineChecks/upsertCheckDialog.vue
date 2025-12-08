@@ -110,7 +110,8 @@ import {
   addMonthsToDate, 
   getDatePickerValue, 
   getDisplayValue,
-  isValidDDMMYYYY
+  isValidDDMMYYYY,
+  isFutureDate
 } from '@/utils/DateFormater'
 import { processFiles } from '@/utils/ImageCompressor'
 
@@ -266,12 +267,24 @@ export default {
       try {
         const factoryId = userStore.selectedFactory.id
         
+
         // Get raw data to avoid proxy issues
         const rawData = toRaw(editedItem.value)
         
         // Process files to compress images before uploading
         const processedDocuments = await processFiles(rawData.documents)
         
+        // If check date is in the future, adjust dates:
+        // - Set nextCheck to the original checkDate
+        // - Subtract checkFrequency months from checkDate
+        if (!isEditMode.value && isFutureDate(rawData.checkDate)) {
+          const months = parseInt(rawData.checkFrequency)
+          if (!isNaN(months) && months > 0) {
+            rawData.nextCheck = rawData.checkDate
+            rawData.checkDate = addMonthsToDate(rawData.checkDate, -months)
+          }
+        }
+
         // Create FormData for file uploads
         const formData = new FormData()
         formData.append('checkTypeId', props.checkType.checkTypeId)

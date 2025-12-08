@@ -6,7 +6,7 @@
             <h2 class="title-text">פעילות שוטפת</h2>
 
             <div v-if="userStore.user.role === 1" class="buttons-group">
-              <v-btn color="primary" @click="openDialog" class="add-btn hide-on-mobile">
+              <v-btn color="primary" @click="openDialog" class="add-btn ">
                 <v-icon>mdi-plus</v-icon>
                 הוסף סוג פעילות שוטפת
               </v-btn>
