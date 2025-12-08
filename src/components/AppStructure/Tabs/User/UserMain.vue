@@ -89,6 +89,10 @@
 import UpsertFactory from './UpsertFactory.vue'
 import FactoryTile from './FactoryTile.vue'
 import { useUserStore } from '@/stores/UserStore'
+import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
+import { useHazardStore } from '@/stores/HazardStore'
+import { useSafetyProceduresStore } from '@/stores/SafetyProceduresStore'
+import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 
 export default {
   name: 'UserMain',
@@ -107,6 +111,19 @@ export default {
     }
   },
   async created() {
+    // Reset all factory-related stores when entering UserMain
+    const routineCheckStore = useRoutineCheckStore()
+    routineCheckStore.reset()
+    
+    const hazardStore = useHazardStore()
+    hazardStore.reset()
+    
+    const safetyProceduresStore = useSafetyProceduresStore()
+    safetyProceduresStore.reset()
+    
+    const safetyCommitteeStore = useSafetyCommitteeStore()
+    safetyCommitteeStore.reset()
+    
     await this.userStore.getFactories()
     
     // If user role is 2, automatically view the first factory

@@ -82,10 +82,6 @@
 
 <script>
 import { useUserStore } from '@/stores/UserStore'
-import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
-import { useHazardStore } from '@/stores/HazardStore'
-import { useSafetyProceduresStore } from '@/stores/SafetyProceduresStore'
-import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 
 export default {
     name: 'FactoryMain',
@@ -187,22 +183,6 @@ export default {
          },
          
          goBack() {
-             // Reset RoutineCheckStore state
-             const routineCheckStore = useRoutineCheckStore()
-             routineCheckStore.reset()
-             
-             // Reset HazardStore state
-             const hazardStore = useHazardStore()
-             hazardStore.reset()
-             
-             // Reset SafetyProceduresStore state
-             const safetyProceduresStore = useSafetyProceduresStore()
-             safetyProceduresStore.reset()
-             
-             // Reset SafetyCommitteeStore state
-             const safetyCommitteeStore = useSafetyCommitteeStore()
-             safetyCommitteeStore.reset()
-             
              // Navigate back to user page
              this.$router.push('/user')
          }
