@@ -58,9 +58,14 @@ const routes = [
         component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SafetyProcedures/SafetyProceduresMain.vue')
       },
       {
-        path: 'factory-tools',
-        name: 'factory-tools',
-        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/FactoryTools/FactoryToolsMain.vue')
+        path: 'factory-details',
+        name: 'factory-details',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/FactoryDetails/FactoryDetailsMain.vue')
+      },
+      {
+        path: 'factory-tasks',
+        name: 'factory-tasks',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/FactoryTasks/FactoryTasksMain.vue')
       }
           ]
   },

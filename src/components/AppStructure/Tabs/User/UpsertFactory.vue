@@ -34,7 +34,7 @@
         <v-btn color="primary" type="submit" :loading="loading">
           {{ submitButtonText }}
         </v-btn>
-        <v-btn variant="outlined" @click="close">
+        <v-btn v-if="!hideCancel" variant="outlined" @click="close">
           ביטול
         </v-btn>
       </div>
@@ -50,7 +50,17 @@ export default {
     // Mode: 'add' or 'update'
     mode: String,
     // Initial data for update mode
-    initialData: Object
+    initialData: Object,
+    // Hide cancel button
+    hideCancel: {
+      type: Boolean,
+      default: false
+    },
+    // Reset form after saving
+    resetAfterSave: {
+      type: Boolean,
+      default: true
+    }
   },
   data: () => ({
     loading: false,
@@ -71,7 +81,7 @@ export default {
       
     submitButtonText() {
      
-      return this.mode === 'update' ? 'עדכן מפעל' : 'הוסף מפעל'
+      return this.mode === 'update' ? 'עדכן' : 'הוסף מפעל'
     },
     dialogTitle() {
       alert(this.mode)
@@ -80,11 +90,25 @@ export default {
   },
   created() {
     // Initialize form data if initialData is provided
-    if (this.initialData && Object.keys(this.initialData).length > 0) {
-      this.factoryData = { ...this.factoryData, ...this.initialData }
+    this.initializeData()
+  },
+  watch: {
+    // Watch for changes in initialData to update the form
+    initialData: {
+      handler(newData) {
+        if (newData && Object.keys(newData).length > 0) {
+          this.initializeData()
+        }
+      },
+      deep: true
     }
   },
   methods: {
+    initializeData() {
+      if (this.initialData && Object.keys(this.initialData).length > 0) {
+        this.factoryData = { ...this.factoryData, ...this.initialData }
+      }
+    },
     async submitForm() {
       // Validate form before submitting
       const { valid } = await this.$refs.form.validate()
@@ -106,15 +130,22 @@ export default {
         // Emit close event
         this.$emit('onClose')
 
-        // Reset form
-         this.factoryData = {
-           name: '',
-           hetpei: '',
-           employees: '',
-           address: '',
-           description: '',
-           memuneHours: '',
-         }
+        // Reset form only if resetAfterSave is true
+        if (this.resetAfterSave) {
+          this.factoryData = {
+            name: '',
+            hetpei: '',
+            employees: '',
+            address: '',
+            description: '',
+            memuneHours: '',
+          }
+        } else {
+          // Update factoryData with the saved data to reflect any server-side changes
+          if (this.mode === 'update' && this.initialData) {
+            this.factoryData = { ...this.factoryData }
+          }
+        }
       } catch (error) {
         console.error('Error adding factory:', error)
       } finally {

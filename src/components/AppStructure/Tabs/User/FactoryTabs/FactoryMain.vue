@@ -11,12 +11,12 @@
                      class="d-md-none me-1"
                  ></v-btn>
                  
-                <h2 class="me-9 text-truncate d-md-none" style="max-width: 150px; padding-right: 16px;">{{ factory?.name || 'שם המפעל' }}</h2>
-                <h2 class="me-9 d-none d-md-block" style="padding-right: 45px;">{{ factory?.name || 'שם המפעל' }}</h2>
+                <h2 class="me-9 text-truncate d-md-none" style="max-width: 150px; padding-right: 16px;">{{ selectedFactory?.name || 'שם המפעל' }}</h2>
+                <h2 class="me-9 d-none d-md-block" style="padding-right: 45px;">{{ selectedFactory?.name || 'שם המפעל' }}</h2>
  
-                <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block me-6">{{ factory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
+                <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block me-6">{{ selectedFactory?.memuneHours || '0' }} שעות ממונה חודשיות</p>
                 
-                <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block"> {{ factory?.employees || '0' }} עובדים</p>
+                <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block"> {{ selectedFactory?.employees || '0' }} עובדים</p>
              </div>
  
              <div class="d-flex align-center">
@@ -87,9 +87,8 @@ export default {
     name: 'FactoryMain',
          data() {
          return {
-             factory: null,
              showMobileMenu: false,
-             navigationItems: [
+             allNavigationItems: [
                  {
                      key: 'accidents',
                      title: 'תאונות',
@@ -121,22 +120,47 @@ export default {
                      icon: 'mdi-account-group',
                      route: 'safety-committee'
                  },
+                {
+                    key: 'factory-details',
+                    title: 'פרטי המפעל',
+                    icon: 'mdi-factory',
+                    route: 'factory-details'
+                },
                  {
-                     key: 'factory-tools',
-                     title: 'עוד על המפעל',
-                     icon: 'mdi-factory',
-                     route: 'factory-tools'
+                     key: 'factory-tasks',
+                     title: 'משימות',
+                     icon: 'mdi-check-circle',
+                     route: 'factory-tasks',
+                     requiresRole: 1
                  }
              ]
          }
      },
+    computed: {
+        userStore() {
+            return useUserStore()
+        },
+        selectedFactory() {
+            return this.userStore.selectedFactory
+        },
+        navigationItems() {
+            // Filter navigation items based on user role
+            return this.allNavigationItems.filter(item => {
+                // If item requires a specific role, check if user has that role
+                if (item.requiresRole !== undefined) {
+                    return this.userStore.user.role === item.requiresRole
+                }
+                // Otherwise, show the item to all users
+                return true
+            })
+        }
+    },
     created() {
         // Get factory from router state or store
         const userStore = useUserStore()
-        this.factory = userStore.selectedFactory || null
 
         // If no factory found, redirect back
-        if (!this.factory) {
+        if (!userStore.selectedFactory) {
             this.$router.push('/user')
         } else {
             // If we're on the factory route without a specific tab, redirect to routine-checks

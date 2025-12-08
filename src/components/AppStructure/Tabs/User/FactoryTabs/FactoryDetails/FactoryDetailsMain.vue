@@ -4,14 +4,14 @@
       <v-card-title class="modern-title" style="height: 55px; display: flex; align-items: center;">
         <div class="title-container">
           <v-tabs v-model="activeTab" color="white" class="tabs-in-title">
+            <v-tab value="details">פרטי המפעל</v-tab>
             <v-tab value="contacts">אנשי קשר</v-tab>
-            <v-tab value="yellow-notes">פתקים צהובים</v-tab>
           </v-tabs>
           <div class="title-section">
             <h1 class="title-text">{{ titleText }}</h1>
           </div>
           
-          <v-btn v-if="userStore.user.role === 1" color="primary" @click="openDialog" class="add-btn hide-on-mobile">
+          <v-btn v-if="userStore.user.role === 1 && activeTab === 'contacts'" color="primary" @click="openDialog" class="add-btn hide-on-mobile">
             <v-icon left>{{ addButtonIcon }}</v-icon>
             {{ addButtonText }}
           </v-btn>
@@ -19,11 +19,19 @@
       </v-card-title>
       <v-card-text class="pa-0">
         <v-window v-model="activeTab">
+          <v-window-item value="details">
+            <div class="pa-4">
+              <UpsertFactory 
+                mode="update" 
+                :initial-data="userStore.selectedFactory"
+                :hide-cancel="true"
+                :reset-after-save="false"
+                @onClose="onFactoryUpdated"
+              />
+            </div>
+          </v-window-item>
           <v-window-item value="contacts">
             <Contacts ref="contactsRef" />
-          </v-window-item>
-          <v-window-item value="yellow-notes">
-            <YellowNotes ref="yellowNotesRef" />
           </v-window-item>
         </v-window>
       </v-card-text>
@@ -35,49 +43,48 @@
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import Contacts from './Contacts.vue'
-import YellowNotes from './YellowNotes.vue'
+import UpsertFactory from '../../UpsertFactory.vue'
 
 const userStore = useUserStore()
 
-const activeTab = ref('contacts')
+const activeTab = ref('details')
 const contactsRef = ref(null)
-const yellowNotesRef = ref(null)
 
 const titleText = computed(() => {
   return ''
 })
 
 const addButtonText = computed(() => {
-  switch (activeTab.value) {
-    case 'contacts':
-      return 'הוסף איש קשר'
-    case 'yellow-notes':
-      return 'הוסף פתק צהוב'
-    default:
-      return 'הוסף'
+  if (activeTab.value === 'contacts') {
+    return 'הוסף איש קשר'
   }
+  return ''
 })
 
 const addButtonIcon = computed(() => {
-  switch (activeTab.value) {
-    case 'contacts':
-      return 'mdi-plus'
-    case 'yellow-notes':
-      return 'mdi-note-plus'
-    default:
-      return 'mdi-plus'
+  if (activeTab.value === 'contacts') {
+    return 'mdi-plus'
   }
+  return 'mdi-plus'
 })
 
 function openDialog() {
-  if (activeTab.value === 'contacts') {
-    if (contactsRef.value) {
-      contactsRef.value.openDialog()
-    }
-  } else if (activeTab.value === 'yellow-notes') {
-    // TODO: Implement yellow notes dialog
-    if (yellowNotesRef.value) {
-      yellowNotesRef.value.openDialog()
+  if (activeTab.value === 'contacts' && contactsRef.value) {
+    contactsRef.value.openDialog()
+  }
+}
+
+async function onFactoryUpdated() {
+  // The updateFactory method already updates the factories array
+  // So we just need to refresh the selectedFactory from the updated list
+  if (userStore.selectedFactory) {
+    // Find the updated factory by hetpei (or id if available)
+    const identifier = userStore.selectedFactory.id || userStore.selectedFactory.hetpei
+    const updatedFactory = userStore.factories?.find(f => 
+      (f.id && f.id === identifier) || (f.hetpei && f.hetpei === identifier)
+    )
+    if (updatedFactory) {
+      userStore.selectedFactory = updatedFactory
     }
   }
 }
