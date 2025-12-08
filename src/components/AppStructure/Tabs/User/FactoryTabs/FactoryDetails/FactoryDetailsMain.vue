@@ -11,7 +11,7 @@
             <h1 class="title-text">{{ titleText }}</h1>
           </div>
           
-          <v-btn v-if="userStore.user.role === 1 && activeTab === 'contacts'" color="primary" @click="openDialog" class="add-btn hide-on-mobile">
+          <v-btn v-if="userStore.user.role === 1 && activeTab === 'contacts'" color="primary" @click="openDialog" class="add-btn ">
             <v-icon left>{{ addButtonIcon }}</v-icon>
             {{ addButtonText }}
           </v-btn>

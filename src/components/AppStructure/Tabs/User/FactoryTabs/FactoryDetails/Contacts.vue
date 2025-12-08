@@ -23,7 +23,7 @@
                   <v-btn icon size="small" @click="editContact(item)" color="primary" class="action-btn">
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
-                  <v-btn icon size="small" @click="deleteContact(item)" color="error" class="action-btn">
+                  <v-btn icon size="small" @click="deleteContact(item)" color="error" class="action-btn delete-btn">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </span>
@@ -173,5 +173,40 @@ export default {
 </script>
 
 <style scoped>
+/* Set actions column to minimum width */
+.modern-table :deep(thead th:last-child),
+.modern-table :deep(tbody td:last-child) {
+  width: 45px !important;
+  min-width: 80px !important;
+  max-width: 120px !important;
+  padding: 8px 4px !important;
+  white-space: nowrap !important;
+}
+
+/* Component-specific mobile column hiding */
+@media (max-width: 768px) {
+  .modern-table :deep(thead th:nth-child(2)),
+  .modern-table :deep(thead th:nth-child(3)) {
+    display: none !important;
+  }
+  
+  .modern-table :deep(tbody td:nth-child(2)),
+  .modern-table :deep(tbody td:nth-child(3)) {
+    display: none !important;
+  }
+  
+  /* Hide delete button on mobile */
+  .delete-btn {
+    display: none !important;
+  }
+  
+  /* Set actions column to minimum width on mobile */
+  .modern-table :deep(thead th:last-child),
+  .modern-table :deep(tbody td:last-child) {
+    min-width: 50px !important;
+    max-width: 60px !important;
+    padding: 8px 2px !important;
+  }
+}
 </style>
 

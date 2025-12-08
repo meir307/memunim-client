@@ -24,7 +24,7 @@
                      color="green-lighten-1"
                      
                       prepend-icon="mdi-arrow-left"
-                     @click=" this.$router.push('/user')" 
+                     @click="goBack" 
                      class="me-3">
                      חזור
                  </v-btn>
@@ -82,6 +82,10 @@
 
 <script>
 import { useUserStore } from '@/stores/UserStore'
+import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
+import { useHazardStore } from '@/stores/HazardStore'
+import { useSafetyProceduresStore } from '@/stores/SafetyProceduresStore'
+import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 
 export default {
     name: 'FactoryMain',
@@ -89,13 +93,12 @@ export default {
          return {
              showMobileMenu: false,
              allNavigationItems: [
-                 {
-                     key: 'accidents',
-                     title: 'תאונות',
-                     icon: 'mdi-flash',
-                     route: 'factory-accidents'
+                {
+                     key: 'routine-checks',
+                     title: 'פעילות שוטפת',
+                     icon: 'mdi-alarm',
+                     route: 'routine-checks'
                  },
-                
                  {
                      key: 'hazards',
                      title: 'מפגעים',
@@ -103,10 +106,10 @@ export default {
                      route: 'factory-hazards'
                  },
                  {
-                     key: 'routine-checks',
-                     title: 'פעילות שוטפת',
-                     icon: 'mdi-alarm',
-                     route: 'routine-checks'
+                     key: 'safety-committee',
+                     title: 'ועדת בטיחות',
+                     icon: 'mdi-account-group',
+                     route: 'safety-committee'
                  },
                  {
                      key: 'safety-procedures',
@@ -115,24 +118,24 @@ export default {
                      route: 'safety-procedures'
                  },
                  {
-                     key: 'safety-committee',
-                     title: 'ועדת בטיחות',
-                     icon: 'mdi-account-group',
-                     route: 'safety-committee'
+                     key: 'accidents',
+                     title: 'תאונות וארועי בטיחות',
+                     icon: 'mdi-flash',
+                     route: 'factory-accidents'
                  },
-                {
+                 {
                     key: 'factory-details',
                     title: 'פרטי המפעל',
                     icon: 'mdi-factory',
                     route: 'factory-details'
                 },
-                 {
+                {
                      key: 'factory-tasks',
                      title: 'משימות',
                      icon: 'mdi-check-circle',
                      route: 'factory-tasks',
                      requiresRole: 1
-                 }
+                }
              ]
          }
      },
@@ -181,6 +184,27 @@ export default {
          
          isActiveRoute(routeName) {
              return this.$route.name === routeName
+         },
+         
+         goBack() {
+             // Reset RoutineCheckStore state
+             const routineCheckStore = useRoutineCheckStore()
+             routineCheckStore.reset()
+             
+             // Reset HazardStore state
+             const hazardStore = useHazardStore()
+             hazardStore.reset()
+             
+             // Reset SafetyProceduresStore state
+             const safetyProceduresStore = useSafetyProceduresStore()
+             safetyProceduresStore.reset()
+             
+             // Reset SafetyCommitteeStore state
+             const safetyCommitteeStore = useSafetyCommitteeStore()
+             safetyCommitteeStore.reset()
+             
+             // Navigate back to user page
+             this.$router.push('/user')
          }
      }
 }

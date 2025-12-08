@@ -150,9 +150,17 @@ export default {
     }
 
     async function deleteNote(note) {
-      const confirmed = confirm('האם למחוק את הפתק?')
-      if (!confirmed) return
 
+      if (userStore.user.role !== 1) {
+        alert('אין הרשאות למחיקה')
+        return
+      }
+
+      if (note.content.trim() != '') {
+        const confirmed = confirm('האם למחוק את הפתק?')
+        if (!confirmed) return
+      } 
+      
       try {
         const factory = userStore.selectedFactory
         if (!factory) {
