@@ -69,6 +69,11 @@ export const useHazardStore = defineStore('hazard', {
         // Ensure severity is a number
         formData.append('severity', String(hazardData.severity || 2))
 
+        // Append areaId if provided
+        if (hazardData.areaId) {
+          formData.append('areaId', String(hazardData.areaId))
+        }
+
         // Append file if any (single file, not array)
         if (hazardData.files && hazardData.files.length > 0 && hazardData.files[0]) {
           formData.append('file', hazardData.files[0])
@@ -124,6 +129,14 @@ export const useHazardStore = defineStore('hazard', {
         
         // Ensure severity is a number
         formData.append('severity', String(hazardData.severity || 2))
+
+        // Append areaId (including null to clear it)
+        if (hazardData.areaId !== undefined && hazardData.areaId !== null) {
+          formData.append('areaId', String(hazardData.areaId))
+        } else if (hazardData.areaId === null) {
+          // Explicitly send empty string to clear the area
+          formData.append('areaId', '')
+        }
 
         // Append file if any (single file, not array)
         if (hazardData.files && hazardData.files.length > 0 && hazardData.files[0]) {

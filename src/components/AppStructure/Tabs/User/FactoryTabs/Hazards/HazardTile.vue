@@ -11,11 +11,7 @@
               <div class="title-box">
                 <span class="title-text">{{ hazard.title }}</span>
               </div>
-            </div>
-            <div class="top-center">
-              <div class="created-info">
-                <span>נוצר על ידי {{ createdByName || 'לא ידוע' }} ב-{{ formatDate(hazard.createdAt || hazard.date) }}</span>
-              </div>
+              <span v-if="areaName" class="area-name">  {{ areaName }}</span>
             </div>
             <div class="top-right">
               <div class="severity-radio-group">
@@ -57,11 +53,14 @@
                   density="compact"
                   variant="outlined"
                   hide-details
-                  rows="3"
+                  rows="2"
                   class="description-textarea"
                   placeholder="אין תיאור"
                   :readonly="!canEditHazard"
                 ></v-textarea>
+              </div>
+              <div class="created-info">
+                <span>נוצר על ידי {{ createdByName || 'לא ידוע' }} ב-{{ formatDate(hazard.createdAt || hazard.date) }}</span>
               </div>
             </div>
             
@@ -268,6 +267,30 @@ export default {
       return props.hazard.createdBy || props.hazard.createdByName || 'לא ידוע'
     })
 
+    // Get area name from factory areas based on hazard's areaId
+    const areaName = computed(() => {
+      if (!props.hazard.areaId) {
+        return null
+      }
+      
+      const factory = userStore.selectedFactory
+      if (!factory || !factory.areas) {
+        return null
+      }
+      
+      try {
+        const parsed = JSON.parse(factory.areas)
+        if (!Array.isArray(parsed)) {
+          return null
+        }
+        const area = parsed.find(a => a.id === props.hazard.areaId)
+        return area ? area.name : null
+      } catch (e) {
+        console.error('Error parsing areas:', e)
+        return null
+      }
+    })
+
     // Check if user can edit/delete: admin (role == 1) or creator
     const canEditHazard = computed(() => {
       const userRole = userStore.user.role
@@ -383,6 +406,7 @@ export default {
       saveHazardRemark,
       saveSeverity,
       localSeverity,
+      areaName,
       canEditHazard
     }
   }
@@ -488,6 +512,7 @@ export default {
   align-items: center;
   flex-shrink: 0;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .top-center {
@@ -563,6 +588,7 @@ export default {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  max-width: fit-content;
 }
 
 .title-text {
@@ -582,11 +608,21 @@ export default {
   max-height: calc(1.4rem * 1.4 * 2);
 }
 
-.created-info {
-  font-size: 1rem;
+.area-name {
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #666;
-  text-align: center;
+  margin-right: 8px;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.created-info {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: right;
+  white-space: nowrap;
+  margin-top: 8px;
 }
 
 /* Bottom Section */
@@ -734,6 +770,17 @@ export default {
   .title-box {
     width: 100%;
     min-width: auto;
+  }
+
+  .top-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .area-name {
+    margin-right: 0;
+    margin-top: 4px;
   }
 
   .bottom-section {

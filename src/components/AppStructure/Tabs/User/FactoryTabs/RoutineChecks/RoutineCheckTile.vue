@@ -5,7 +5,7 @@
         <div class="tile-content">
           <div class="title-menu-row">
             <div class="info-column title-column">
-              <h2 class="check-type-name">{{ checkType.checkTypeName }}</h2>
+              <h2 class="check-type-name">{{ truncatedCheckTypeName }}</h2>
             </div>
             <div v-if="userStore.user.role === 1" class="info-column menu-column">
               <v-menu>
@@ -219,6 +219,14 @@ export default {
       return 'tile-bg-green'
     })
 
+    const truncatedCheckTypeName = computed(() => {
+      const name = props.checkType.checkTypeName || ''
+      if (name.length <= 28) {
+        return name
+      }
+      return name.substring(0, 28) + '...'
+    })
+
     return {
       userStore,
       showHistoryDialog,
@@ -233,7 +241,8 @@ export default {
       daysRemaining,
       daysRemainingText,
       daysRemainingClass,
-      tileBackgroundClass
+      tileBackgroundClass,
+      truncatedCheckTypeName
     }
   }
 }
@@ -288,7 +297,7 @@ export default {
 .title-column {
   flex: 3 !important;
   min-width: 300px !important;
-  max-width: 80% !important;
+  max-width: 70% !important;
 }
 
 .menu-btn {
@@ -327,7 +336,7 @@ export default {
 }
 
 .check-type-name {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: #06488a;
   margin: 0;
@@ -538,6 +547,11 @@ export default {
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .routine-check-tile {
+    max-width: 95% !important;
+    width: 95% !important;
+  }
+
   .tile-content {
     flex-direction: column;
     gap: 12px;

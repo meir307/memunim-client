@@ -56,11 +56,25 @@
 
           <v-row>
             <v-col cols="12">
+              <v-select
+                v-model="editedItem.areaId"
+                :items="areaOptions"
+                label="אזור"
+                reverse
+                item-title="title"
+                item-value="value"
+                clearable
+              ></v-select>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col cols="12">
               <v-textarea
                 v-model="editedItem.description"
                 label="תיאור"
                 reverse
-                rows="4"
+                rows="2"
                 placeholder="הזן תיאור של המפגע..."
               ></v-textarea>
             </v-col>
@@ -137,6 +151,7 @@
 <script>
 import { ref, computed, watch } from 'vue'
 import { useHazardStore } from '@/stores/HazardStore'
+import { useUserStore } from '@/stores/UserStore'
 import { 
   getTodayDDMMYYYY, 
   getDatePickerValue, 
@@ -160,6 +175,7 @@ export default {
   emits: ['close-dialog'],
   setup(props, { emit }) {
     const hazardStore = useHazardStore()
+    const userStore = useUserStore()
     
     const dialog = ref(false)
     const loading = ref(false)
@@ -174,6 +190,7 @@ export default {
       date: '',
       description: '',
       severity: '',
+      areaId: null,
       files: null
     })
 
@@ -182,6 +199,28 @@ export default {
       { title: 'בינונית', value: 2 },
       { title: 'גבוהה', value: 3 }
     ]
+
+    // Parse areas from factory and create options for dropdown
+    const areaOptions = computed(() => {
+      const factory = userStore.selectedFactory
+      if (!factory || !factory.areas) {
+        return []
+      }
+      
+      try {
+        const parsed = JSON.parse(factory.areas)
+        if (!Array.isArray(parsed)) {
+          return []
+        }
+        return parsed.map(area => ({
+          title: area.name || '',
+          value: area.id
+        }))
+      } catch (e) {
+        console.error('Error parsing areas:', e)
+        return []
+      }
+    })
 
     const isEditMode = computed(() => !!props.editHazard)
     
@@ -230,6 +269,7 @@ export default {
           date: props.editHazard.date || getTodayDDMMYYYY(),
           description: getDescriptionText(props.editHazard.description),
           severity: props.editHazard.severity || 2,
+          areaId: props.editHazard.areaId || null,
           files: null
         }
         // Get first file if array, or the file itself
@@ -243,6 +283,7 @@ export default {
           date: getTodayDDMMYYYY(),
           description: '',
           severity: 2,
+          areaId: null,
           files: null
         }
         existingFile.value = null
@@ -360,6 +401,7 @@ export default {
         date: '',
         description: '',
         severity: 2,
+        areaId: null,
         files: null
       }
       existingFile.value = null
@@ -379,6 +421,7 @@ export default {
           date: editedItem.value.date,
           description: editedItem.value.description || '',
           severity: editedItem.value.severity,
+          areaId: editedItem.value.areaId || null,
           files: editedItem.value.files ? [editedItem.value.files] : []
         }
 
@@ -411,6 +454,7 @@ export default {
       formattedDate,
       dateFormatRule,
       severityOptions,
+      areaOptions,
       handleFilesChange,
       removeNewImage,
       getExistingImageUrl,

@@ -6,12 +6,13 @@
           <v-tabs v-model="activeTab" color="white" class="tabs-in-title">
             <v-tab value="details">פרטי המפעל</v-tab>
             <v-tab value="contacts">אנשי קשר</v-tab>
+            <v-tab value="areas">אזורים</v-tab>
           </v-tabs>
           <div class="title-section">
             <h1 class="title-text">{{ titleText }}</h1>
           </div>
           
-          <v-btn v-if="userStore.user.role === 1 && activeTab === 'contacts'" color="primary" @click="openDialog" class="add-btn ">
+          <v-btn v-if="userStore.user.role === 1 && (activeTab === 'contacts' || activeTab === 'areas')" color="primary" @click="openDialog" class="add-btn ">
             <v-icon left>{{ addButtonIcon }}</v-icon>
             {{ addButtonText }}
           </v-btn>
@@ -33,6 +34,9 @@
           <v-window-item value="contacts">
             <Contacts ref="contactsRef" />
           </v-window-item>
+          <v-window-item value="areas">
+            <Areas ref="areasRef" />
+          </v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
@@ -43,12 +47,14 @@
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import Contacts from './Contacts.vue'
+import Areas from './Areas.vue'
 import UpsertFactory from '../../UpsertFactory.vue'
 
 const userStore = useUserStore()
 
 const activeTab = ref('details')
 const contactsRef = ref(null)
+const areasRef = ref(null)
 
 const titleText = computed(() => {
   return ''
@@ -57,6 +63,9 @@ const titleText = computed(() => {
 const addButtonText = computed(() => {
   if (activeTab.value === 'contacts') {
     return 'הוסף איש קשר'
+  }
+  if (activeTab.value === 'areas') {
+    return 'הוסף אזור'
   }
   return ''
 })
@@ -71,6 +80,9 @@ const addButtonIcon = computed(() => {
 function openDialog() {
   if (activeTab.value === 'contacts' && contactsRef.value) {
     contactsRef.value.openDialog()
+  }
+  if (activeTab.value === 'areas' && areasRef.value) {
+    areasRef.value.openDialog()
   }
 }
 
