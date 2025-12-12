@@ -30,7 +30,7 @@
                 <v-btn icon="mdi-close" variant="text" @click="closeDelete"></v-btn>
             </v-card-title>
             <v-card-text>
-                <p>האם אתה בטוח שברצונך למחוק משתמש זה?</p>
+                <p class="delete-confirmation-text">{{ deleteConfirmationMessage }}</p>
                 <div class="popup-btn-row">
                     <v-btn @click="deleteItemConfirm" color="error">מחק</v-btn>
                     <v-btn @click="closeDelete">ביטול</v-btn>
@@ -86,6 +86,12 @@ export default {
 
 const formTitle = computed(() => {
     return editedIndex.value === -1 ? 'משתמש חדש' : 'ערוך משתמש'
+})
+
+const deleteConfirmationMessage = computed(() => {
+    const contact = editedIndex.value >= 0 && users.value[editedIndex.value] ? users.value[editedIndex.value] : null
+    const contactName = contact ? (contact.fullName || contact.name) : 'משתמש זה'
+    return `האם למחוק את נאמן הבטיחות - ${contactName}?\nבמידה ו ${contactName} הזין מפגעים, מפגעים אלה ישוייכו אליך.`
 })
 
 // Get users from store
@@ -190,6 +196,7 @@ async function deleteItemConfirm() {
             editedIndex,
             editedItem,
             formTitle,
+            deleteConfirmationMessage,
             users,
             editUser,
             deleteUser,
@@ -222,5 +229,9 @@ async function deleteItemConfirm() {
     gap: 16px;
     margin-top: 24px;
     margin-bottom: 8px;
+}
+
+.delete-confirmation-text {
+    white-space: pre-line;
 }
 </style>
