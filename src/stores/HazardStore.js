@@ -117,32 +117,22 @@ export const useHazardStore = defineStore('hazard', {
         formData.append('title', hazardData.title)
         formData.append('description', hazardData.description || '')
         
-        // Convert date from DD/MM/YYYY to YYYY-MM-DD format
-        let dateValue = hazardData.date
-        if (dateValue && dateValue.includes('/')) {
-          const parts = dateValue.split('/')
-          if (parts.length === 3) {
-            dateValue = `${parts[2]}-${parts[1]}-${parts[0]}` // YYYY-MM-DD
-          }
-        }
-        formData.append('date', dateValue)
-        
-        // Ensure severity is a number
-        formData.append('severity', String(hazardData.severity || 2))
-
-        // Append areaId (including null to clear it)
+        // Append areaId if provided
         if (hazardData.areaId !== undefined && hazardData.areaId !== null) {
           formData.append('areaId', String(hazardData.areaId))
         } else if (hazardData.areaId === null) {
           // Explicitly send empty string to clear the area
           formData.append('areaId', '')
         }
-
+       
+        // Append old file name if provided (for updating/deleting old file)
+        formData.append('oldFileName', hazardData.oldFileName)
+        
+       
         // Append file if any (single file, not array)
         if (hazardData.files && hazardData.files.length > 0 && hazardData.files[0]) {
           formData.append('file', hazardData.files[0])
         }
-
         const response = await axios.post(commonStore.apiUrl + 'hazards/updateHazard', formData, {
           headers: {
             'sessionid': userStore.user.sessionId,

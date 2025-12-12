@@ -14,33 +14,12 @@
               <span v-if="areaName" class="area-name">  {{ areaName }}</span>
             </div>
             <div class="top-right">
-              <div class="severity-radio-group">
-                <v-radio-group
-                  v-model="localSeverity"
-                  @update:model-value="saveSeverity"
-                  inline
-                  density="compact"
-                  hide-details
-                  class="severity-radios"
-                  :disabled="!canEditHazard"
-                >
-                  <v-radio
-                    :value="1"
-                    label="נמוכה"
-                    class="severity-radio severity-radio-1"
-                  ></v-radio>
-                  <v-radio
-                    :value="2"
-                    label="בינונית"
-                    class="severity-radio severity-radio-2"
-                  ></v-radio>
-                  <v-radio
-                    :value="3"
-                    label="גבוהה"
-                    class="severity-radio severity-radio-3"
-                  ></v-radio>
-                </v-radio-group>
-              </div>
+              <SeverityControl
+                :key="`severity-${hazard.id}-${localSeverity}`"
+                v-model="localSeverity"
+                :disabled="!canEditHazard"
+                @update:modelValue="saveSeverity"
+              />
             </div>
           </div>
 
@@ -56,7 +35,8 @@
                   rows="2"
                   class="description-textarea"
                   placeholder="אין תיאור"
-                  :readonly="!canEditHazard"
+                  :readonly="true"
+                  
                 ></v-textarea>
               </div>
               <div class="created-info">
@@ -67,14 +47,14 @@
             <div class="bottom-right">
               <div class="buttons-container">
                 <v-btn
-                  @click="saveHazardRemark"
+                  @click="editHazard"
                   color="primary"
                   size="small"
                   class="save-btn"
                   :disabled="!canEditHazard"
                 >
-                  <v-icon left>mdi-check</v-icon>
-                  שמור
+                  <v-icon left>mdi-pencil</v-icon>
+                  ערוך
                 </v-btn>
                 <!-- Mobile image icon button -->
                 <v-btn
@@ -130,9 +110,13 @@
 import { computed, ref, watch } from 'vue'
 import { useHazardStore } from '@/stores/HazardStore'
 import { useUserStore } from '@/stores/UserStore'
+import SeverityControl from './SeverityControl.vue'
 
 export default {
   name: 'HazardTile',
+  components: {
+    SeverityControl
+  },
   props: {
     hazard: {
       type: Object,
@@ -367,15 +351,8 @@ export default {
       emit('delete-hazard', props.hazard.id)
     }
 
-    async function saveHazardRemark() {
-      try {
-        await hazardStore.saveHazardRemark({
-          id: props.hazard.id,
-          description: localDescription.value || ''
-        })
-      } catch (error) {
-        console.error('Failed to save hazard remark:', error)
-      }
+    function editHazard() {
+      emit('edit-hazard', props.hazard)
     }
 
     async function saveSeverity(newSeverity) {
@@ -403,7 +380,7 @@ export default {
       openImage,
       resolveHazard,
       deleteHazard,
-      saveHazardRemark,
+      editHazard,
       saveSeverity,
       localSeverity,
       areaName,
@@ -521,48 +498,6 @@ export default {
   flex: 1;
   justify-content: center;
   min-width: 0;
-}
-
-.severity-radio-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.severity-radios {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.severity-radio {
-  margin-right: 16px;
-}
-
-.severity-radio-1 ::v-deep(.v-label) {
-  color: #2e7d32 !important;
-  font-weight: 600;
-}
-
-.severity-radio-1 ::v-deep(.v-selection-control-group__input) {
-  color: #2e7d32 !important;
-}
-
-.severity-radio-2 ::v-deep(.v-label) {
-  color: #f57c00 !important;
-  font-weight: 600;
-}
-
-.severity-radio-2 ::v-deep(.v-selection-control-group__input) {
-  color: #f57c00 !important;
-}
-
-.severity-radio-3 ::v-deep(.v-label) {
-  color: #c62828 !important;
-  font-weight: 600;
-}
-
-.severity-radio-3 ::v-deep(.v-selection-control-group__input) {
-  color: #c62828 !important;
 }
 
 .severity-low {

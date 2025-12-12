@@ -15,17 +15,17 @@
             reverse
             maxlength="34"
             counter
-            :rules="[v => !!v || 'כותרת חובה', v => (v && v.length <= 34) || 'כותרת לא יכולה לעלות על 34 תווים']"
+            :rules="titleRules"
           ></v-text-field>
 
-          <v-row>
+          <v-row v-if="!isEditMode">
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="formattedDate"
                 label="תאריך"
                 required
                 reverse
-                :rules="[v => !!v || 'תאריך חובה', dateFormatRule]"
+                :rules="dateRules"
                 @input="handleDateChange"
                 placeholder="dd/MM/yyyy"
                 prepend-icon="mdi-calendar"
@@ -49,7 +49,7 @@
                 label="רמת חומרה"
                 required
                 reverse
-                :rules="[v => !!v || 'רמת חומרה חובה']"
+                :rules="severityRules"
               ></v-select>
             </v-col>
           </v-row>
@@ -60,10 +60,11 @@
                 v-model="editedItem.areaId"
                 :items="areaOptions"
                 label="אזור"
+                required
                 reverse
                 item-title="title"
                 item-value="value"
-                clearable
+                :rules="areaRules"
               ></v-select>
             </v-col>
           </v-row>
@@ -73,9 +74,11 @@
               <v-textarea
                 v-model="editedItem.description"
                 label="תיאור"
+                required
                 reverse
                 rows="2"
                 placeholder="הזן תיאור של המפגע..."
+                :rules="descriptionRules"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -91,6 +94,8 @@
                 show-size
                 hint="ניתן להעלות תמונה אחת"
                 persistent-hint
+                :required="!isEditMode"
+                :rules="fileRules"
                 @update:model-value="handleFilesChange"
               ></v-file-input>
             </v-col>
@@ -240,11 +245,39 @@ export default {
       }
     })
 
-    // Date format validation rule
-    const dateFormatRule = (value) => {
-      if (!value) return true
-      return isValidDDMMYYYY(value) || 'פורמט תאריך לא תקין. השתמש בפורמט dd/MM/yyyy'
-    }
+    // Validation rules
+    const titleRules = computed(() => [
+      v => !!v || 'כותרת חובה',
+      v => !v || v.length <= 34 || 'כותרת לא יכולה לעלות על 34 תווים'
+    ])
+
+    const dateRules = computed(() => [
+      v => !!v || 'תאריך חובה',
+      v => !v || isValidDDMMYYYY(v) || 'פורמט תאריך לא תקין. השתמש בפורמט dd/MM/yyyy'
+    ])
+
+    const severityRules = computed(() => [
+      v => !!v || 'רמת חומרה חובה'
+    ])
+
+    const areaRules = computed(() => [
+      v => !!v || 'אזור חובה'
+    ])
+
+    const descriptionRules = computed(() => [
+      v => !!v || 'תיאור חובה'
+    ])
+
+    const fileRules = computed(() => {
+      // File is only required when creating a new hazard (not in edit mode)
+      if (!isEditMode.value) {
+        return [
+          v => !!v || 'תמונה חובה'
+        ]
+      }
+      // In edit mode, file is optional
+      return []
+    })
 
     // Watch for prop changes
     watch(() => props.showDialog, (newVal) => {
@@ -262,6 +295,11 @@ export default {
     })
 
     function initializeForm() {
+      // Reset validation state
+      if (form.value) {
+        form.value.resetValidation()
+      }
+      
       if (isEditMode.value && props.editHazard) {
         // Edit mode - populate with existing data
         editedItem.value = {
@@ -391,6 +429,11 @@ export default {
     }
 
     function resetForm() {
+      // Reset validation state
+      if (form.value) {
+        form.value.resetValidation()
+      }
+      
       // Clean up object URL
       if (newImagePreview.value && newImagePreview.value.url && newImagePreview.value.url.startsWith('blob:')) {
         URL.revokeObjectURL(newImagePreview.value.url)
@@ -408,8 +451,53 @@ export default {
       newImagePreview.value = null
     }
 
+    function getOldFileName() {
+      if (!isEditMode.value || !props.editHazard) {
+        return null
+      }
+      
+      // Check if existingFile has a file name
+      if (existingFile.value) {
+        if (typeof existingFile.value === 'string') {
+          return existingFile.value
+        } else if (existingFile.value.fileName) {
+          return existingFile.value.fileName
+        } else if (existingFile.value.name) {
+          return existingFile.value.name
+        } else if (existingFile.value.url) {
+          // Extract filename from URL if it's a path
+          return existingFile.value.url
+        }
+      }
+      
+      // Fallback: check hazard's fileName property
+      if (props.editHazard.fileName) {
+        return props.editHazard.fileName
+      }
+      
+      // Check files array
+      if (props.editHazard.files) {
+        const file = Array.isArray(props.editHazard.files) 
+          ? props.editHazard.files[0] 
+          : props.editHazard.files
+        if (file) {
+          if (typeof file === 'string') {
+            return file
+          } else if (file.fileName) {
+            return file.fileName
+          } else if (file.name) {
+            return file.name
+          }
+        }
+      }
+      
+      return null
+    }
+
     async function save() {
-      if (!form.value.validate()) {
+      // Validate form before saving
+      const { valid } = await form.value.validate()
+      if (!valid) {
         return
       }
 
@@ -427,6 +515,7 @@ export default {
 
         if (isEditMode.value) {
           hazardData.id = props.editHazard.id
+          hazardData.oldFileName = getOldFileName()
           await hazardStore.updateHazard(hazardData)
         } else {
           await hazardStore.addHazard(hazardData)
@@ -452,7 +541,12 @@ export default {
       isEditMode,
       dialogTitle,
       formattedDate,
-      dateFormatRule,
+      titleRules,
+      dateRules,
+      severityRules,
+      areaRules,
+      descriptionRules,
+      fileRules,
       severityOptions,
       areaOptions,
       handleFilesChange,
