@@ -47,15 +47,21 @@
             <div class="bottom-right">
               <div class="buttons-container">
                 <v-btn
+                  icon="mdi-pencil"
                   @click="editHazard"
                   color="primary"
                   size="small"
                   class="save-btn"
                   :disabled="!canEditHazard"
-                >
-                  <v-icon left>mdi-pencil</v-icon>
-                  ערוך
-                </v-btn>
+                ></v-btn>
+                <!-- Email button -->
+                <v-btn
+                  icon="mdi-email"
+                  @click="emailHazard"
+                  color="yellow"
+                  size="small"
+                  class="email-btn"
+                ></v-btn>
                 <!-- Mobile image icon button -->
                 <v-btn
                   v-if="hazardImage"
@@ -355,6 +361,10 @@ export default {
       emit('edit-hazard', props.hazard)
     }
 
+    function emailHazard() {
+      emit('email-hazard', props.hazard)
+    }
+
     async function saveSeverity(newSeverity) {
       try {
         await hazardStore.saveSeverity({
@@ -381,6 +391,7 @@ export default {
       resolveHazard,
       deleteHazard,
       editHazard,
+      emailHazard,
       saveSeverity,
       localSeverity,
       areaName,

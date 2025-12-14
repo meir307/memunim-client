@@ -255,13 +255,22 @@ export default {
   transition: box-shadow 0.2s ease;
   border: 1px solid #e0e0e0;
   width: 100%;
-  min-width: 100%;
+  max-width: 100%;
   flex: 1;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .routine-check-tile:hover {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-color: #1976d2;
+}
+
+.routine-check-tile :deep(.v-card-text) {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  overflow: hidden;
 }
 
 .tile-bg-red {
@@ -312,6 +321,9 @@ export default {
   gap: 24px;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .info-column {
@@ -548,14 +560,22 @@ export default {
 /* Responsive design */
 @media (max-width: 768px) {
   .routine-check-tile {
-    max-width: 95% !important;
-    width: 95% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .routine-check-tile :deep(.v-card-text) {
+    padding: 12px;
   }
 
   .tile-content {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
+    width: 100%;
+    min-width: 0;
   }
 
   .title-menu-row {
@@ -563,6 +583,8 @@ export default {
     order: -1;
     flex-direction: row;
     justify-content: space-between;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .info-column {
@@ -570,36 +592,62 @@ export default {
     flex-direction: row;
     align-items: center;
     gap: 8px;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .title-column {
     flex: 1;
-    min-width: 200px !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
   .info-column.title-column {
     flex: 1 !important;
-    min-width: 200px !important;
+    min-width: 0 !important;
     max-width: 100% !important;
+  }
+
+  .check-type-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .info-label {
     min-width: auto;
+    flex-shrink: 1;
+  }
+
+  .info-value {
+    flex-shrink: 1;
+    min-width: 0;
   }
 
   .remark-section {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .remark-section-content {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .remark-container {
     width: 100%;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
   .day-left-container {
     width: 100%;
     justify-content: flex-end;
+    box-sizing: border-box;
   }
 }
 </style>

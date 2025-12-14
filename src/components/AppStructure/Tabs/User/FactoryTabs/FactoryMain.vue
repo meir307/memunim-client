@@ -1,8 +1,8 @@
 <template>
     <div class="pa-2">
                  <!-- Sticky Header -->
-         <div class="sticky-header d-flex align-center justify-space-between mb-4">
-             <div class="d-flex align-center">
+         <div class="sticky-header d-flex align-center mb-4">
+             <div class="d-flex align-center flex-grow-1">
                  <!-- Mobile hamburger menu -->
                  <v-btn
                      icon="mdi-menu"
@@ -18,17 +18,16 @@
                 
                 <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block"> {{ selectedFactory?.employees || '0' }} עובדים</p>
              </div>
- 
-             <div class="d-flex align-center">
-                 <v-btn 
-                     color="green-lighten-1"
-                     
+  
+              <div class="back-button-container">
+                  <v-btn 
+                      color="green-lighten-1"
                       prepend-icon="mdi-arrow-left"
-                     @click="goBack" 
-                     class="me-3">
-                     חזור
-                 </v-btn>
-             </div>
+                      @click="goBack" 
+                      class="me-3">
+                      חזור
+                  </v-btn>
+              </div>
          </div>
 
                  <!-- Mobile navigation drawer -->
@@ -54,10 +53,10 @@
          </v-navigation-drawer>
          
          <!-- Factory content area -->
-         <div class="d-flex">
+         <div class="content-wrapper">
              <!-- Left side - Navigation menu -->
-             <div class="d-none d-md-block me-4">
-                 <v-card class="pa-3" style="width: 250px;">
+             <div class="navigation-menu d-none d-md-block">
+                 <v-card class="pa-3 navigation-card">
                      <v-list>
                          <v-list-item
                              v-for="item in navigationItems"
@@ -73,7 +72,7 @@
              </div>
              
              <!-- Right side - Content area -->
-             <div class="flex-grow-1">
+             <div class="content-area">
                  <router-view />
              </div>
          </div>
@@ -121,7 +120,7 @@ export default {
                  },
                  {
                     key: 'factory-details',
-                    title: 'פרטי המפעל',
+                    title: 'הגדרות המפעל',
                     icon: 'mdi-factory',
                     route: 'factory-details'
                 },
@@ -195,5 +194,55 @@ export default {
   margin-bottom: calc(1rem - 8px);
   padding: 7px;
   line-height: 1.2;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.sticky-header > div:first-child {
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.back-button-container {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  margin-right: 0;
+  margin-left: auto;
+  min-width: fit-content;
+}
+
+.content-wrapper {
+  display: flex;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.navigation-menu {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  width: 250px;
+  margin-left: 16px;
+  z-index: 10;
+}
+
+.navigation-card {
+  width: 100%;
+}
+
+.content-area {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 960px) {
+  .navigation-menu {
+    margin-left: 0;
+  }
 }
 </style>

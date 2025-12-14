@@ -44,7 +44,9 @@
 
 <script>
 import { ref, computed } from 'vue'
+import axios from 'axios'
 import { useUserStore } from '@/stores/UserStore'
+import { useCommonStore } from '@/stores/CommonStore'
 import UpsertArea from './UpsertArea.vue'
 import '@/assets/DataTable.css'
 
@@ -55,6 +57,7 @@ export default {
   },
   setup() {
     const userStore = useUserStore()
+    const commonStore = useCommonStore()
 
     const loading = ref(false)
     const showDialog = ref(false)
@@ -105,17 +108,45 @@ export default {
       showDialog.value = true
     }
 
+    async function checkHazardsByArea(areaId, factoryId) {
+      try {
+        const response = await axios.post(commonStore.apiUrl + 'hazards/checkHazardsByArea', {
+          areaId,
+          factoryId
+        }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+        return response.data.hazardsCount || 0
+      } catch (error) {
+        console.error('Failed to check hazards by area:', error)
+        throw error
+      }
+    }
+
     async function deleteArea(area) {
       const confirmed = confirm(`האם למחוק את האזור "${area.name}"?`)
       if (!confirmed) return
 
+      const factory = userStore.selectedFactory
+
+      // Check if there are any hazards associated with this area
       try {
-        loading.value = true
-        const factory = userStore.selectedFactory
-        if (!factory) {
-          alert('מפעל לא נבחר')
+        const associatedHazardsCount = await checkHazardsByArea(area.id, factory.id)
+        
+        if (associatedHazardsCount > 0) {
+          alert(`לא ניתן למחוק את האזור "${area.name}" מכיוון שיש מפגעים המשויכים אליו.`)
           return
         }
+      } catch (error) {
+        console.error('Failed to check hazards:', error)
+        // Continue with deletion if check fails (user can still proceed)
+      }
+    
+
+      try {
+        loading.value = true
 
         // Get current areas
         let areasList = []
