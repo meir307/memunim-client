@@ -283,6 +283,37 @@ export const useHazardStore = defineStore('hazard', {
       }
     },
 
+    // Email hazard
+    async emailHazard(emailData) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const response = await axios.post(commonStore.apiUrl + 'hazards/emailHazard', {
+          hazard: emailData.hazard,
+          emails: emailData.emails,
+          factoryId: emailData.factoryId
+        }, {
+          headers: {
+            'sessionid': userStore.user.sessionId
+          }
+        })
+
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to send hazard email'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Clear error
     clearError() {
       this.error = null

@@ -109,6 +109,14 @@
         </div>
       </v-card-text>
     </v-card>
+
+    <!-- Email Hazard Dialog -->
+    <MailHazard 
+      :show-dialog="showEmailDialog" 
+      :hazard="hazard"
+      @close-dialog="closeEmailDialog"
+      @send-email="handleSendEmail"
+    />
   </div>
 </template>
 
@@ -117,11 +125,13 @@ import { computed, ref, watch } from 'vue'
 import { useHazardStore } from '@/stores/HazardStore'
 import { useUserStore } from '@/stores/UserStore'
 import SeverityControl from './SeverityControl.vue'
+import MailHazard from './MailHazard.vue'
 
 export default {
   name: 'HazardTile',
   components: {
-    SeverityControl
+    SeverityControl,
+    MailHazard
   },
   props: {
     hazard: {
@@ -144,6 +154,9 @@ export default {
     
     // Local reactive state for description
     const localDescription = ref('')
+    
+    // Email dialog state
+    const showEmailDialog = ref(false)
     
     // Initialize localDescription from prop
     function getDescriptionText(description) {
@@ -188,7 +201,9 @@ export default {
               const formattedDay = parsedDate.getDate().toString().padStart(2, '0')
               const formattedMonth = (parsedDate.getMonth() + 1).toString().padStart(2, '0')
               const formattedYear = parsedDate.getFullYear()
-              return `${formattedDay}/${formattedMonth}/${formattedYear}`
+              const hours = parsedDate.getHours().toString().padStart(2, '0')
+              const minutes = parsedDate.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes} ${formattedDay}/${formattedMonth}/${formattedYear}`
             }
           }
           return dateString
@@ -196,7 +211,9 @@ export default {
         const day = date.getDate().toString().padStart(2, '0')
         const month = (date.getMonth() + 1).toString().padStart(2, '0')
         const year = date.getFullYear()
-        return `${day}/${month}/${year}`
+        const hours = date.getHours().toString().padStart(2, '0')
+        const minutes = date.getMinutes().toString().padStart(2, '0')
+        return `${hours}:${minutes} ${day}/${month}/${year}`
       } catch (error) {
         return dateString
       }
@@ -362,7 +379,31 @@ export default {
     }
 
     function emailHazard() {
-      emit('email-hazard', props.hazard)
+      showEmailDialog.value = true
+    }
+
+    function closeEmailDialog() {
+      showEmailDialog.value = false
+    }
+
+    async function handleSendEmail(data) {
+      try {
+        // Create hazard object with areaName included
+        const hazardWithArea = {
+          ...props.hazard,
+          areaName: areaName.value
+        }
+        
+        await hazardStore.emailHazard({
+          hazard: hazardWithArea,
+          emails: data.emails,
+          factoryId: userStore.selectedFactory.id
+        })
+        alert('האימייל נשלח בהצלחה')
+      } catch (error) {
+        console.error('Failed to send email:', error)
+        alert('שגיאה בשליחת האימייל')
+      }
     }
 
     async function saveSeverity(newSeverity) {
@@ -392,6 +433,9 @@ export default {
       deleteHazard,
       editHazard,
       emailHazard,
+      showEmailDialog,
+      closeEmailDialog,
+      handleSendEmail,
       saveSeverity,
       localSeverity,
       areaName,
