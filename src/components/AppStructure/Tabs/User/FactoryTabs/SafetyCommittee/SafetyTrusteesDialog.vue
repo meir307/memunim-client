@@ -151,6 +151,53 @@ function closeDelete() {
     editedIndex.value = -1
 }
 
+async function addUserToFactoryContacts(userData) {
+    const factory = userStore.selectedFactory
+    if (!factory) {
+        return
+    }
+
+    // Get current contacts or initialize as empty array
+    let contacts = []
+    try {
+        contacts = factory.contacts ? JSON.parse(factory.contacts) : []
+    } catch (e) {
+        contacts = []
+    }
+
+    if (!Array.isArray(contacts)) {
+        contacts = []
+    }
+
+    // Check if contact already exists (by email)
+    const existingContactIndex = contacts.findIndex(
+        c => c.email && c.email.toLowerCase() === userData.email.toLowerCase()
+    )
+
+    if (existingContactIndex === -1) {
+        // Add new contact
+        const newContact = {
+            id: Date.now(), // Simple ID generation
+            name: userData.fullName || '',
+            jobDescription: 'נאמן בטיחות',
+            email: userData.email || '',
+            phone: userData.phone || ''
+        }
+        contacts.push(newContact)
+
+        // Update factory with new contacts JSON
+        const updatedFactory = {
+            ...factory,
+            contacts: JSON.stringify(contacts)
+        }
+
+        await userStore.updateFactory(updatedFactory)
+        
+        // Update selectedFactory in store
+        userStore.selectedFactory = updatedFactory
+    }
+}
+
 async function save() {
     const factoryId = userStore.selectedFactory.id
     const factoryName = userStore.selectedFactory.name
@@ -172,6 +219,9 @@ async function save() {
             dataToSend.password = editedItem.value.phone
             dataToSend.factoryId = factoryId
             await safetyCommitteeStore.addMember(dataToSend)
+
+            // Add this user to factory contacts
+            await addUserToFactoryContacts(editedItem.value)
         }
         closeDialog()
     } catch (error) {
