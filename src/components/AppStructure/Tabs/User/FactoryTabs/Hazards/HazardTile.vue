@@ -11,7 +11,7 @@
               <div class="title-box">
                 <span class="title-text">{{ hazard.title }}</span>
               </div>
-              <span v-if="areaName" class="area-name">  {{ areaName }}</span>
+              <span class="area-name">{{ areaName || 'מיקום כללי' }}</span>
             </div>
             <div class="top-right">
               <SeverityControl

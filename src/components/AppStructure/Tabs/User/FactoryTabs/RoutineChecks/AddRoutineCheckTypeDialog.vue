@@ -243,34 +243,5 @@ export default {
     margin-top: 24px;
     margin-bottom: 8px;
 }
-
-.select-with-button {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    direction: rtl;
-}
-
-.select-field {
-    flex: 1;
-}
-
-.select-button {
-    margin-top: 2px;
-    background-color: #4caf50 !important;
-    color: white !important;
-    font-weight: bold;
-}
-
-.select-button :deep(.v-icon) {
-    color: white !important;
-    font-weight: bold;
-    font-size: 28px !important;
-}
-
-.select-button:hover {
-    background-color: #45a049 !important;
-    transform: scale(1.1);
-}
 </style>
 

@@ -6,20 +6,23 @@
         <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
       </v-card-title>
       <v-card-text>
-        <v-select
-          v-model="selectedContacts"
-          :items="contactOptions"
-          item-title="name"
-          item-value="value"
-          label="בחר אנשי קשר"
-          multiple
-          chips
-          closable-chips
-          variant="outlined"
-          density="comfortable"
-          reverse
-          :loading="loading"
-        >
+        <div class="select-with-button">
+          <v-select
+            v-model="selectedContacts"
+            :items="contactOptions"
+            item-title="name"
+            item-value="value"
+            label="בחר אנשי קשר"
+            multiple
+            chips
+            closable-chips
+            variant="outlined"
+            density="comfortable"
+            reverse
+            no-data-text="לא הוגדרו אנשי קשר"
+            :loading="loading"
+            class="select-field"
+          >
           <template v-slot:item="{ props, item }">
             <v-list-item 
               :value="props.value"
@@ -44,7 +47,16 @@
               {{ contactOptions.find(c => c.value === email)?.name || email }}
             </v-chip>
           </template>
-        </v-select>
+          </v-select>
+          <v-btn
+            icon="mdi-plus-circle-outline"
+            variant="flat"
+            size="small"
+            class="select-button"
+            color="success"
+            @click="openContactDialog"
+          ></v-btn>
+        </div>
         
         <div class="popup-btn-row">
           <v-btn @click="sendEmail" color="primary" :disabled="selectedContacts.length === 0">
@@ -55,16 +67,27 @@
           <v-spacer></v-spacer>
         </div>
       </v-card-text>
-    </v-card>
-  </v-dialog>
+      </v-card>
+    </v-dialog>
+
+  <!-- UpsertContact Dialog -->
+  <UpsertContact 
+    :show-dialog="showContactDialog" 
+    :edit-contact="null"
+    @close-dialog="closeContactDialog" 
+  />
 </template>
 
 <script>
 import { ref, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
+import UpsertContact from '../FactoryDetails/UpsertContact.vue'
 
 export default {
   name: 'MailHazard',
+  components: {
+    UpsertContact
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -81,6 +104,7 @@ export default {
     const dialog = ref(false)
     const loading = ref(false)
     const selectedContacts = ref([])
+    const showContactDialog = ref(false)
 
     // Watch for prop changes
     watch(() => props.showDialog, (newVal) => {
@@ -126,6 +150,15 @@ export default {
       }
     })
 
+    function openContactDialog() {
+      showContactDialog.value = true
+    }
+
+    function closeContactDialog() {
+      showContactDialog.value = false
+      // Contact options will automatically refresh when selectedFactory changes
+    }
+
     function closeDialog() {
       dialog.value = false
       selectedContacts.value = []
@@ -149,7 +182,10 @@ export default {
       dialog,
       loading,
       selectedContacts,
+      showContactDialog,
       contactOptions,
+      openContactDialog,
+      closeContactDialog,
       closeDialog,
       sendEmail
     }

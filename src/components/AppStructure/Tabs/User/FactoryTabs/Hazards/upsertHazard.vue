@@ -56,16 +56,27 @@
 
           <v-row>
             <v-col cols="12">
-              <v-select
-                v-model="editedItem.areaId"
-                :items="areaOptions"
-                label="אזור"
-                required
-                reverse
-                item-title="title"
-                item-value="value"
-                :rules="areaRules"
-              ></v-select>
+              <div class="select-with-button">
+                <v-select
+                  v-model="editedItem.areaId"
+                  :items="areaOptions"
+                  label="אזור"
+                  reverse
+                  item-title="title"
+                  item-value="value"
+                  :rules="areaRules"
+                  class="select-field"
+                  no-data-text="לא הוגדרו אזורים"
+                ></v-select>
+                <v-btn
+                  icon="mdi-plus-circle-outline"
+                  variant="flat"
+                  size="small"
+                  class="select-button"
+                  color="success"
+                  @click="openAreaDialog"
+                ></v-btn>
+              </div>
             </v-col>
           </v-row>
 
@@ -74,7 +85,6 @@
               <v-textarea
                 v-model="editedItem.description"
                 label="תיאור"
-                required
                 reverse
                 rows="2"
                 placeholder="הזן תיאור של המפגע..."
@@ -151,6 +161,13 @@
       </div>
     </v-card>
   </v-dialog>
+
+  <!-- UpsertArea Dialog -->
+  <UpsertArea 
+    :show-dialog="showAreaDialog" 
+    :edit-area="null"
+    @close-dialog="closeAreaDialog" 
+  />
 </template>
 
 <script>
@@ -164,9 +181,13 @@ import {
   isValidDDMMYYYY
 } from '@/utils/DateFormater'
 import { compressImage } from '@/utils/ImageCompressor'
+import UpsertArea from '../FactoryDetails/UpsertArea.vue'
 
 export default {
   name: 'UpsertHazard',
+  components: {
+    UpsertArea
+  },
   props: {
     showDialog: {
       type: Boolean,
@@ -189,6 +210,7 @@ export default {
     const datePickerValue = ref('')
     const existingFile = ref(null)
     const newImagePreview = ref(null)
+    const showAreaDialog = ref(false)
     
     const editedItem = ref({
       title: '',
@@ -261,11 +283,11 @@ export default {
     ])
 
     const areaRules = computed(() => [
-      v => !!v || 'אזור חובה'
+      // Area is optional, no validation required
     ])
 
     const descriptionRules = computed(() => [
-      v => !!v || 'תיאור חובה'
+      // Description is optional, no validation required
     ])
 
     const fileRules = computed(() => {
@@ -423,6 +445,16 @@ export default {
       }
     }
 
+    function openAreaDialog() {
+      showAreaDialog.value = true
+    }
+
+    function closeAreaDialog() {
+      showAreaDialog.value = false
+      // Refresh area options after closing the dialog
+      // The areaOptions computed will automatically update when selectedFactory changes
+    }
+
     function closeDialog() {
       dialog.value = false
       resetForm()
@@ -538,6 +570,7 @@ export default {
       editedItem,
       existingFile,
       newImagePreview,
+      showAreaDialog,
       isEditMode,
       dialogTitle,
       formattedDate,
@@ -555,6 +588,8 @@ export default {
       removeExistingFile,
       handleDateChange,
       handleDatePickerChange,
+      openAreaDialog,
+      closeAreaDialog,
       closeDialog,
       save
     }
