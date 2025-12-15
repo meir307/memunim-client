@@ -61,6 +61,7 @@
                   color="yellow"
                   size="small"
                   class="email-btn"
+                  :disabled="!canEditHazard"
                 ></v-btn>
                 <!-- Mobile image icon button -->
                 <v-btn

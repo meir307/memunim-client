@@ -31,7 +31,7 @@
 
       <div  class="popup-btn-row">
        
-        <v-btn color="primary" type="submit" :loading="loading">
+        <v-btn v-if="userStore.user.role === 1" color="primary" type="submit" :loading="loading">
           {{ submitButtonText }}
         </v-btn>
         <v-btn v-if="!hideCancel" variant="outlined" @click="close">
@@ -78,7 +78,9 @@ export default {
     }
   }),
   computed: {
-      
+    userStore() {
+      return useUserStore()
+    },
     submitButtonText() {
      
       return this.mode === 'update' ? 'עדכן' : 'הוסף מפעל'

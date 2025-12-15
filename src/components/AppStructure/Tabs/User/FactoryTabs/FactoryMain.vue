@@ -19,7 +19,7 @@
                 <p class="text-h6 text-medium-emphasis mb-0 d-none d-md-block"> {{ selectedFactory?.employees || '0' }} עובדים</p>
              </div>
   
-              <div class="back-button-container">
+              <div v-if="userStore.user.role === 1" class="back-button-container">
                   <v-btn 
                       color="green-lighten-1"
                       prepend-icon="mdi-arrow-left"
