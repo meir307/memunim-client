@@ -521,3 +521,18 @@
 .procedure-link:hover {
   text-decoration: underline;
 }
+
+/* Phone number input - digits only */
+.phone-input input {
+  text-align: right;
+}
+
+.phone-input input::-webkit-outer-spin-button,
+.phone-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.phone-input input[type=number] {
+  -moz-appearance: textfield;
+}

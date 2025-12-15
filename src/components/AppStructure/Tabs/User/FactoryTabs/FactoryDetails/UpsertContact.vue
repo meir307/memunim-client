@@ -31,6 +31,8 @@
             v-model="editedItem.phone" 
             label="טלפון" 
             reverse
+            class="phone-input"
+            @input="handlePhoneInput"
           ></v-text-field>
         </v-form>
         <div class="popup-btn-row">
@@ -46,6 +48,7 @@
 <script>
 import { ref, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
+import { restrictPhoneToDigits } from '@/utils/PhoneInput'
 
 export default {
   name: 'UpsertContact',
@@ -118,6 +121,10 @@ export default {
         email: '',
         phone: ''
       }
+    }
+
+    function handlePhoneInput(value) {
+      editedItem.value.phone = restrictPhoneToDigits(value)
     }
 
     function closeDialog() {
@@ -202,7 +209,8 @@ export default {
       editedItem,
       dialogTitle,
       closeDialog,
-      save
+      save,
+      handlePhoneInput
     }
   }
 }

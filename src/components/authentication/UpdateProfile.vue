@@ -37,6 +37,8 @@
               type="text"
               reverse
               required
+              class="phone-input"
+              @input="handlePhoneInput"
               @keyup.enter="updateProfile"
             ></v-text-field>
 
@@ -55,6 +57,7 @@
 <script>
 import * as validationRules from '@/utils/ValidationRules'
 import { useUserStore } from '@/stores/UserStore'
+import { restrictPhoneToDigits } from '@/utils/PhoneInput'
 
 export default {
   name: 'UpdateProfileComponent',
@@ -70,6 +73,9 @@ export default {
     }
   },
   methods: {
+    handlePhoneInput(value) {
+      this.user.phone = restrictPhoneToDigits(value)
+    },
     focusEmail() {
       this.$nextTick(() => {
         this.$refs.emailField?.focus()

@@ -10,7 +10,7 @@
                 <v-form @submit.prevent="save">
                     <v-text-field v-model="editedItem.fullName" label="שם" required reverse></v-text-field>
                     <v-text-field v-model="editedItem.email" label="אימייל" type="email" required reverse></v-text-field>
-                    <v-text-field v-model="editedItem.phone" label="טלפון" reverse></v-text-field>
+                    <v-text-field v-model="editedItem.phone" label="טלפון" reverse class="phone-input" @input="handlePhoneInput"></v-text-field>
                     <v-checkbox v-model="editedItem.isCommitteeMember" label="חבר ועדה" :true-value="true"></v-checkbox>
                 </v-form>
                 <div class="popup-btn-row">
@@ -45,6 +45,7 @@
 import { ref, computed, watch } from 'vue'
 import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 import { useUserStore } from '@/stores/UserStore'
+import { restrictPhoneToDigits } from '@/utils/PhoneInput'
 
 export default {
     name: 'SafetyTrusteesDialog',
@@ -123,6 +124,10 @@ function editUser(item) {
         password: item.password || ''
     }
     dialog.value = true
+}
+
+function handlePhoneInput(value) {
+    editedItem.value.phone = restrictPhoneToDigits(value)
 }
 
 function closeDialog() {
@@ -253,7 +258,8 @@ async function deleteItemConfirm() {
             closeDialog,
             closeDelete,
             save,
-            deleteItemConfirm
+            deleteItemConfirm,
+            handlePhoneInput
         }
     }
 }

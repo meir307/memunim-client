@@ -17,7 +17,7 @@
                         <v-text-field v-model="user.email" :rules="validationRules.emailRules" label="אימייל"
                             type="email" reverse></v-text-field>
                         <v-text-field v-model="user.phone" :rules="validationRules.phoneRules" label="טלפון" type="text"
-                            reverse>
+                            reverse class="phone-input" @input="handlePhoneInput">
                         </v-text-field>
 
 
@@ -61,6 +61,7 @@ import * as validationRules from '@/utils/ValidationRules'
 import axios from 'axios'
 import { useCommonStore } from '@/stores/CommonStore'
 import { useLoaderStore } from '@/stores/LoaderStore'
+import { restrictPhoneToDigits } from '@/utils/PhoneInput'
 
 export default {
     name: 'RegistrationComponent',
@@ -89,6 +90,9 @@ export default {
         }
     },
     methods: {
+        handlePhoneInput(value) {
+            this.user.phone = restrictPhoneToDigits(value)
+        },
         async regUser() {
             const emailValid = this.validationRules.emailRules.every(rule => rule(this.user.email) === true);
             const passwordValid = this.validationRules.passwordRules.every(rule => rule(this.user.password) === true);
