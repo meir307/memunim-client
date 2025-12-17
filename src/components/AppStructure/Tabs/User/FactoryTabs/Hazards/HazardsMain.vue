@@ -5,6 +5,31 @@
         <div class="title-container">
           <h2 class="title-text">מפגעים</h2>
           <v-spacer></v-spacer>
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                icon="mdi-dots-vertical"
+                variant="text"
+                size="small"
+                v-bind="props"
+                class="menu-btn"
+              ></v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="openFilterDialog">
+                <template v-slot:prepend>
+                  <v-icon>mdi-filter</v-icon>
+                </template>
+                <v-list-item-title>סינון</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="sendReport">
+                <template v-slot:prepend>
+                  <v-icon>mdi-file-send</v-icon>
+                </template>
+                <v-list-item-title>שלח דוח</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <v-btn color="primary" @click="openDialog" class="add-btn">
             <v-icon left>mdi-plus</v-icon>
             הוסף מפגע
@@ -15,7 +40,7 @@
       <v-card-text class="pa-0">
         <div class="tiles-container">
           <div v-if="hazards.length === 0" class="no-data">
-            לא הוזנו מפגעים
+           אין מפגעים להצגה
           </div>
           <HazardTile
             v-for="hazard in hazards"
@@ -28,6 +53,15 @@
           />
         </div>
       </v-card-text>
+
+    <!-- Filter Dialog -->
+    <v-dialog v-model="showFilterDialog" max-width="600px" persistent>
+      <FilterHazards 
+        :filter-object="filterObject"
+        @close="showFilterDialog = false"
+        @apply-filters="handleApplyFilters"
+      />
+    </v-dialog>
     </v-card>
 
     <!-- Upsert Hazard Dialog Component -->
@@ -44,6 +78,7 @@
 import { ref, computed, onMounted } from 'vue'
 import HazardTile from './HazardTile.vue'
 import UpsertHazard from './upsertHazard.vue'
+import FilterHazards from './FilterHazards.vue'
 import { useHazardStore } from '@/stores/HazardStore'
 import { useUserStore } from '@/stores/UserStore'
 
@@ -51,7 +86,8 @@ export default {
   name: 'HazardsMain',
   components: {
     HazardTile,
-    UpsertHazard
+    UpsertHazard,
+    FilterHazards
   },
   setup() {
     const hazardStore = useHazardStore()
@@ -60,6 +96,33 @@ export default {
     const showDialog = ref(false)
     const selectedHazard = ref(null)
     const upsertHazardDialog = ref(null)
+    const showFilterDialog = ref(false)
+    
+    // Filter object with default values
+    const createDefaultFilter = () => {
+      const factory = userStore.selectedFactory
+      let defaultAreas = []
+      
+      // Get all area IDs from factory
+      if (factory && factory.areas) {
+        try {
+          const parsed = JSON.parse(factory.areas)
+          if (Array.isArray(parsed)) {
+            defaultAreas = parsed.map(area => area.id)
+          }
+        } catch (e) {
+          console.error('Error parsing areas:', e)
+        }
+      }
+      
+      return {
+        severities: [1, 2, 3], // All severities by default
+        areas: defaultAreas, // All areas by default
+        statuses: [0] // Only open status by default (0 = open, 1 = closed)
+      }
+    }
+    
+    const filterObject = ref(createDefaultFilter())
 
     const hazards = computed(() => hazardStore.getHazards)
 
@@ -105,7 +168,7 @@ export default {
     async function refreshHazards() {
       try {
         if (userStore.selectedFactory) {
-          await hazardStore.fetchHazards(userStore.selectedFactory.id)
+          await hazardStore.fetchHazards(userStore.selectedFactory.id, filterObject.value)
         }
       } catch (error) {
         console.error('Failed to refresh hazards:', error)
@@ -117,10 +180,29 @@ export default {
       refreshHazards()
     }
 
+    function openFilterDialog() {
+      showFilterDialog.value = true
+    }
+
+    function handleApplyFilters(filters) {
+      filterObject.value = filters
+      showFilterDialog.value = false
+      // Refresh hazards with new filter
+      refreshHazards()
+    }
+
+    function sendReport() {
+      // TODO: Implement send report functionality
+      alert('שליחת דוח - פונקציונליות זו תיושם בקרוב')
+    }
+
     onMounted(async () => {
       try {
+        // Initialize filter object with default values
+        filterObject.value = createDefaultFilter()
+        
         if (userStore.selectedFactory) {
-          await hazardStore.fetchHazards(userStore.selectedFactory.id)
+          await hazardStore.fetchHazards(userStore.selectedFactory.id, filterObject.value)
         }
       } catch (error) {
         console.error('Failed to fetch hazards:', error)
@@ -131,6 +213,8 @@ export default {
       showDialog,
       selectedHazard,
       upsertHazardDialog,
+      showFilterDialog,
+      filterObject,
       hazards,
       openDialog,
       closeDialog,
@@ -138,7 +222,10 @@ export default {
       deleteHazard,
       resolveHazard,
       refreshHazards,
-      handleUpdateHazard
+      handleUpdateHazard,
+      openFilterDialog,
+      handleApplyFilters,
+      sendReport
     }
   }
 }
@@ -164,7 +251,8 @@ export default {
   font-size: 1.2rem !important;
 }
 
-.add-btn {
+.add-btn,
+.menu-btn {
   flex-shrink: 0 !important;
   min-width: auto;
 }

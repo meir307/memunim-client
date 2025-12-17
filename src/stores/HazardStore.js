@@ -16,8 +16,8 @@ export const useHazardStore = defineStore('hazard', {
   },
 
   actions: {
-    // Fetch all hazards for a factory
-    async fetchHazards(factoryId) {
+    // Fetch all hazards for a factory with optional filter
+    async fetchHazards(factoryId, filterObject = null) {
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -25,7 +25,14 @@ export const useHazardStore = defineStore('hazard', {
       try {
         const commonStore = useCommonStore()
         const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'hazards/getHazards', { factoryId }, {
+        const requestData = { factoryId }
+        
+        // Add filter object if provided
+        if (filterObject) {
+          requestData.filters = filterObject
+        }
+        
+        const response = await axios.post(commonStore.apiUrl + 'hazards/getHazards', requestData, {
           headers: {
             'sessionId': userStore.user.sessionId
           }
@@ -253,7 +260,6 @@ export const useHazardStore = defineStore('hazard', {
 
     // Resolve hazard
     async resolveHazard(hazardId) {
-      alert('resolveHazard')
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()

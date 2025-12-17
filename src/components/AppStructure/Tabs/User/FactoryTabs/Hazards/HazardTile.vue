@@ -10,8 +10,14 @@
             <div class="top-left">
               <div class="title-box">
                 <span class="title-text">{{ hazard.title }}</span>
+                <!-- Status Indicator -->
+               
               </div>
-              <span class="area-name">{{ areaName || 'מיקום כללי' }}</span>
+              <span class="area-name"> איזור - {{ areaName || 'מיקום כללי' }}</span>
+              
+              <span class="status-name" :class="hazardStatus.class">
+                   סטטוס - {{ hazardStatus.text }}
+                </span>
             </div>
             <div class="top-right">
               <SeverityControl
@@ -52,7 +58,7 @@
                   color="primary"
                   size="small"
                   class="save-btn"
-                  :disabled="!canEditHazard"
+                  :disabled="!canEditHazard || isClosed"
                 ></v-btn>
                 <!-- Email button -->
                 <v-btn
@@ -78,7 +84,7 @@
                   class="resolve-btn-icon" 
                   @click="resolveHazard"
                   size="small"
-                  :disabled="!canEditHazard"
+                  :disabled="!canEditHazard || isClosed"
                 ></v-btn>
                 <!-- Delete button -->
                 <v-btn 
@@ -299,6 +305,28 @@ export default {
       }
     })
 
+    // Status indicator (open/closed)
+    const hazardStatus = computed(() => {
+      // Check if hazard is resolved (closed = 1, open = 0)
+      const isResolved = props.hazard.status === 1
+      if (isResolved) {
+        return {
+          text: 'סגור',
+          class: 'status-closed'
+        }
+      } else {
+        return {
+          text: 'פתוח',
+          class: 'status-open'
+        }
+      }
+    })
+
+    // Check if hazard is closed
+    const isClosed = computed(() => {
+      return props.hazard.status === 1
+    })
+
     // Check if user can edit/delete: admin (role == 1) or creator
     const canEditHazard = computed(() => {
       const userRole = userStore.user.role
@@ -440,7 +468,9 @@ export default {
       saveSeverity,
       localSeverity,
       areaName,
-      canEditHazard
+      canEditHazard,
+      hazardStatus,
+      isClosed
     }
   }
 }
@@ -580,23 +610,35 @@ export default {
   align-items: center;
   flex-shrink: 0;
   max-width: fit-content;
+  gap: 8px;
 }
 
 .title-text {
   font-size: 1.4rem;
   font-weight: 600;
   color: #06488a;
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  width: 100%;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  line-clamp: 2;
-  line-height: 1.4;
-  max-height: calc(1.4rem * 1.4 * 2);
+}
+
+.status-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.status-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.status-open {
+  color: #cc271c; /* Green for open */
+}
+
+.status-closed {
+  color: #066129; /* Grey for closed */
 }
 
 .area-name {

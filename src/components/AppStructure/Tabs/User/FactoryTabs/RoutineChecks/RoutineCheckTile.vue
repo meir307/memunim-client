@@ -587,6 +587,25 @@ export default {
     box-sizing: border-box;
   }
 
+  .info-column.menu-column {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    margin-right: auto !important;
+    margin-left: 0 !important;
+    width: auto !important;
+    flex: 0 0 auto !important;
+    order: 1 !important;
+  }
+
+  .title-column {
+    order: 0 !important;
+  }
+
+  .menu-btn {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
   .info-column {
     width: 100%;
     flex-direction: row;
