@@ -1,7 +1,18 @@
 export const required = v => !!v || 'שדה חובה';
-export const email = v => /.+@.+\..+/.test(v) || 'אימייל לא תקין';
+export const email = v => {
+  if (!v) return true; // Let required rule handle empty values
+  // Check for spaces
+  if (/\s/.test(v)) return 'אימייל לא יכול להכיל רווחים';
+  // More strict email validation: no spaces, proper format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(v) || 'אימייל לא תקין';
+};
 
 export const minLength = min => v => (v && v.length >= min) || `לפחות ${min} תווים`;
+export const noSpaces = v => {
+  if (!v) return true; // Let required rule handle empty values
+  return !/\s/.test(v) || 'לא יכול להכיל רווחים';
+};
 export const hasNumber = v => /\d/.test(v) || 'הסיסמה חייבת להכיל לפחות ספרה אחת';
 export const hasLetter = v => /[a-zA-Z]/.test(v) || 'הסיסמה חייבת להכיל לפחות אות אחת באנגלית';
 
@@ -20,17 +31,23 @@ export const fullNameRules = [
   fullNameHebrewWords
 ];
 
+export const phoneNoSpaces = v => {
+  if (!v) return true; // Let required rule handle empty values
+  return !/\s/.test(v) || 'הטלפון לא יכול להכיל רווחים';
+};
 export const phoneDigits = v => /^\d+$/.test(v) || 'הטלפון חייב להכיל ספרות בלבד';
 export const phoneLength = v => (v && (v.length === 9 || v.length === 10)) || 'מספר טלפון לא תקין';
 
 export const phoneRules = [
   required,
+  phoneNoSpaces,
   phoneDigits,
   phoneLength
 ];
 
 export const passwordRules = [
   required,
+  noSpaces,
   minLength(6),
   hasNumber,
   hasLetter

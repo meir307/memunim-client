@@ -99,8 +99,13 @@ export default {
       }
 
       // Add new note
+      // Find the maximum ID and increment by 1 for sequential order
+      const maxId = notesList.length > 0 
+        ? Math.max(...notesList.map(n => n.id || 0))
+        : 0
+      
       const newNote = {
-        id: Date.now(),
+        id: maxId + 1,
         content: ''
       }
       notesList.push(newNote)

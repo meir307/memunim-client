@@ -172,8 +172,13 @@ export default {
           }
         } else {
           // Add new contact
+          // Find the maximum ID and increment by 1 for sequential order
+          const maxId = contacts.length > 0 
+            ? Math.max(...contacts.map(c => c.id || 0))
+            : 0
+          
           const newContact = {
-            id: Date.now(), // Simple ID generation
+            id: maxId + 1,
             name: editedItem.value.name,
             jobDescription: editedItem.value.jobDescription,
             email: editedItem.value.email,
