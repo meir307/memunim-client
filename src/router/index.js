@@ -98,6 +98,18 @@ const routes = [
     path: '/activateTrustee',
     name: 'activateTrustee',
     component: () => import('../components/Authentication/ActivateTrustee.vue')
+  },
+  {
+    path: '/admin/system',
+    name: 'admin-system',
+    component: () => import('../components/Admin/tabs/AdminSystem/MainSystemAdmin.vue'),
+    meta: { requiresAuth: true, requiresAdminType: 1 }
+  },
+  {
+    path: '/admin/shop',
+    name: 'admin-shop',
+    component: () => import('../components/Admin/tabs/AdminShop/MainShopAdmin.vue'),
+    meta: { requiresAuth: true, requiresAdminType: 2 }
   }
 ]
 
@@ -106,17 +118,66 @@ const router = createRouter({
   routes
 })
 
-// Navigation guard to check authentication
+// Navigation guard to check authentication and admin permissions
 router.beforeEach((to, from, next) => {
+  // Get user from localStorage (store might not be initialized in router context)
+  const userStr = localStorage.getItem('user')
+  let user = null
+  
+  if (userStr && userStr !== 'undefined') {
+    try {
+      user = JSON.parse(userStr)
+    } catch (e) {
+      console.error('Error parsing user from localStorage:', e)
+    }
+  }
+  
   // Check if route requires authentication
   if (to.meta.requiresAuth) {
-    // Get user store to check authentication status
-    // You'll need to import your user store here
-    const isAuthenticated = localStorage.getItem('user') || false // Simple check
+    const isAuthenticated = user?.isAuthenticated || user !== null
     
     if (!isAuthenticated) {
       // Redirect to login or show login modal
       next('/regulations') // Redirect to home page
+      return
+    }
+  }
+  
+  // Check if route requires specific AdminType
+  if (to.meta.requiresAdminType !== undefined) {
+    const userAdminType = user?.AdminType
+    
+    if (!userAdminType) {
+      next('/regulations')
+      return
+    }
+    
+    // Parse AdminType if it's a string (e.g., "[1,2]")
+    let userAdminTypes = userAdminType
+    if (typeof userAdminType === 'string') {
+      try {
+        userAdminTypes = JSON.parse(userAdminType)
+      } catch (e) {
+        // If parsing fails, treat as single value
+        userAdminTypes = [userAdminType]
+      }
+    }
+    
+    // Normalize to array
+    if (!Array.isArray(userAdminTypes)) {
+      userAdminTypes = [userAdminTypes]
+    }
+    
+    const requiredAdminTypeNum = Number(to.meta.requiresAdminType)
+    
+    // Check if any of the user's AdminTypes match the required type
+    const hasMatchingType = userAdminTypes.some(userType => {
+      const userTypeNum = Number(userType)
+      return !isNaN(userTypeNum) && userTypeNum === requiredAdminTypeNum
+    })
+    
+    if (!hasMatchingType) {
+      next('/regulations')
       return
     }
   }

@@ -156,9 +156,11 @@ export default {
     userMenu: false,
     activeTab: 0,
     tabs: [
-      { id: 0, text: 'חוקים ותקנות', route: '/regulations' },
-      { id: 1, text: 'נותני שרות', route: '/services' },
-      { id: 2, text: 'איזור אישי', route: '/user' }
+      { id: 0, text: 'חוקים ותקנות', route: '/regulations', adminType: null },
+      { id: 1, text: 'נותני שרות', route: '/services', adminType: null },
+      { id: 2, text: 'איזור אישי', route: '/user', adminType: null },
+      { id: 3, text: 'ניהול מערכת', route: '/admin/system', adminType:1 },
+      { id: 4, text: 'ניהול חנות', route: '/admin/shop', adminType:2 }
     ]
   }),
   computed: {
@@ -172,7 +174,58 @@ export default {
       return this.userStore.user.fullName
     },
     visibleTabs() {
-      return this.isAuthenticated ? this.tabs : this.tabs.slice(0, -1)
+      let filteredTabs = this.tabs
+      
+      // Filter by authentication - hide 'איזור אישי' for guests
+      if (!this.isAuthenticated) {
+        filteredTabs = filteredTabs.filter(tab => tab.id !== 2)
+      }
+      
+      // Filter by AdminType
+      const userAdminType = this.userStore.user?.AdminType
+      
+      filteredTabs = filteredTabs.filter(tab => {
+        // If tab has no adminType restriction (null), show it to everyone
+        if (tab.adminType === null || tab.adminType === undefined) {
+          return true
+        }
+        
+        // If user has no AdminType, hide admin-restricted tabs
+        if (!userAdminType) {
+          return false
+        }
+        
+        // Parse AdminType if it's a string (e.g., "[1,2]")
+        let userAdminTypes = userAdminType
+        if (typeof userAdminType === 'string') {
+          try {
+            userAdminTypes = JSON.parse(userAdminType)
+          } catch (e) {
+            // If parsing fails, treat as single value
+            userAdminTypes = [userAdminType]
+          }
+        }
+        
+        // Normalize to array
+        if (!Array.isArray(userAdminTypes)) {
+          userAdminTypes = [userAdminTypes]
+        }
+        
+        // Convert all to numbers for consistent comparison
+        const userAdminTypesNum = userAdminTypes.map(type => Number(type)).filter(num => !isNaN(num))
+        
+        // If tab.adminType is an array, check if any user AdminType is in the array
+        if (Array.isArray(tab.adminType)) {
+          const tabAdminTypesNum = tab.adminType.map(type => Number(type))
+          return userAdminTypesNum.some(userType => tabAdminTypesNum.includes(userType))
+        }
+        
+        // If tab.adminType is a single value, check if any user AdminType matches
+        const tabAdminTypeNum = Number(tab.adminType)
+        return userAdminTypesNum.some(userType => userType === tabAdminTypeNum)
+      })
+      
+      return filteredTabs
     }
   },
   methods: {
