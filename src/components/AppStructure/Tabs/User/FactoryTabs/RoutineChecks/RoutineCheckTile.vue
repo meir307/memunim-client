@@ -15,7 +15,7 @@
                 <v-list>
                   <v-list-item @click="addCheck">
                     <v-list-item-title>
-                      הוסף בדיקה חדשה
+                      הוסף פעילות חדשה
                       <v-icon left> mdi-plus</v-icon>
                     </v-list-item-title>
                   </v-list-item>
@@ -38,13 +38,13 @@
 
           <div class="info-column">
             <v-icon class="info-icon">mdi-calendar</v-icon>
-            <span class="info-label">תאריך בדיקה:</span>
+            <span class="info-label">תאריך פעילות:</span>
             <span class="info-value">{{ formatDate(checkDate) }}</span>
           </div>
 
           <div class="info-column">
             <v-icon class="info-icon">mdi-calendar-clock</v-icon>
-            <span class="info-label">תאריך בדיקה הבאה:</span>
+            <span class="info-label">תאריך פעילות הבאה:</span>
             <span class="info-value">{{ formatDate(nextCheckDate) }}</span>
           </div>
 

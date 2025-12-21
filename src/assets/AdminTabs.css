@@ -1,0 +1,160 @@
+/* Admin Tabs Global Styles */
+
+.admin-wrapper {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.admin-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  position: relative;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.navigation-menu {
+  width: 280px;
+  min-width: 280px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.navigation-card {
+  position: sticky;
+  overflow-y: auto;
+  margin-top: 0;
+}
+
+.content-area {
+  min-height: 500px;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.content-section {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* List item styling */
+:deep(.v-list-item--active) {
+  background-color: rgba(25, 118, 210, 0.1);
+  color: rgb(25, 118, 210);
+}
+
+:deep(.v-list-item:hover) {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Remove any default padding/margin from parent containers */
+:deep(.v-main) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+:deep(.v-main__wrap) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Target router-view if it has padding */
+:deep(router-view) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Title styling matching HazardsMain */
+.title-row {
+  width: 100% !important;
+  display: block !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Override global modern-title gradient with white background - ONLY for main admin title (with title-row class) */
+.admin-wrapper .modern-title.title-row,
+.admin-container .modern-title.title-row {
+  color: black !important;
+  padding: 4px 16px !important;
+  background-image: none !important;
+  background: white !important;
+  background-color: white !important;
+}
+
+.admin-wrapper :deep(.modern-title.title-row),
+.admin-container :deep(.modern-title.title-row) {
+  background-image: none !important;
+  background: white !important;
+  background-color: white !important;
+}
+
+.admin-wrapper .v-card-title.modern-title.title-row,
+.admin-container .v-card-title.modern-title.title-row {
+  background: white !important;
+  background-color: white !important;
+  background-image: none !important;
+}
+
+.admin-wrapper :deep(.v-card-title.modern-title.title-row),
+.admin-container :deep(.v-card-title.modern-title.title-row) {
+  background: white !important;
+  background-color: white !important;
+  background-image: none !important;
+}
+
+/* Title container and text - ONLY for admin tabs */
+.admin-wrapper .title-container,
+.admin-container .title-container {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+  flex-direction: row !important;
+  gap: 16px;
+}
+
+.admin-wrapper .title-text,
+.admin-container .title-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 !important;
+  font-size: 1.5rem !important;
+  color: black !important;
+  font-weight: 600 !important;
+}
+
+.admin-wrapper .title-icon,
+.admin-container .title-icon {
+  color: black !important;
+}
+
+@media (max-width: 768px) {
+  .admin-wrapper .title-container,
+  .admin-container .title-container {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+  }
+  
+  .admin-wrapper .title-text,
+  .admin-container .title-text {
+    text-align: left !important;
+    margin-right: 16px !important;
+  }
+}
+

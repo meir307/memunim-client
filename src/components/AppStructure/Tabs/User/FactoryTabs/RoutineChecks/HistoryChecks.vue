@@ -42,7 +42,7 @@
           <div class="panel-column">
             <div class="panel-container">
               <div class="panel-title-with-button">
-                <h3 class="panel-title">הקבצים שמקושרים לבדיקה</h3>
+                <h3 class="panel-title">הקבצים שמקושרים לפעילות</h3>
                 <v-btn size="small" color="primary" @click="addFiles" class="add-file-btn">
                   <v-icon left>mdi-plus</v-icon>
                   הוסף קבצים
@@ -64,7 +64,7 @@
                   </div>
                 </div>
                 <div v-else class="placeholder-text">
-                 אין קבצים מקושרים לבדיקה המסומנת
+                 אין קבצים מקושרים לפעילות המסומנת
                 </div>
               </div>
             </div>
@@ -77,9 +77,9 @@
         <!-- Remarks Section -->
         <div class="remarks-section">
           <div class="remarks-container">
-            <v-textarea v-model="selectedRemark" label="הערות על הבדיקה המסומנת" rows="1" reverse variant="outlined"
+            <v-textarea v-model="selectedRemark" label="הערות על הפעילות המסומנת" rows="1" reverse variant="outlined"
               class="remarks-field"
-              :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר בדיקה להצגת הערות'"></v-textarea>
+              :placeholder="selectedCheck ? 'הערות עבור ' + formatDate(selectedCheck.checkDate) : 'בחר פעילות להצגת הערות'"></v-textarea>
             <v-btn color="primary" @click="saveRemarks" :disabled="!selectedCheck">
               <v-icon left>mdi-content-save</v-icon>
               שמור
@@ -247,7 +247,7 @@ export default {
     
     addFiles() {
       if (!this.selectedCheck) {
-        alert('אנא בחר בדיקה קודם')
+        alert('אנא בחר פעילות')
         return
       }
       this.showAddFilesDialog = true
@@ -329,14 +329,14 @@ export default {
     },
 
     async deleteHistoryCheck(check, index) {
-      const confirmed = confirm(`האם למחוק את הבדיקה מתאריך ${this.formatDate(check.checkDate)}?`)
+      const confirmed = confirm(`האם למחוק את הפעילות מתאריך ${this.formatDate(check.checkDate)}?`)
       if (!confirmed) return
 
       // Block deletion if there are attached files
       const hasFiles = (Array.isArray(check.fileNames) && check.fileNames.length > 0) ||
         (Array.isArray(check.fileLinks) && check.fileLinks.length > 0)
       if (hasFiles) {
-        alert('לא ניתן למחוק בדיקה שיש לה קבצים מקושרים')
+        alert('לא ניתן למחוק פעילות שיש לה קבצים מקושרים')
         return
       }
 
@@ -345,7 +345,7 @@ export default {
         const routineCheckStore = useRoutineCheckStore()
         const ok = await routineCheckStore.deleteHistoryCheck(check.checkId)
         if (!ok && ok !== undefined) {
-          alert('שגיאה במחיקת הבדיקה')
+          alert('שגיאה במחיקת הפעילות')
           return
         }
 
@@ -361,7 +361,7 @@ export default {
         // Emit event to refresh parent tile list
         this.$emit('check-deleted')
       } catch (e) {
-        alert('שגיאה במחיקת הבדיקה')
+        alert('שגיאה במחיקת הפעילות')
       }
     },
 

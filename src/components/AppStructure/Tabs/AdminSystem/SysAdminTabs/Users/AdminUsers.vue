@@ -300,7 +300,7 @@ export default {
   margin-right: 0 !important;
 }
 
-/* Apply gradient to modern-title - multiple selectors for maximum specificity */
+/* Use same style as FactoryTabs - ensure gradient applies */
 :deep(.v-card-title.modern-title) {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
@@ -315,13 +315,16 @@ export default {
   padding: 10px !important;
 }
 
+:deep(.v-card-title.modern-title *),
+:deep(.modern-title *) {
+  color: white !important;
+}
+
 .title-container {
-  display: flex !important;
-  align-items: center !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
-  flex-wrap: nowrap !important;
-  flex-direction: row !important;
-  gap: 16px;
 }
 
 .title-text {
@@ -331,7 +334,41 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0 !important;
-  font-size: 1.2rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 100 !important;
+  color: white !important;
+}
+
+/* Ensure h2 doesn't make it bigger - match FactoryTabs exactly */
+h2.title-text {
+  font-size: 1.1rem !important;
+  font-weight: 100 !important;
+  line-height: 1.2 !important;
+}
+
+.title-text,
+.title-text *,
+h2.title-text {
+  color: white !important;
+}
+
+/* Override AdminTabs.css black text color - must be more specific */
+.admin-users-container .title-text,
+.admin-wrapper .admin-users-container .title-text,
+.admin-container .admin-users-container .title-text,
+.admin-wrapper .admin-users-container h2.title-text,
+.admin-container .admin-users-container h2.title-text,
+.admin-users-container h2.title-text {
+  color: white !important;
+}
+
+/* Also override for all elements inside title-container */
+.admin-users-container .title-container,
+.admin-users-container .title-container *,
+.admin-wrapper .admin-users-container .title-container,
+.admin-wrapper .admin-users-container .title-container *,
+.admin-container .admin-users-container .title-container,
+.admin-container .admin-users-container .title-container * {
   color: white !important;
 }
 
@@ -388,12 +425,3 @@ export default {
 }
 </style>
 
-<style>
-/* Non-scoped styles to ensure gradient applies */
-.v-card-title.modern-title {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  padding: 10px !important;
-}
-</style>

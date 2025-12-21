@@ -12,10 +12,10 @@
             <v-col cols="12" md="4">
               <v-text-field
                 v-model="formattedCheckDate"
-                label="תאריך בדיקה"
+                label="תאריך פעילות"
                 required
                 reverse
-                :rules="[v => !!v || 'תאריך בדיקה חובה', dateFormatRule]"
+                :rules="[v => !!v || 'תאריך פעילות חובה', dateFormatRule]"
                 @input="handleCheckDateChange"
                 placeholder="dd/MM/yyyy"
                 prepend-icon="mdi-calendar"
@@ -36,7 +36,7 @@
             <v-col cols="12" md="4" class="hide-on-mobile">
               <v-text-field
                 v-model="editedItem.checkFrequency"
-                label="תדירות בדיקה (חודשים)"
+                label="תדירות פעילות (חודשים)"
                 type="number"
                 readonly
                 reverse
@@ -154,9 +154,9 @@ export default {
     
     const dialogTitle = computed(() => {
       if (isEditMode.value) {
-        return `עדכון בדיקה עבור ${props.checkType?.checkTypeName || ''}`
+        return `עדכון פעילות עבור ${props.checkType?.checkTypeName || ''}`
       }
-      return `בדיקה חדשה עבור ${props.checkType?.checkTypeName || ''}`
+      return `פעילות חדשה עבור ${props.checkType?.checkTypeName || ''}`
     })
 
     const formattedCheckDate = computed({
@@ -313,18 +313,18 @@ export default {
         if (isEditMode.value) {
           // TODO: Call update check API
           console.log('Update check with FormData:', formData)
-          alert('בדיקה עודכנה בהצלחה')
+          alert('פעילות עודכנה בהצלחה')  
         } else {
           // Call add check API with FormData
           await routineCheckStore.addRoutineCheck(formData)
-          alert('בדיקה נוספה בהצלחה')
+          alert('פעילות נוספה בהצלחה')
         }
         
         closeDialog()
         
       } catch (error) {
         console.error('Failed to save check:', error)
-        alert('שגיאה בשמירת הבדיקה: ' + error.message)
+        alert('שגיאה בשמירת הפעילות: ' + error.message)
       } finally {
         loading.value = false
       }
