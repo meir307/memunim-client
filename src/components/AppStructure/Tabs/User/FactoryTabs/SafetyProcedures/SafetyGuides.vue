@@ -58,7 +58,7 @@
 
             <v-file-input 
               v-model="newGuide.file" 
-              label="קובץ ההדרכה
+              label="קובץ ההדרכה"
               accept=".pdf,.doc,.docx"
               prepend-icon="mdi-file-document" 
               reverse 
