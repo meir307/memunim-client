@@ -5,7 +5,7 @@
         <div class="title-container">
           <v-tabs v-model="activeTab" color="white" class="tabs-in-title">
             <v-tab value="procedures">נהלי בטיחות</v-tab>
-            <v-tab value="guides">מדריכי בטיחות</v-tab>
+            <v-tab value="guides">הדרכות בטיחות</v-tab>
           </v-tabs>
           <div class="title-section">
             <h1 class="title-text">{{ titleText }}</h1>
@@ -61,7 +61,7 @@ const addButtonText = computed(() => {
     case 'procedures':
       return 'הוסף נהל בטיחות'
     case 'guides':
-      return 'הוסף מדריך בטיחות'
+      return 'הוסף הדרכת בטיחות'
     default:
       return 'הוסף נהל בטיחות'
   }

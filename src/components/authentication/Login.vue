@@ -11,8 +11,17 @@
 
             <v-text-field ref="emailField" v-model="email" reverse label="אימייל" type="email" required
               @keyup.enter="focusPassword"></v-text-field>
-            <v-text-field ref="passwordField" v-model="password" reverse label="סיסמה" type="password" required
-              @keyup.enter="login"></v-text-field>
+            <v-text-field 
+              ref="passwordField" 
+              v-model="password" 
+              reverse 
+              label="סיסמה" 
+              :type="showPassword ? 'text' : 'password'" 
+              required
+              :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPassword = !showPassword"
+              @keyup.enter="login"
+            ></v-text-field>
               
             <div class="text-right mt-2 mb-4">
               <a href="#" @click.prevent="openForgotPassword" class="forgot-password-link">
@@ -51,7 +60,8 @@ export default {
   emits: ['btnClose', 'forgot-password'],
   data: () => ({
     email: '',
-    password: ''
+    password: '',
+    showPassword: false
   }),
   methods: {
     openForgotPassword() {

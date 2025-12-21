@@ -8,7 +8,7 @@
           :loading="loading"
           :items-per-page="-1"
           class="modern-table"
-          no-data-text="אין מדריכי בטיחות"
+          no-data-text="אין הדרכות בטיחות"
           loading-text="טוען נתונים..."
           hide-default-footer
         >
@@ -51,14 +51,14 @@
           <v-form @submit.prevent="saveGuide" ref="form">
             <v-text-field 
               v-model="newGuide.name" 
-              label="שם המדריך" 
+              label="שם ההדרכה" 
               required 
               reverse
             ></v-text-field>
 
             <v-file-input 
               v-model="newGuide.file" 
-              label="קובץ המדריך" 
+              label="קובץ ההדרכה
               accept=".pdf,.doc,.docx"
               prepend-icon="mdi-file-document" 
               reverse 
@@ -100,11 +100,11 @@ const newGuide = ref({
 
 var dialogMode = ref('add')
 
-const dialogTitle = ref('הוסף מדריך בטיחות חדש')
+const dialogTitle = ref('הוסף הדרכת בטיחות חדשה')
 
 const headers = computed(() => {
   const baseHeaders = [
-    { title: 'שם המדריך', key: 'name', sortable: true },
+    { title: 'שם ההדרכה', key: 'name', sortable: true },
     { title: 'הועלה על ידי', key: 'createdBy', sortable: false },
     { title: 'תאריך', key: 'createdAt', sortable: true, width: '140px' }
   ]
@@ -119,7 +119,7 @@ const headers = computed(() => {
 
 function openDialog() {
   console.log('Opening dialog to add new guide')
-  dialogTitle.value = 'הוסף מדריך בטיחות חדש'
+  dialogTitle.value = 'הוסף הדרכת בטיחות חדשה'
   dialogMode.value = 'add'
   dialog.value = true
 }
@@ -137,7 +137,7 @@ watch(dialog, (newVal) => {
 function closeDialog() {
   dialog.value = false
   dialogMode.value = 'add'
-  dialogTitle.value = 'הוסף מדריך בטיחות חדש'
+  dialogTitle.value = 'הוסף הדרכת בטיחות חדשה'
   newGuide.value = {
     name: '',
     file: null,
@@ -155,7 +155,7 @@ async function saveGuide() {
     // Use .value to access ref content
     if (!newGuide.value.name || !newGuide.value.name.trim()) {
       console.error('Guide name is required')
-      alert('נא להזין שם למדריך')
+      alert('נא להזין שם להדרכה')
       return
     }
 
@@ -229,7 +229,7 @@ async function handleFileUpload(event, guide) {
 
 async function editGuide(guide) {
   console.log('Editing guide:', guide.name)
-  dialogTitle.value = 'ערוך מדריך בטיחות'
+  dialogTitle.value = 'ערוך הדרכת בטיחות'
   dialogMode.value = 'edit'
   // Set the form data for editing - use .value to access ref
   newGuide.value = {
@@ -244,7 +244,7 @@ async function deleteGuide(guide) {
   // Show confirmation dialog
   // Extract guide name from proxy object
   const guideName = String(guide.name || '')
-  if (confirm(`האם אתה בטוח שברצונך למחוק את המדריך "${guideName}"?`)) {
+  if (confirm(`האם אתה בטוח שברצונך למחוק את ההדרכה "${guideName}"?`)) {
     try {
       await safetyProceduresStore.deleteGuide(guide)
       // Refresh guides list after deletion

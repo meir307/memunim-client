@@ -1,17 +1,29 @@
 <template>
   <div class="admin-wrapper" :style="{ marginTop: '-' + (topStripHeight) + 'px', paddingTop: topStripHeight + 'px' }">
     <div class="admin-system-container" dir="rtl">
-    <div class="d-flex" style="gap: 0;">
-      <!-- Vertical Navigation Menu -->
-      <div class="navigation-menu d-none d-md-block pt-4">
+      <!-- Title Row - Full Width -->
+      <v-card-title class="modern-title title-row">
+        <div class="title-container">
+          <v-btn
+            icon
+            variant="text"
+            class="d-md-none mr-2"
+            @click="showMobileMenu = true"
+          >
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+          <h2 class="title-text pr-6">ניהול מערכת</h2>
+          <v-spacer></v-spacer>
+          <v-icon class="mr-2 title-icon">mdi-account-cog</v-icon>
+        </div>
+      </v-card-title>
+      
+      <!-- Content Row -->
+      <div class="d-flex" style="gap: 0;">
+        <!-- Vertical Navigation Menu -->
+        <div class="navigation-menu d-none d-md-block pt-4">
         <v-card class="navigation-card" elevation="2" :style="{ top: topStripHeight + 'px', maxHeight: 'calc(100vh - ' + topStripHeight + 'px)' }">
-          <v-card-title class="modern-title bg-primary">
-            <div class="title-container">
-              <h2 class="title-text pr-6">ניהול מערכת</h2>
-              <v-spacer></v-spacer>
-              <v-icon class="mr-2 title-icon">mdi-account-cog</v-icon>
-            </div>
-          </v-card-title>
+         
           <v-divider></v-divider>
           <v-list class="pa-2">
             <v-list-item
@@ -209,16 +221,23 @@ export default {
 }
 
 /* Title styling matching HazardsMain */
+.title-row {
+  width: 100% !important;
+  display: block !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
 .modern-title {
-  color: white !important;
-  padding: 16px !important;
+  color: black !important;
+  padding: 4px 16px !important;
   background-image: none !important;
-  background: rgb(var(--v-theme-primary)) !important;
+  background: white !important;
 }
 
 :deep(.modern-title) {
   background-image: none !important;
-  background: rgb(var(--v-theme-primary)) !important;
+  background: white !important;
 }
 
 .title-container {
@@ -237,12 +256,13 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0 !important;
-  font-size: 1.2rem !important;
-  color: white !important;
+  font-size: 1.5rem !important;
+  color: black !important;
+  font-weight: 600 !important;
 }
 
 .title-icon {
-  color: white !important;
+  color: black !important;
 }
 
 @media (max-width: 768px) {

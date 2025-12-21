@@ -173,7 +173,7 @@ export const useSafetyProceduresStore = defineStore('safetyProcedures', {
         this.guides.push(response.data.guide)
         return response.data.guide
       } catch (error) {
-        this.error = error.response?.data?.message || 'תקלה בשמירת המדריך'
+        this.error = error.response?.data?.message || 'תקלה בשמירת ההדרכה'
         alert(this.error)
         throw this.error
       } finally {
