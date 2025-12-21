@@ -1,9 +1,9 @@
 <template>
   <div class="admin-wrapper" :style="{ marginTop: '-' + (topStripHeight) + 'px', paddingTop: topStripHeight + 'px' }">
     <div class="admin-system-container" dir="rtl">
-    <div class="d-flex">
+    <div class="d-flex" style="gap: 0;">
       <!-- Vertical Navigation Menu -->
-      <div class="navigation-menu d-none d-md-block">
+      <div class="navigation-menu d-none d-md-block pt-4">
         <v-card class="navigation-card" elevation="2" :style="{ top: topStripHeight + 'px', maxHeight: 'calc(100vh - ' + topStripHeight + 'px)' }">
           <v-card-title class="modern-title bg-primary">
             <div class="title-container">
@@ -63,8 +63,8 @@
 </template>
 
 <script>
-import AdminUsers from './Tabs/AdminUsers.vue'
-import AdminFactories from './Tabs/AdminFactories.vue'
+import AdminUsers from './SysAdminTabs/Users/AdminUsers.vue'
+import AdminFactories from './SysAdminTabs/Factories/AdminFactories.vue'
 
 export default {
   name: 'MainSystemAdmin',
@@ -145,9 +145,8 @@ export default {
 .navigation-menu {
   width: 280px;
   min-width: 280px;
-  margin-left: 16px;
-  margin-top: 0;
-  padding-top: 0;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .navigation-card {
@@ -158,7 +157,8 @@ export default {
 
 .content-area {
   min-height: 500px;
-  padding: 16px;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .content-section {
@@ -224,7 +224,7 @@ export default {
 .title-container {
   display: flex !important;
   align-items: center !important;
-  width: 100%;
+  width: 100% !important;
   flex-wrap: nowrap !important;
   flex-direction: row !important;
   gap: 16px;
