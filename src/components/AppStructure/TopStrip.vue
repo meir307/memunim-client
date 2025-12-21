@@ -159,10 +159,10 @@ export default {
 
       { id: 0, text: 'אודותינו', route: '/about', adminType: null },
       { id: 1, text: 'חוקים ותקנות', route: '/regulations', adminType: 3 },
-      { id: 2, text: 'נותני שרות', route: '/services', adminType: 2 },
+      { id: 2, text: 'נותני שרות', route: '/services', adminType: 3 },
       { id: 3, text: 'איזור אישי', route: '/user', adminType: null },
-      { id: 4, text: 'ניהול מערכת', route: '/admin/system', adminType:3 },
-      { id: 5, text: 'ניהול חנות', route: '/admin/shop', adminType:2 }
+      { id: 4, text: 'ניהול מערכת', route: '/admin/system', adminType:1 },
+      { id: 5, text: 'ניהול חנות', route: '/admin/shop', adminType:3 }
     ]
   }),
   computed: {
