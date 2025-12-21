@@ -152,12 +152,12 @@ export default {
     }
 
     function handleLoginClose() {
-      // After login, redirect to regulations page
-      router.push('/regulations')
+      // After login, redirect to about page
+      router.push('/about')
     }
 
     function goToHome() {
-      router.push('/regulations')
+      router.push('/about')
     }
 
     async function focusConfirmPassword() {

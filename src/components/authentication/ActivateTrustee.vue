@@ -181,7 +181,7 @@ export default {
     }
 
     function goToHome() {
-      router.push('/regulations')
+      router.push('/about')
     }
 
     async function focusConfirmPassword() {

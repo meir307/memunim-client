@@ -137,7 +137,7 @@ export default {
     
     if (!isAuthenticated) {
       // Redirect to login or show login modal
-      next('/regulations')
+      next('/about')
       return
     }
     

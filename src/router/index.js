@@ -4,7 +4,12 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/regulations'
+    redirect: '/about'
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import(/* webpackChunkName: "about" */ '../components/AppStructure/Tabs/About/AboutView.vue')
   },
   {
     path: '/regulations',
@@ -69,11 +74,7 @@ const routes = [
       }
           ]
   },
-  {
-    path: '/about',
-    name: 'about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  },
+
   {
     path: '/activate',
     name: 'activate',
@@ -102,13 +103,13 @@ const routes = [
   {
     path: '/admin/system',
     name: 'admin-system',
-    component: () => import('../components/Admin/tabs/AdminSystem/MainSystemAdmin.vue'),
+    component: () => import('../components/AppStructure/Tabs/AdminSystem/MainSystemAdmin.vue'),
     meta: { requiresAuth: true, requiresAdminType: 1 }
   },
   {
     path: '/admin/shop',
     name: 'admin-shop',
-    component: () => import('../components/Admin/tabs/AdminShop/MainShopAdmin.vue'),
+    component: () => import('../components/AppStructure/Tabs/AdminShop/MainShopAdmin.vue'),
     meta: { requiresAuth: true, requiresAdminType: 2 }
   }
 ]
@@ -138,7 +139,7 @@ router.beforeEach((to, from, next) => {
     
     if (!isAuthenticated) {
       // Redirect to login or show login modal
-      next('/regulations') // Redirect to home page
+      next('/about') // Redirect to home page
       return
     }
   }
@@ -148,7 +149,7 @@ router.beforeEach((to, from, next) => {
     const userAdminType = user?.AdminType
     
     if (!userAdminType) {
-      next('/regulations')
+      next('/about')
       return
     }
     
@@ -177,7 +178,7 @@ router.beforeEach((to, from, next) => {
     })
     
     if (!hasMatchingType) {
-      next('/regulations')
+      next('/about')
       return
     }
   }

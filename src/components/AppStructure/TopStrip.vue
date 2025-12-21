@@ -156,11 +156,13 @@ export default {
     userMenu: false,
     activeTab: 0,
     tabs: [
-      { id: 0, text: 'חוקים ותקנות', route: '/regulations', adminType: null },
-      { id: 1, text: 'נותני שרות', route: '/services', adminType: null },
-      { id: 2, text: 'איזור אישי', route: '/user', adminType: null },
-      { id: 3, text: 'ניהול מערכת', route: '/admin/system', adminType:1 },
-      { id: 4, text: 'ניהול חנות', route: '/admin/shop', adminType:2 }
+
+      { id: 0, text: 'אודותינו', route: '/about', adminType: null },
+      { id: 1, text: 'חוקים ותקנות', route: '/regulations', adminType: 3 },
+      { id: 2, text: 'נותני שרות', route: '/services', adminType: 2 },
+      { id: 3, text: 'איזור אישי', route: '/user', adminType: null },
+      { id: 4, text: 'ניהול מערכת', route: '/admin/system', adminType:3 },
+      { id: 5, text: 'ניהול חנות', route: '/admin/shop', adminType:2 }
     ]
   }),
   computed: {
@@ -178,7 +180,7 @@ export default {
       
       // Filter by authentication - hide 'איזור אישי' for guests
       if (!this.isAuthenticated) {
-        filteredTabs = filteredTabs.filter(tab => tab.id !== 2)
+        filteredTabs = filteredTabs.filter(tab => tab.id !== 3)
       }
       
       // Filter by AdminType
@@ -231,7 +233,7 @@ export default {
   methods: {
     logout() {
       this.userStore.logout()
-      this.$router.push('/regulations')
+      this.$router.push('/about')
     },
     navigateToTab(route) {
       this.$router.push(route)
