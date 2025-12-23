@@ -1,7 +1,7 @@
 <template>
   <div class="pa-4">
     <div class="sticky-header d-flex align-center justify-space-between mb-4">
-      <h1>המפעלים שלי</h1>
+      <h2>המפעלים שלי</h2>
       <v-btn
         color="primary"
         prepend-icon="mdi-plus"
@@ -19,7 +19,7 @@
           :key="factory.hetpei"
           :factory="factory"
           @edit="editFactory"
-          @delete="deleteFactory"
+          @transfer="FactoryTransfer"
           @view="viewFactory"
         />
       </div>
@@ -82,12 +82,21 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <!-- Transfer Factory Dialog -->
+    <TransferFactoryDialog
+      :show-dialog="showTransferDialog"
+      :factory="selectedFactoryForTransfer"
+      @close-dialog="showTransferDialog = false"
+      @transfer-completed="onFactoryTransferred"
+    />
   </div>
 </template>
 
 <script>
 import UpsertFactory from './UpsertFactory.vue'
 import FactoryTile from './FactoryTile.vue'
+import TransferFactoryDialog from './TransferFactoryDialog.vue'
 import { useUserStore } from '@/stores/UserStore'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 import { useHazardStore } from '@/stores/HazardStore'
@@ -98,12 +107,15 @@ export default {
   name: 'UserMain',
   components: {
     UpsertFactory,
-    FactoryTile
+    FactoryTile,
+    TransferFactoryDialog
   },
   data: () => ({
     showAddFactoryDialog: false,
     showEditFactoryDialog: false,
-    selectedFactory: null
+    showTransferDialog: false,
+    selectedFactory: null,
+    selectedFactoryForTransfer: null
   }),
   computed: {
     userStore() {
@@ -149,10 +161,10 @@ export default {
       this.showEditFactoryDialog = true
     },
     
-    deleteFactory(factory) {
-      // TODO: Implement delete functionality
-      console.log('Delete factory:', factory)
-    },
+    FactoryTransfer(factory) {
+      this.selectedFactoryForTransfer = factory
+      this.showTransferDialog = true
+    },  
     
     viewFactory(factory) {
       // Set selected factory in store
@@ -176,6 +188,13 @@ export default {
       this.selectedFactory = null
       // Refresh factories list
       //this.userStore.getFactories()
+    },
+
+    async onFactoryTransferred() {
+      this.showTransferDialog = false
+      this.selectedFactoryForTransfer = null
+      // Refresh factories list
+      await this.userStore.getFactories()
     }
   }
 }

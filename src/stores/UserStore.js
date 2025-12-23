@@ -213,6 +213,58 @@ export const useUserStore = defineStore('UserStore', {
         this.postAction()
       }
     },
+
+    async getUserByEmail(email) {
+      this.preAction()
+      try {
+        console.log('getUserByEmail')
+        const response = await axios.post(
+          this.apiUrl + 'user/getUserByEmail',
+          { email: email },
+          {
+            headers: {
+              'sessionId': this.user.sessionId || ''
+            }
+          }
+        )
+        return response.data.user
+      } catch (error) {
+        alert(error.response?.data?.message || 'שגיאה בחיפוש משתמש')
+        this.error = error.response?.data?.message || 'שגיאה בחיפוש משתמש'
+        throw error
+      } finally {
+        this.postAction()
+      }
+    },
+
+    async transferFactory(factoryId, targetEmail) {
+      this.preAction()
+      try {
+        console.log('transferFactory')
+        const response = await axios.post(
+          this.apiUrl + 'user/transferFactory',
+          {
+            factoryId: factoryId,
+            targetEmail: targetEmail
+          },
+          {
+            headers: {
+              'sessionId': this.user.sessionId || ''
+            }
+          }
+        )
+        this.factories = response.data.factories
+        // Save to localStorage
+        localStorage.setItem('factories', JSON.stringify(this.factories))
+        alert('המפעל הועבר בהצלחה')
+      } catch (error) {
+        alert(error.response?.data?.message || 'שגיאה בהעברת מפעל')
+        this.error = error.response?.data?.message || 'שגיאה בהעברת מפעל'
+        throw error
+      } finally {
+        this.postAction()
+      }
+    },
  
     preAction() {
       this.loaderStore.show()

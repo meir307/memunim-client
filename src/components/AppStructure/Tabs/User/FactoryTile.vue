@@ -38,9 +38,9 @@
                 @click="$emit('edit', factory)"
               ></v-list-item>
               <v-list-item
-                prepend-icon="mdi-delete"
-                title="מחק"
-                @click="$emit('delete', factory)"
+                prepend-icon="mdi-arrow-left"
+                title="העבר לממונה אחר"
+                @click="$emit('transfer', factory)"
               ></v-list-item>
             </v-list>
           </v-menu>
@@ -68,22 +68,15 @@
           </div>
           <div class="d-flex gap-2">
             <v-btn
-              color="primary"
-              variant="outlined"
+              color="green-lighten-4"
               prepend-icon="mdi-factory"
               size="small"
+              class="large-font-btn"
               @click="$emit('view', factory)"
             >
-              פעילות
+              כניסה
             </v-btn>
-            <v-btn
-              color="primary"
-              prepend-icon="mdi-pencil"
-              size="small"
-              @click="$emit('edit', factory)"
-            >
-              ערוך
-            </v-btn>
+           
           </div>
         </div>
       </div>
@@ -109,7 +102,7 @@ export default {
       })
     }
   },
-  emits: ['edit', 'delete', 'view']
+  emits: ['edit', 'transfer', 'view']
 }
 </script>
 
@@ -148,6 +141,10 @@ export default {
 
 .gap-3 {
   gap: 12px;
+}
+
+.large-font-btn {
+  font-size: 1rem !important;
 }
 
 /* RTL specific adjustments */
