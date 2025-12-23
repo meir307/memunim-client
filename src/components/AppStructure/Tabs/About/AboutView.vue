@@ -108,7 +108,7 @@ export default {
         },
         {
           title: 'ניהול מפגעים',
-          description: 'זיהוי וניהול סיכונים במקום העבודה',
+          description: 'זיהוי וניהול מפגעים במקום העבודה',
           icon: 'mdi-shield-alert'
         },
         {
