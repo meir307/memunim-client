@@ -13,7 +13,7 @@
             <div class="panel-column">
             <div class="panel-container">
               <div class="panel-title-with-button">
-                <h3 class="panel-title">הסטורית בדיקות</h3>
+                <h3 class="panel-title">הסטורית פעילות</h3>
               </div>
               <div class="panel-content dates-panel">
                 <div v-if="checkHistory && checkHistory.length > 0" class="dates-list">
@@ -33,7 +33,7 @@
                   </div>
                 </div>
                 <div v-else class="placeholder-text">
-                  כאן יוצגו תאריכי הבדיקות
+                  כאן יוצגו תאריכי הפעולות
                 </div>
               </div>
             </div>
