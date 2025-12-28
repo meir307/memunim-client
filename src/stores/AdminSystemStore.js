@@ -164,6 +164,11 @@ export const useAdminSystemStore = defineStore('adminSystem', {
           }
         })
         
+        // Replace the user state in UserStore with the new user (same as login method)
+        userStore.user = response.data.user
+        // Save to localStorage
+        localStorage.setItem('user', JSON.stringify(userStore.user))
+        
         return response.data
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to login as user'
