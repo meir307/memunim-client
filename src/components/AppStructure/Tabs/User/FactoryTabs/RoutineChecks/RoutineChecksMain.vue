@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="routine-checks-wrapper">
       <v-card class="modern-card">
-        <v-card-title class="modern-title">
+        <v-card-title class="modern-title fixed-title">
           <div class="title-container">
             <h2 class="title-text">פעילות שוטפת</h2>
 
@@ -21,7 +21,7 @@
           
         </v-card-title>
 
-        <v-card-text class="pa-0">
+        <v-card-text class="pa-0 scrollable-content">
           <div class="tiles-container">
             <div v-if="routineCheckTypes.length === 0" class="no-data">
              לא הוגדרה פעילות שוטפת
@@ -246,13 +246,52 @@
   </script>
 
   <style scoped>
+     /* scorling */
+  .routine-checks-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .fixed-title {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+
+  .modern-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+ /* scorling */
   .title-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
   }
+   /* scorling */
 
+  .scrollable-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+  }
+
+  .tiles-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    width: 100%;
+  }
+ /* scorling */
+ 
   .buttons-group {
     display: flex;
     gap: 4px;

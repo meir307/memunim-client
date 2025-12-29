@@ -216,6 +216,11 @@ export default {
   position: relative;
   width: 100%;
   min-width: 0;
+
+  /* scorling */
+  height: calc(100vh - 120px); /* Adjust based on header height */
+  overflow: hidden;
+   /* scorling */
 }
 
 .navigation-menu {
@@ -238,6 +243,10 @@ export default {
   min-width: 0;
   width: 100%;
   overflow-x: hidden;
+   /* scorling */
+  overflow-y: auto;
+  height: 100%;
+   /* scorling */
 }
 
 @media (max-width: 960px) {
