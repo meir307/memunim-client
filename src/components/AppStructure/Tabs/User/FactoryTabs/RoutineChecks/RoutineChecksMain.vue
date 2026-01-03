@@ -28,7 +28,7 @@
             </div>
             <RoutineCheckTile
               v-for="checkType in routineCheckTypes"
-              :id="checkType.id"
+              :id="String(checkType.id)"
               :key="checkType.id"
               :checkTypeId="checkType.checkTypeId"
               :check-type="checkType"

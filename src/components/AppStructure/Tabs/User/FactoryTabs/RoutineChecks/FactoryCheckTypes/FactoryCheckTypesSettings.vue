@@ -104,7 +104,7 @@ export default {
             default: false
         }
     },
-    emits: ['close-dialog', 'refresh-parent'],
+    emits: ['close-dialog', 'refresh-parent', 'add-check-type', 'addCheckType'],
     setup(props, { emit }) {
         const routineCheckStore = useRoutineCheckStore()
         const userStore = useUserStore()
