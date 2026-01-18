@@ -52,11 +52,12 @@
     <AddFactoryCheckType 
         :show-dialog="showAddFactoryCheckTypeDialog"
         @close-dialog="closeAddFactoryCheckTypeDialog"
+        @check-type-added="handleCheckTypeAdded"
     />
 </template>
 
 <script>
-import { ref, computed, watch, toRaw, onMounted } from 'vue'
+import { ref, computed, watch, toRaw, nextTick } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 import AddFactoryCheckType from './FactoryCheckTypes/AddFactoryCheckType.vue'
@@ -139,10 +140,6 @@ export default {
             loadCheckTypes()
         }
 
-        onMounted(() => {
-            loadCheckTypes()
-        })
-
         function closeDialog() {
             dialog.value = false
             editedItem.value = {
@@ -157,8 +154,23 @@ export default {
 
         function closeAddFactoryCheckTypeDialog() {
             showAddFactoryCheckTypeDialog.value = false
-            // Refresh the check types list after adding a new factory check type
-            loadCheckTypes()
+        }
+
+        async function handleCheckTypeAdded(newCheckTypeId) {
+            // Close the AddFactoryCheckType dialog
+            showAddFactoryCheckTypeDialog.value = false
+            
+            // Convert to number if needed to match the value format
+            const checkTypeId = typeof newCheckTypeId === 'string' ? Number(newCheckTypeId) : newCheckTypeId
+            
+            // Refresh the check types list to include the newly added type
+            await loadCheckTypes()
+            await nextTick()
+            
+            // Set the newly added check type as selected
+            if (checkTypeOptions.value.some(opt => opt.value === checkTypeId)) {
+                editedItem.value.checkType = checkTypeId
+            }
         }
 
         async function save() {
@@ -216,7 +228,8 @@ export default {
             closeDialog,
             save,
             AddFactoryCheckType,
-            closeAddFactoryCheckTypeDialog
+            closeAddFactoryCheckTypeDialog,
+            handleCheckTypeAdded
         }
     }
 }

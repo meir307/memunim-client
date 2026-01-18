@@ -36,7 +36,7 @@ export default {
             default: false
         }
     },
-    emits: ['close-dialog'],
+    emits: ['close-dialog', 'check-type-added'],
     setup(props, { emit }) {
         const routineCheckStore = useRoutineCheckStore()
         const tileKey = ref(0)
@@ -61,8 +61,17 @@ export default {
 
         async function handleSave(data) {
             try {
-                
-                await routineCheckStore.AddNewFactoryCheckType(data)
+                const response = await routineCheckStore.AddNewFactoryCheckType(data)
+                console.log('AddNewFactoryCheckType response:', response)
+                // Emit the newly created check type ID
+                // Check different possible response structures
+                const checkTypeId = response?.id || response?.checkType?.id || response?.factoryCheckType?.id
+                if (checkTypeId) {
+                    console.log('Emitting check-type-added with ID:', checkTypeId)
+                    emit('check-type-added', checkTypeId)
+                } else {
+                    console.warn('No ID found in response:', response)
+                }
                 closeDialog()
             } catch (error) {
                 console.error('Failed to add factory check type:', error)
