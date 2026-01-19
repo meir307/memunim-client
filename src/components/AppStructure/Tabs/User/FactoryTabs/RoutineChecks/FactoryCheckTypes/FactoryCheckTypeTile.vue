@@ -26,13 +26,12 @@
             ></v-text-field>
             
             <v-btn color="primary" size="small" @click="handleSave">שמור</v-btn>
-            <v-btn v-if="showDeleteButton" icon="mdi-delete" size="small" variant="text" color="error" @click="handleDelete"></v-btn>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 
 export default {
@@ -51,12 +50,11 @@ export default {
             required: true
         }
     },
-    emits: ['save', 'delete'],
+    emits: ['save'],
     setup(props, { emit }) {
         const routineCheckStore = useRoutineCheckStore()
         const localCheckTypeName = ref(props.checkTypeName)
         const localCheckPeriodInMonth = ref(props.checkPeriodInMonth || 12)
-        const showDeleteButton = computed(() => props.id !== 0)
         const nameInputRef = ref(null)
         // Update local values when props change
         watch(() => props.checkTypeName, (newVal) => {
@@ -109,12 +107,6 @@ export default {
             }
         }
 
-        function handleDelete() {
-            emit('delete', {
-                id: props.id
-            })
-        }
-
         function focusName() {
             if (nameInputRef.value && nameInputRef.value.$el) {
                 const input = nameInputRef.value.$el.querySelector('input')
@@ -127,10 +119,8 @@ export default {
         return {
             localCheckTypeName,
             localCheckPeriodInMonth,
-            showDeleteButton,
             nameInputRef,
             handleSave,
-            handleDelete,
             focusName
         }
     }

@@ -317,7 +317,6 @@ export default {
         } else {
           // Call add check API with FormData
           await routineCheckStore.addRoutineCheck(formData)
-          alert('פעילות נוספה בהצלחה')
         }
         
         closeDialog()

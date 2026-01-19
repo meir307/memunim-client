@@ -43,11 +43,11 @@
         </v-card-text>
       </v-card>
 
-      <!-- Add Routine Check Type Dialog Component -->
-      <AddRoutineCheckTypeDialog 
-        ref="routineCheckTypeDialog"
+      <!-- Add Factory Check Type Dialog Component -->
+      <AddFactoryCheckType 
         :show-dialog="showDialog" 
-        @close-dialog="closeDialog" 
+        @close-dialog="closeDialog"
+        @check-type-added="handleCheckTypeAdded"
       />
 
       <!-- Upsert Check Dialog Component -->
@@ -71,7 +71,7 @@
   
   <script>
   import { ref, computed, onMounted } from 'vue'
-  import AddRoutineCheckTypeDialog from './AddRoutineCheckTypeDialog.vue'
+  import AddFactoryCheckType from './FactoryCheckTypes/AddFactoryCheckType.vue'
   import RoutineCheckTile from './RoutineCheckTile.vue'
   import UpsertCheckDialog from './upsertCheckDialog.vue'
   import FactoryCheckTypesSettings from './FactoryCheckTypes/FactoryCheckTypesSettings.vue'
@@ -81,7 +81,7 @@
   export default {
     name: 'RoutineChecksMain',
     components: {
-      AddRoutineCheckTypeDialog,
+      AddFactoryCheckType,
       RoutineCheckTile,
       UpsertCheckDialog,
       FactoryCheckTypesSettings
@@ -91,7 +91,6 @@
       const userStore = useUserStore()
       
       const showDialog = ref(false)
-      const routineCheckTypeDialog = ref(null)
       
       // Check dialog state
       const showCheckDialog = ref(false)
@@ -159,6 +158,12 @@
         openDialog()
       }
 
+      // eslint-disable-next-line no-unused-vars
+      async function handleCheckTypeAdded(checkTypeId) {
+        // Refresh the tiles after a new check type is added
+        await refreshTiles()
+      }
+
       function addCheck(tileProps) {
         console.log('Add check for type:', tileProps)
         // Extract checkType from the tile props
@@ -179,11 +184,27 @@
       }
 
 
-      async function deleteCheckType(checkTypeId) {
+      async function deleteCheckType(routineCheckTypeId) {
+        // Find the routine check type to get its factory check type ID
+        const routineCheckType = routineCheckTypes.value.find(type => String(type.id) === String(routineCheckTypeId))
+        
+        if (!routineCheckType) {
+          alert('סוג הפעילות לא נמצא')
+          return
+        }
 
+        // Get the factory check type ID
+        const factoryCheckTypeId = routineCheckType.checkTypeId
+        const checkTypeName = routineCheckType.checkTypeName || 'זה'
+
+        // Use the same delete logic as FactoryCheckTypesSettings.handleDelete
+        const confirmed = confirm(`האם למחוק את סוג הפעילות "${checkTypeName}"?`)
+        if (!confirmed) return
 
         try {
-          await routineCheckStore.deleteRoutineCheckType(checkTypeId)
+          // Delete the factory check type (same as FactoryCheckTypesSettings)
+          await routineCheckStore.DeleteFactoryCheckType(factoryCheckTypeId)
+          
           // Refresh the list
           await routineCheckStore.fetchRoutineChecks(userStore.selectedFactory.id)
         } catch (error) {
@@ -223,7 +244,6 @@
       return {
         userStore,
         showDialog,
-        routineCheckTypeDialog,
         routineCheckTypes,
         showCheckDialog,
         selectedCheckType,
@@ -235,6 +255,7 @@
         openSettingsDialog,
         closeSettingsDialog,
         handleAddFromSettings,
+        handleCheckTypeAdded,
         addCheck,
         editCheckType,
         deleteCheckType,

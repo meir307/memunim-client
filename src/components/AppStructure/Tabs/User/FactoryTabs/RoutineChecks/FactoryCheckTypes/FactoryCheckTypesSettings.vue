@@ -198,7 +198,10 @@ export default {
 
             try {
                 await routineCheckStore.DeleteFactoryCheckType(data.id)
-                // List will be refreshed automatically by the store method
+                // Remove the deleted check type from the store's list
+                routineCheckStore.factoryCheckTypes = routineCheckStore.factoryCheckTypes.filter(
+                    type => type.id !== data.id
+                )
             } catch (error) {
                 console.error('Failed to delete factory check type:', error)
                 // Error message is already shown by the store

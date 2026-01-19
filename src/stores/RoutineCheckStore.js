@@ -13,7 +13,6 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
   }),
 
   getters: {
-    getRoutineChecks: (state) => state.routineChecks,
     getRoutineCheckTypes: (state) => state.routineCheckTypes,
     getError: (state) => state.error
   },
@@ -22,6 +21,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
 
     // Fetch all routine check types for a factory
     async fetchRoutineChecks(factoryId) {
+      
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -43,36 +43,7 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
         loaderStore.hide()
       }
     },
-
-    // Add new routine check type
-    async addRoutineCheckType(routineCheckTypeData) {
-      this.error = null
-      const loaderStore = useLoaderStore()
-      loaderStore.show()
-
-      try {
-        const commonStore = useCommonStore()
-        const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'routineChecks/addCheckType', routineCheckTypeData, {
-          headers: {
-            'sessionid': userStore.user.sessionId
-          }
-        })
-
-        // Add the new routine check type to the local state
-        this.routineCheckTypes.push(response.data.routineCheckType)
-        return response.data.routineCheckType
-      } catch (error) {
-        console.error('API Error:', error)
-        const errorMessage = error.response?.data?.message || 'Failed to add routine check type'
-        this.error = errorMessage
-        alert(errorMessage)
-        throw error
-      } finally {
-        loaderStore.hide()
-      }
-    },
-
+    
     // Add new routine check
     async addRoutineCheck(routineCheckData) {
       this.error = null
@@ -93,38 +64,6 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
 
       } catch (error) {
         const errorMessage = error.response?.data?.message || 'Failed to add routine check'
-        this.error = errorMessage
-        alert(errorMessage)
-        throw error
-      } finally {
-        loaderStore.hide()
-      }
-    },
-
-    // Update existing routine check
-    async updateRoutineCheck(routineCheckData) {
-      this.error = null
-      const loaderStore = useLoaderStore()
-      loaderStore.show()
-
-      try {
-        const commonStore = useCommonStore()
-        const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'routineChecks/updateCheck', routineCheckData, {
-          headers: {
-            'sessionid': userStore.user.sessionId
-          }
-        })
-
-        // Update the routine check in the local state
-        const index = this.routineChecks.findIndex(check => check.id === response.data.routineCheck.id)
-        if (index !== -1) {
-          this.routineChecks[index] = response.data.routineCheck
-        }
-        return response.data.routineCheck
-      } catch (error) {
-        console.error('API Error:', error)
-        const errorMessage = error.response?.data?.message || 'Failed to update routine check'
         this.error = errorMessage
         alert(errorMessage)
         throw error
@@ -320,39 +259,10 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
         loaderStore.hide()
       }
     },
-    // Delete routine check type
-    async deleteRoutineCheckType(id) {
-      this.error = null
-      const loaderStore = useLoaderStore()
-      loaderStore.show()
-
-      try {
-        const commonStore = useCommonStore()
-        const userStore = useUserStore()
-        const response = await axios.post(commonStore.apiUrl + 'routineChecks/deleteCheckType', {
-          id
-        }, {
-          headers: {
-            'sessionid': userStore.user.sessionId
-          }
-        })
-
-        // Remove the check type from local state
-        this.routineCheckTypes = this.routineCheckTypes.filter(checkType => checkType.id !== id)
-        return response.data
-      } catch (error) {
-        console.error('API Error:', error)
-        const errorMessage = error.response?.data?.message || 'Failed to delete routine check type'
-        this.error = errorMessage
-        alert(errorMessage)
-        throw error
-      } finally {
-        loaderStore.hide()
-      }
-    },
 
 
     async getFactoryCheckTypes(factoryId) {
+      
       this.error = null
       const loaderStore = useLoaderStore()
       loaderStore.show()
@@ -430,10 +340,6 @@ export const useRoutineCheckStore = defineStore('routineCheck', {
             'sessionId': userStore.user.sessionId
           }
         })
-
-        // Refresh the factory check types list
-        await this.getFactoryCheckTypes(factoryId)
-
         return response.data
       } catch (error) {
         console.error('API Error:', error)

@@ -3,7 +3,7 @@
     <v-dialog :model-value="showDialog" @update:model-value="$emit('close-dialog')" max-width="750px" persistent>
         <v-card>
             <v-card-title class="popup-title d-flex align-center justify-space-between">
-                הגדר סוג פעילות שוטפת
+                הוסף סוג פעילות שוטפת
                 <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
             </v-card-title>
             <v-card-text>
@@ -61,17 +61,21 @@ export default {
 
         async function handleSave(data) {
             try {
+                // Create the factory check type
                 const response = await routineCheckStore.AddNewFactoryCheckType(data)
                 console.log('AddNewFactoryCheckType response:', response)
-                // Emit the newly created check type ID
-                // Check different possible response structures
+                
+                // Get the newly created check type ID
                 const checkTypeId = response?.id || response?.checkType?.id || response?.factoryCheckType?.id
-                if (checkTypeId) {
-                    console.log('Emitting check-type-added with ID:', checkTypeId)
-                    emit('check-type-added', checkTypeId)
-                } else {
+                
+                if (!checkTypeId) {
                     console.warn('No ID found in response:', response)
+                    closeDialog()
+                    return
                 }
+
+                // Emit the newly created check type ID
+                emit('check-type-added', checkTypeId)
                 closeDialog()
             } catch (error) {
                 console.error('Failed to add factory check type:', error)
