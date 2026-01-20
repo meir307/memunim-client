@@ -35,6 +35,7 @@
               :check-date="checkType.checkDate || ''"
               :check-period-in-month="checkType.checkPeriodInMonth"
               :next-check-date="checkType.nextCheck || ''"
+              :files-names="checkType.files_name || []"
               @add-check="addCheck"
               @delete-check-type="deleteCheckType"
               @refresh-tiles="refreshTiles"

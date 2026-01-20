@@ -66,13 +66,38 @@
                 <v-icon left>mdi-check</v-icon>
                 שמור
               </v-btn>
+              
             <div class="day-left-container">
               <span class="day-left-text">ימים שנותרו:</span>
               <span v-if="daysRemaining !== null" class="day-left-value" :class="daysRemainingClass">{{
                 daysRemainingText
                 }}</span>
               <span v-else class="day-left-value">-</span>
+              <span class="space-on-mobile"></span>
+              <v-btn
+                v-if="showFileIcon"
+                icon
+                size="small"
+                :color="hasFiles ? 'success' : 'error'"
+                @click="handleFileClick"
+                class="file-icon-btn show-on-mobile"
+                :title="hasFiles ? 'צפה בקבצים' : 'הוסף קבצים'"
+              >
+                <v-icon>{{ hasFiles ? 'mdi-file-document' : 'mdi-file-plus' }}</v-icon>
+              </v-btn>
             </div>
+
+            <v-btn
+                v-if="showFileIcon"
+                icon
+                size="small"
+                :color="hasFiles ? 'success' : 'error'"
+                @click="handleFileClick"
+                class="file-icon-btn hide-on-mobile"
+                :title="hasFiles ? 'צפה בקבצים' : 'הוסף קבצים'"
+              >
+                <v-icon>{{ hasFiles ? 'mdi-file-document' : 'mdi-file-plus' }}</v-icon>
+              </v-btn>
           </div>
         </div>
       </v-card-text>
@@ -120,6 +145,10 @@ export default {
     remark: {
       type: String,
       required: false
+    },
+    filesNames: {
+      type: Array,
+      default: () => []
     }
   },
   emits: ['add-check', 'delete-check-type', 'refresh-tiles'],
@@ -173,6 +202,20 @@ export default {
 
       emit('delete-check-type', props.id)
 
+    }
+
+    // Check if file icon should be shown (hide if checkDate is 'לא נקבע')
+    const showFileIcon = computed(() => {
+      return props.checkDate !== '' 
+    })
+
+    // Check if there are files attached
+    const hasFiles = computed(() => {
+      return Array.isArray(props.filesNames) && props.filesNames.length > 0
+    })
+
+    function handleFileClick() {
+        showHistoryDialog.value = true
     }
 
     function saveRemark() {
@@ -242,7 +285,10 @@ export default {
       daysRemainingText,
       daysRemainingClass,
       tileBackgroundClass,
-      truncatedCheckTypeName
+      truncatedCheckTypeName,
+      showFileIcon,
+      hasFiles,
+      handleFileClick
     }
   }
 }
@@ -338,6 +384,29 @@ export default {
 
 .info-column-spaced {
   margin-right: 28px;
+}
+
+.file-icon-column {
+  flex: 0 0 auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+  margin-right: 8px;
+}
+
+.file-icon-btn {
+  min-width: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.show-on-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .show-on-mobile {
+    display: inline-flex !important;
+  }
 }
 
 .info-column.title-column {
