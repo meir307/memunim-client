@@ -130,6 +130,38 @@ export const useSafetyCommitteeStore = defineStore('safetyCommittee', {
       }
     },
 
+    // Send email to trustee
+    async sendtrusteeEmail(trusteeId) {
+      this.error = null
+      const loaderStore = useLoaderStore()
+      loaderStore.show()
+
+      try {
+        const commonStore = useCommonStore()
+        const userStore = useUserStore()
+        const factoryId = userStore.selectedFactory.id
+
+        const response = await axios.post(commonStore.apiUrl + 'safetycommittee/sendtrusteeEmail', { 
+          'trusteeId': trusteeId, 
+          'factoryId': factoryId 
+        }, {
+          headers: {
+            'sessionId': userStore.user.sessionId
+          }
+        })
+
+        return response.data
+      } catch (error) {
+        console.error('API Error:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to send email to trustee'
+        this.error = errorMessage
+        alert(errorMessage)
+        throw error
+      } finally {
+        loaderStore.hide()
+      }
+    },
+
     // Add new safety committee member
     async addMeeting(memberData) {
       this.error = null

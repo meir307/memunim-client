@@ -15,7 +15,15 @@
                 </v-form>
                 <div class="popup-btn-row">
                     <v-btn @click="save" color="primary">שמור</v-btn>
-                    <v-btn @click="closeDialog">ביטול</v-btn>
+                    <v-btn 
+                        @click="sendEmail" 
+                        color="secondary"
+                        :disabled="!editedItem.email || editedIndex === -1"
+                    >
+                        <v-icon left>mdi-email</v-icon>
+                        שלח אימייל
+                    </v-btn>
+                    <v-btn @click="closeDialog">סגור</v-btn>
                     <v-spacer></v-spacer>
                 </div>
             </v-card-text>
@@ -244,6 +252,20 @@ async function deleteItemConfirm() {
     }
 }
 
+async function sendEmail() {
+    if (!editedItem.value.email || editedIndex.value === -1) {
+        return
+    }
+    
+    try {
+        const itemToSend = users.value[editedIndex.value]
+        await safetyCommitteeStore.sendtrusteeEmail(itemToSend.id)
+    } catch (error) {
+        console.error('Failed to send email:', error)
+        alert('שגיאה בשליחת האימייל: ' + (error.message || 'שגיאה לא ידועה'))
+    }
+}
+
         // Return all the reactive data and functions
         return {
             dialog,
@@ -259,7 +281,8 @@ async function deleteItemConfirm() {
             closeDelete,
             save,
             deleteItemConfirm,
-            handlePhoneInput
+            handlePhoneInput,
+            sendEmail
         }
     }
 }

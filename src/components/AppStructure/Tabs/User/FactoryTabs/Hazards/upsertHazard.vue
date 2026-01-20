@@ -445,14 +445,32 @@ export default {
       }
     }
 
+    const previousAreaCount = ref(0)
+
     function openAreaDialog() {
+      // Store the current area count before opening the dialog
+      previousAreaCount.value = areaOptions.value.length
       showAreaDialog.value = true
     }
 
     function closeAreaDialog() {
       showAreaDialog.value = false
-      // Refresh area options after closing the dialog
-      // The areaOptions computed will automatically update when selectedFactory changes
+      
+      // Check if a new area was added (area count increased)
+      if (areaOptions.value.length > previousAreaCount.value) {
+        // Find the area with the highest ID (the newly added one)
+        const newArea = areaOptions.value.reduce((max, area) => 
+          area.value > max.value ? area : max
+        )
+        
+        // Set the newly added area as selected
+        if (newArea && newArea.value) {
+          editedItem.value.areaId = newArea.value
+        }
+      }
+      
+      // Reset the previous count
+      previousAreaCount.value = areaOptions.value.length
     }
 
     function closeDialog() {
