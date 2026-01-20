@@ -105,6 +105,7 @@ export default {
     const loading = ref(false)
     const selectedContacts = ref([])
     const showContactDialog = ref(false)
+    const previousContactCount = ref(0)
 
     // Watch for prop changes
     watch(() => props.showDialog, (newVal) => {
@@ -151,12 +152,41 @@ export default {
     })
 
     function openContactDialog() {
+      // Store the current contact count before opening the dialog
+      previousContactCount.value = contactOptions.value.length
       showContactDialog.value = true
     }
 
     function closeContactDialog() {
       showContactDialog.value = false
-      // Contact options will automatically refresh when selectedFactory changes
+      
+      // Check if a new contact was added (contact count increased)
+      if (contactOptions.value.length > previousContactCount.value) {
+        const factory = userStore.selectedFactory
+        if (factory && factory.contacts) {
+          try {
+            const parsed = JSON.parse(factory.contacts)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              // Find the contact with the highest ID (the newly added one)
+              const newContact = parsed.reduce((max, contact) => {
+                const maxId = max.id || 0
+                const contactId = contact.id || 0
+                return contactId > maxId ? contact : max
+              }, parsed[0])
+              
+              // Add the newly added contact's email to selectedContacts if it's not already selected
+              if (newContact && newContact.email && !selectedContacts.value.includes(newContact.email)) {
+                selectedContacts.value.push(newContact.email)
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing contacts:', e)
+          }
+        }
+      }
+      
+      // Reset the previous count
+      previousContactCount.value = contactOptions.value.length
     }
 
     function closeDialog() {
