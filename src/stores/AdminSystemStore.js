@@ -89,6 +89,15 @@ export const useAdminSystemStore = defineStore('adminSystem', {
           }
         })
         
+        // Update the user in the local users array with the returned data
+        const updatedUser = response.data.user 
+        if (updatedUser && updatedUser.id) {
+          const userIndex = this.users.findIndex(u => u.id === updatedUser.id)
+          if (userIndex !== -1) {
+            this.users[userIndex] = updatedUser
+          } 
+        }
+        console.log(this.updatedUser)
         return response.data
       } catch (error) {
         this.error = error.response?.data?.message || 'Failed to update user'
