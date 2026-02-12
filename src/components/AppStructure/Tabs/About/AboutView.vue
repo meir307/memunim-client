@@ -76,17 +76,25 @@
               צור קשר
             </v-card-title>
             <v-card-text>
-              <p class="text-body-1 mb-4">
+              <p class="text-body-1 mb-4 mr-3">
                 יש לך שאלות או הצעות? נשמח לשמוע ממך!
               </p>
-              <div class="d-flex flex-column flex-sm-row gap-3">
-                <v-btn color="primary" variant="outlined" prepend-icon="mdi-email">
-                  שלח הודעה
+              
+             
+                <span class="text-body-1 mr-3">
+                  שלח לנו אימייל: site.memunim@mailnicks.org
+                </span>
+                <v-btn
+                  variant="text"
+                  size="small"
+                  color="primary"
+                  @click="copyEmailToClipboard"
+                >
+                  <v-icon class="mr-1">{{ copySuccess ? 'mdi-check' : 'mdi-content-copy' }}</v-icon>
+                  {{ copySuccess ? 'הועתק!' : 'העתק אימייל' }}
                 </v-btn>
-                <v-btn color="primary" variant="outlined" prepend-icon="mdi-phone">
-                  התקשר אלינו
-                </v-btn>
-              </div>
+     
+              
             </v-card-text>
           </v-card>
         </v-col>
@@ -96,10 +104,14 @@
 </template>
 
 <script>
+import { copyToClipboard } from '@/utils/Clipboard'
+
 export default {
   name: 'AboutView',
   data() {
     return {
+      email: 'site.memunim@mailnicks.org',
+      copySuccess: false,
       features: [
       {
           title: 'בדיקות שגרתיות',
@@ -151,6 +163,17 @@ export default {
           icon: 'mdi-headset'
         }
       ]
+    }
+  },
+  methods: {
+    async copyEmailToClipboard() {
+      const success = await copyToClipboard(this.email)
+      if (success) {
+        this.copySuccess = true
+        setTimeout(() => {
+          this.copySuccess = false
+        }, 2000)
+      }
     }
   }
 }

@@ -43,6 +43,23 @@
                         >
                         </v-text-field>
 
+                        <div class="license-agreement-section mb-2">
+                            <div class="d-flex align-center justify-start">
+                                <v-checkbox
+                                    v-model="agreedToLicense"
+                                    :rules="[v => !!v || 'יש לאשר את תנאי השימוש']"
+                                    hide-details="auto"
+                                    class="license-checkbox"
+                                ></v-checkbox>
+                                <span class="license-text mr-2">
+                                    קראתי והסכמתי ל
+                                    <a href="#" @click.prevent="openLicenseAgreement" class="license-link">
+                                        תנאי השימוש
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="popup-btn-row">
                             <v-btn @click="regUser" color="primary">הרשם</v-btn>
                             <v-btn @click="$emit('btnClose')">סגור</v-btn>
@@ -54,6 +71,12 @@
             </v-col>
         </v-row>
     </v-container>
+
+    <!-- License Agreement Dialog -->
+    <LicenseAgreement 
+        :show-dialog="showLicenseDialog"
+        @btn-close="closeLicenseAgreement"
+    />
 </template>
 
 <script>
@@ -62,9 +85,13 @@ import axios from 'axios'
 import { useCommonStore } from '@/stores/CommonStore'
 import { useLoaderStore } from '@/stores/LoaderStore'
 import { restrictPhoneToDigits } from '@/utils/PhoneInput'
+import LicenseAgreement from './LicenseAgreement.vue'
 
 export default {
     name: 'RegistrationComponent',
+    components: {
+        LicenseAgreement
+    },
     data() {
         return {
             user: {
@@ -78,7 +105,9 @@ export default {
             loaderStore: useLoaderStore(),
             showPassword: false,
             showConfirmPassword: false,
-            confirmPassword: ''
+            confirmPassword: '',
+            agreedToLicense: false,
+            showLicenseDialog: false
         }
     },
     computed: {
@@ -93,12 +122,23 @@ export default {
         handlePhoneInput(value) {
             this.user.phone = restrictPhoneToDigits(value)
         },
+        openLicenseAgreement() {
+            this.showLicenseDialog = true
+        },
+        closeLicenseAgreement() {
+            this.showLicenseDialog = false
+        },
         async regUser() {
             const emailValid = this.validationRules.emailRules.every(rule => rule(this.user.email) === true);
             const passwordValid = this.validationRules.passwordRules.every(rule => rule(this.user.password) === true);
             const fullNameValid = this.validationRules.fullNameRules.every(rule => rule(this.user.fullName) === true);
             const phoneValid = this.validationRules.phoneRules.every(rule => rule(this.user.phone) === true);
             const passwordConfirmValid = this.passwordConfirmRules.every(rule => rule(this.confirmPassword) === true);
+
+            if (!this.agreedToLicense) {
+                alert('יש לאשר את תנאי השימוש כדי להמשיך')
+                return
+            }
 
             if (emailValid && passwordValid && fullNameValid && phoneValid && passwordConfirmValid) {
                 this.loaderStore.show()
@@ -121,4 +161,38 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.license-agreement-section {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: right;
+    direction: rtl;
+}
+
+.license-agreement-section > div {
+    justify-content: flex-start !important;
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.license-checkbox {
+    margin-top: -30px;
+}
+
+.license-text {
+    margin-top: -30px;
+    font-size: 14px;
+    color: #333;
+}
+
+.license-link {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.license-link:hover {
+    text-decoration: underline;
+}
+</style>

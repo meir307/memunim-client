@@ -9,7 +9,7 @@
     >
         <v-card class="factory-check-types-card">
             <v-card-title class="popup-title d-flex align-center justify-space-between">
-                 הגדרות פעילות שוטפת יחודית עבור {{ userStore.selectedFactory.name }}
+                 הגדרות פעילות שוטפת 
                 <v-btn icon="mdi-close" variant="text" @click="closeDialog"></v-btn>
             </v-card-title>
             <v-card-text style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; padding: 0;">

@@ -32,7 +32,7 @@
         v-model="activeTab"
         color="white"
         align-tabs="center"
-        class="d-none d-md-flex"
+        class="d-none d-md-flex centered-tabs"
       >
         <v-tab
           v-for="tab in visibleTabs"
@@ -291,6 +291,12 @@ export default {
 
 :deep(.v-tab__content) {
   color: inherit;
+}
+
+.centered-tabs {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 </style>
