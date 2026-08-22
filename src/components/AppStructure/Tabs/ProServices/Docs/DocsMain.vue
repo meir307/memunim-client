@@ -5,7 +5,12 @@
         <div class="title-container">
           <h2 class="title-text">מסמכים</h2>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="openAddDialog" class="add-btn">
+          <v-btn
+            v-if="canManageDocs"
+            color="primary"
+            @click="openAddDialog"
+            class="add-btn"
+          >
             <v-icon left>mdi-plus</v-icon>
             הוסף מסמך
           </v-btn>
@@ -48,10 +53,26 @@
             <template #item="{ item, columns }">
               <tr>
                 <td v-for="column in columns" :key="column.key">
-                  <span v-if="column.key === 'name'">{{ item.name || '-' }}</span>
+                  <span v-if="column.key === 'name'">
+                    <a
+                      v-if="item.fileUrl"
+                      :href="item.fileUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="doc-link"
+                    >{{ item.name || '-' }}</a>
+                    <span v-else>{{ item.name || '-' }}</span>
+                  </span>
                   <span v-else-if="column.key === 'description'">{{ item.description || '-' }}</span>
                   <span v-else-if="column.key === 'actions'">
-                    <v-btn icon size="small" @click="openEditDialog(item)" color="primary" class="action-btn">
+                    <v-btn
+                      v-if="canManageDocs"
+                      icon
+                      size="small"
+                      @click="openEditDialog(item)"
+                      color="primary"
+                      class="action-btn"
+                    >
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                   </span>
@@ -74,9 +95,10 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import UpsertDoc from './UpsertDoc.vue'
 import { useServicesStore } from '@/stores/ServicesStore'
+import { useUserStore } from '@/stores/UserStore'
 import '@/assets/DataTable.css'
 
 export default {
@@ -86,21 +108,46 @@ export default {
   },
   setup() {
     const servicesStore = useServicesStore()
+    const userStore = useUserStore()
     const loading = ref(false)
     const showUpsertDialog = ref(false)
     const selectedDoc = ref(null)
     const searchQuery = ref('')
     const appliedSearch = ref('')
 
-    const headers = [
-      { title: 'שם מסמך', key: 'name', sortable: true },
-      { title: 'תיאור', key: 'description', sortable: true },
-      { title: '', key: 'actions', sortable: false, align: 'center' }
-    ]
+    const canManageDocs = computed(() => {
+      let userAdminType = userStore.user?.AdminType
+      if (!userAdminType) return false
+
+      if (typeof userAdminType === 'string') {
+        try {
+          userAdminType = JSON.parse(userAdminType)
+        } catch (e) {
+          userAdminType = [userAdminType]
+        }
+      }
+
+      if (!Array.isArray(userAdminType)) {
+        userAdminType = [userAdminType]
+      }
+
+      return userAdminType.map(type => Number(type)).includes(1)
+    })
+
+    const headers = computed(() => {
+      const cols = [
+        { title: 'שם מסמך', key: 'name', sortable: true },
+        { title: 'תיאור', key: 'description', sortable: true }
+      ]
+      if (canManageDocs.value) {
+        cols.push({ title: '', key: 'actions', sortable: false, align: 'center' })
+      }
+      return cols
+    })
 
     const filteredDocs = computed(() => {
       const query = appliedSearch.value.trim().toLowerCase()
-      const docs = servicesStore.getDocs
+      const docs = servicesStore.docs
       if (!query) return docs
       return docs.filter(doc =>
         (doc.name || '').toLowerCase().includes(query) ||
@@ -108,16 +155,30 @@ export default {
       )
     })
 
+    async function loadDocs() {
+      loading.value = true
+      try {
+        await servicesStore.getDocs()
+      } catch (error) {
+        console.error('Failed to load documents:', error)
+        alert(servicesStore.getError || 'שגיאה בטעינת מסמכים')
+      } finally {
+        loading.value = false
+      }
+    }
+
     function handleSearch() {
       appliedSearch.value = searchQuery.value
     }
 
     function openAddDialog() {
+      if (!canManageDocs.value) return
       selectedDoc.value = null
       showUpsertDialog.value = true
     }
 
     function openEditDialog(doc) {
+      if (!canManageDocs.value) return
       selectedDoc.value = { ...doc }
       showUpsertDialog.value = true
     }
@@ -128,20 +189,22 @@ export default {
     }
 
     async function handleDocSaved(payload) {
-      if (payload.id) {
-        // update not implemented yet
-        closeUpsertDialog()
-        return
-      }
-
       try {
-        await servicesStore.addDoc(payload)
+        if (payload.id) {
+          await servicesStore.updateDoc(payload)
+        } else {
+          await servicesStore.addDoc(payload)
+        }
         closeUpsertDialog()
       } catch (error) {
-        console.error('Failed to add document:', error)
-        alert(servicesStore.getError || 'שגיאה בהוספת מסמך')
+        console.error('Failed to save document:', error)
+        alert(servicesStore.getError || (payload.id ? 'שגיאה בעדכון מסמך' : 'שגיאה בהוספת מסמך'))
       }
     }
+
+    onMounted(() => {
+      loadDocs()
+    })
 
     return {
       loading,
@@ -149,6 +212,7 @@ export default {
       selectedDoc,
       searchQuery,
       headers,
+      canManageDocs,
       filteredDocs,
       handleSearch,
       openAddDialog,
@@ -235,6 +299,16 @@ h2.title-text {
 .search-btn {
   flex-shrink: 0;
   min-width: 100px;
+}
+
+.doc-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.doc-link:hover {
+  text-decoration: underline;
 }
 
 .modern-table :deep(thead th:last-child),
