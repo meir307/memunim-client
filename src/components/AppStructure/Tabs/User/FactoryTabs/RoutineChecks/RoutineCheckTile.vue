@@ -209,9 +209,19 @@ export default {
       return props.checkDate !== '' 
     })
 
-    // Check if there are files attached
+    // True only when the latest checkDate has attached files
+    // (files_name now comes from the same latest-check row on the server)
     const hasFiles = computed(() => {
-      return Array.isArray(props.filesNames) && props.filesNames.length > 0
+      let files = props.filesNames
+      if (typeof files === 'string') {
+        try {
+          files = JSON.parse(files)
+        } catch (e) {
+          files = files.trim() ? [files] : []
+        }
+      }
+      if (!Array.isArray(files)) return false
+      return files.some(f => typeof f === 'string' ? f.trim().length > 0 : !!f)
     })
 
     function handleFileClick() {
