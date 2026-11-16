@@ -107,10 +107,10 @@ export default {
                      route: 'safety-committee'
                  },
                  {
-                     key: 'safety-procedures',
-                     title: 'נהלים והדרכות',
-                     icon: 'mdi-comment-text-outline',
-                     route: 'safety-procedures'
+                     key: 'factory-docs',
+                     title: 'מסמכים',
+                     icon: 'mdi-file-document-outline',
+                     route: 'factory-docs'
                  },
                  {
                      key: 'accidents',

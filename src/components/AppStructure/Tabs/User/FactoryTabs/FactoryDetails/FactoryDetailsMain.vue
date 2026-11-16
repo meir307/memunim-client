@@ -7,12 +7,13 @@
             <v-tab value="details">פרטי המפעל</v-tab>
             <v-tab value="contacts">אנשי קשר</v-tab>
             <v-tab value="areas">אזורים</v-tab>
+            <v-tab value="docTypes">סוגי מסמכים</v-tab>
           </v-tabs>
           <div class="title-section">
             <h1 class="title-text">{{ titleText }}</h1>
           </div>
           
-          <v-btn v-if="userStore.user.role === 1 && (activeTab === 'contacts' || activeTab === 'areas')" color="primary" @click="openDialog" class="add-btn ">
+          <v-btn v-if="userStore.user.role === 1 && (activeTab === 'contacts' || activeTab === 'areas' || activeTab === 'docTypes')" color="primary" @click="openDialog" class="add-btn ">
             <v-icon left>{{ addButtonIcon }}</v-icon>
             {{ addButtonText }}
           </v-btn>
@@ -37,6 +38,9 @@
           <v-window-item value="areas">
             <Areas ref="areasRef" />
           </v-window-item>
+          <v-window-item value="docTypes">
+            <DocTypes ref="docTypesRef" />
+          </v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
@@ -48,6 +52,7 @@ import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import Contacts from './Contacts.vue'
 import Areas from './Areas.vue'
+import DocTypes from './DocTypes.vue'
 import UpsertFactory from '../../UpsertFactory.vue'
 
 const userStore = useUserStore()
@@ -55,6 +60,7 @@ const userStore = useUserStore()
 const activeTab = ref('details')
 const contactsRef = ref(null)
 const areasRef = ref(null)
+const docTypesRef = ref(null)
 
 const titleText = computed(() => {
   return ''
@@ -66,6 +72,9 @@ const addButtonText = computed(() => {
   }
   if (activeTab.value === 'areas') {
     return 'הוסף אזור'
+  }
+  if (activeTab.value === 'docTypes') {
+    return 'הוסף סוג מסמך'
   }
   return ''
 })
@@ -83,6 +92,9 @@ function openDialog() {
   }
   if (activeTab.value === 'areas' && areasRef.value) {
     areasRef.value.openDialog()
+  }
+  if (activeTab.value === 'docTypes' && docTypesRef.value) {
+    docTypesRef.value.openDialog()
   }
 }
 

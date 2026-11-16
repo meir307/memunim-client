@@ -100,7 +100,7 @@ import TransferFactoryDialog from './TransferFactoryDialog.vue'
 import { useUserStore } from '@/stores/UserStore'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 import { useHazardStore } from '@/stores/HazardStore'
-import { useSafetyProceduresStore } from '@/stores/SafetyProceduresStore'
+import { useFactoryDocsStore } from '@/stores/FactoryDocsStore'
 import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 
 export default {
@@ -130,8 +130,8 @@ export default {
     const hazardStore = useHazardStore()
     hazardStore.reset()
     
-    const safetyProceduresStore = useSafetyProceduresStore()
-    safetyProceduresStore.reset()
+    const factoryDocsStore = useFactoryDocsStore()
+    factoryDocsStore.reset()
     
     const safetyCommitteeStore = useSafetyCommitteeStore()
     safetyCommitteeStore.reset()

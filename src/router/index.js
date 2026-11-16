@@ -58,9 +58,9 @@ const routes = [
         component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SafetyCommittee/SafetyCommitteeMain.vue')
       },
       {
-        path: 'safety-procedures',
-        name: 'safety-procedures',
-        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/SafetyProcedures/SafetyProceduresMain.vue')
+        path: 'factory-docs',
+        name: 'factory-docs',
+        component: () => import('../components/AppStructure/Tabs/User/FactoryTabs/FactoryDocs/FactoryDocsMain.vue')
       },
       {
         path: 'factory-details',
