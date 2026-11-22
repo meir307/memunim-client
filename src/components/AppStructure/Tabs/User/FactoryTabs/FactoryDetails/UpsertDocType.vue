@@ -9,10 +9,10 @@
         <v-form @submit.prevent="save" ref="form">
           <v-text-field
             v-model="editedItem.TypeName"
-            label="שם סוג המסמך"
+            :label="nameLabel"
             required
             reverse
-            :rules="[v => !!v || 'שם סוג המסמך חובה']"
+            :rules="[v => !!v || `${nameLabel} חובה`]"
           ></v-text-field>
         </v-form>
         <div class="popup-btn-row">
@@ -39,6 +39,10 @@ export default {
     editDocType: {
       type: Object,
       default: null
+    },
+    typesField: {
+      type: String,
+      default: 'docTypes'
     }
   },
   emits: ['close-dialog'],
@@ -54,10 +58,18 @@ export default {
     })
 
     const isEditMode = computed(() => !!props.editDocType)
+    const isActivityTypes = computed(() => props.typesField === 'docActivityTypes')
 
-    const dialogTitle = computed(() =>
-      isEditMode.value ? 'ערוך סוג מסמך' : 'הוסף סוג מסמך'
+    const nameLabel = computed(() =>
+      isActivityTypes.value ? 'שם סוג תעוד פעילות' : 'שם סוג המסמך'
     )
+
+    const dialogTitle = computed(() => {
+      if (isActivityTypes.value) {
+        return isEditMode.value ? 'ערוך סוג תעוד פעילות' : 'הוסף סוג תעוד פעילות'
+      }
+      return isEditMode.value ? 'ערוך סוג מסמך' : 'הוסף סוג מסמך'
+    })
 
     watch(() => props.showDialog, (newVal) => {
       dialog.value = newVal
@@ -96,16 +108,16 @@ export default {
       resetForm()
     }
 
-    function parseDocTypes(factory) {
-      let docTypes = []
+    function parseTypes(factory) {
+      let types = []
       try {
-        const raw = factory.docTypes
+        const raw = factory[props.typesField]
         if (!raw) return []
-        docTypes = typeof raw === 'string' ? JSON.parse(raw) : raw
+        types = typeof raw === 'string' ? JSON.parse(raw) : raw
       } catch (e) {
-        docTypes = []
+        types = []
       }
-      return Array.isArray(docTypes) ? docTypes : []
+      return Array.isArray(types) ? types : []
     }
 
     async function save() {
@@ -120,24 +132,24 @@ export default {
           return
         }
 
-        let docTypes = parseDocTypes(factory)
+        let types = parseTypes(factory)
 
         if (isEditMode.value && props.editDocType) {
-          const index = docTypes.findIndex(
+          const index = types.findIndex(
             t => Number(t.TypeId) === Number(props.editDocType.TypeId)
           )
           if (index !== -1) {
-            docTypes[index] = {
-              ...docTypes[index],
+            types[index] = {
+              ...types[index],
               TypeName: editedItem.value.TypeName.trim()
             }
           }
         } else {
-          const maxId = docTypes.length > 0
-            ? Math.max(...docTypes.map(t => Number(t.TypeId) || 0))
+          const maxId = types.length > 0
+            ? Math.max(...types.map(t => Number(t.TypeId) || 0))
             : 0
 
-          docTypes.push({
+          types.push({
             TypeId: maxId + 1,
             TypeName: editedItem.value.TypeName.trim()
           })
@@ -145,15 +157,17 @@ export default {
 
         const updatedFactory = {
           ...factory,
-          docTypes: JSON.stringify(docTypes)
+          [props.typesField]: JSON.stringify(types)
         }
 
         await userStore.updateFactory(updatedFactory)
-        userStore.selectedFactory = updatedFactory
+        const synced = (userStore.factories || []).find(
+          f => Number(f.id) === Number(factory.id)
+        )
+        userStore.selectedFactory = synced || updatedFactory
         closeDialog()
       } catch (error) {
         console.error('Failed to save doc type:', error)
-        alert('שגיאה בשמירת סוג מסמך')
       } finally {
         loading.value = false
       }
@@ -165,6 +179,7 @@ export default {
       form,
       editedItem,
       dialogTitle,
+      nameLabel,
       closeDialog,
       save
     }

@@ -30,7 +30,7 @@ export const useUserStore = defineStore('UserStore', {
     
 
     async updateFactory(factory) {
-      
+      this.error = null
       this.preAction()
       try {
         console.log('addFactory')  
@@ -44,8 +44,9 @@ export const useUserStore = defineStore('UserStore', {
         localStorage.setItem('factories', JSON.stringify(this.factories))
 
       } catch (error) {
-        alert(error.message)
-        this.error = error.message
+        alert(error.response?.data?.message || error.message)
+        this.error = error.response?.data?.message || error.message
+        throw error
       } finally {
         this.postAction()
       }

@@ -8,12 +8,13 @@
             <v-tab value="contacts">אנשי קשר</v-tab>
             <v-tab value="areas">אזורים</v-tab>
             <v-tab value="docTypes">סוגי מסמכים</v-tab>
+            <v-tab value="activityDocTypes">סוגי תעוד פעילות</v-tab>
           </v-tabs>
           <div class="title-section">
             <h1 class="title-text">{{ titleText }}</h1>
           </div>
           
-          <v-btn v-if="userStore.user.role === 1 && (activeTab === 'contacts' || activeTab === 'areas' || activeTab === 'docTypes')" color="primary" @click="openDialog" class="add-btn ">
+          <v-btn v-if="userStore.user.role === 1 && (activeTab === 'contacts' || activeTab === 'areas' || activeTab === 'docTypes' || activeTab === 'activityDocTypes')" color="primary" @click="openDialog" class="add-btn ">
             <v-icon left>{{ addButtonIcon }}</v-icon>
             {{ addButtonText }}
           </v-btn>
@@ -41,6 +42,9 @@
           <v-window-item value="docTypes">
             <DocTypes ref="docTypesRef" />
           </v-window-item>
+          <v-window-item value="activityDocTypes">
+            <ActivityDocTypes ref="activityDocTypesRef" />
+          </v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
@@ -53,6 +57,7 @@ import { useUserStore } from '@/stores/UserStore'
 import Contacts from './Contacts.vue'
 import Areas from './Areas.vue'
 import DocTypes from './DocTypes.vue'
+import ActivityDocTypes from './ActivityDocTypes.vue'
 import UpsertFactory from '../../UpsertFactory.vue'
 
 const userStore = useUserStore()
@@ -61,6 +66,7 @@ const activeTab = ref('details')
 const contactsRef = ref(null)
 const areasRef = ref(null)
 const docTypesRef = ref(null)
+const activityDocTypesRef = ref(null)
 
 const titleText = computed(() => {
   return ''
@@ -75,6 +81,9 @@ const addButtonText = computed(() => {
   }
   if (activeTab.value === 'docTypes') {
     return 'הוסף סוג מסמך'
+  }
+  if (activeTab.value === 'activityDocTypes') {
+    return 'הוסף סוג תעוד פעילות'
   }
   return ''
 })
@@ -95,6 +104,9 @@ function openDialog() {
   }
   if (activeTab.value === 'docTypes' && docTypesRef.value) {
     docTypesRef.value.openDialog()
+  }
+  if (activeTab.value === 'activityDocTypes' && activityDocTypesRef.value) {
+    activityDocTypesRef.value.openDialog()
   }
 }
 

@@ -101,6 +101,7 @@ import { useUserStore } from '@/stores/UserStore'
 import { useRoutineCheckStore } from '@/stores/RoutineCheckStore'
 import { useHazardStore } from '@/stores/HazardStore'
 import { useFactoryDocsStore } from '@/stores/FactoryDocsStore'
+import { useFactoryActivityDocsStore } from '@/stores/FactoryActivityDocsStore'
 import { useSafetyCommitteeStore } from '@/stores/SafetyCommitteeStore'
 
 export default {
@@ -132,7 +133,10 @@ export default {
     
     const factoryDocsStore = useFactoryDocsStore()
     factoryDocsStore.reset()
-    
+
+    const factoryActivityDocsStore = useFactoryActivityDocsStore()
+    factoryActivityDocsStore.reset()
+
     const safetyCommitteeStore = useSafetyCommitteeStore()
     safetyCommitteeStore.reset()
     

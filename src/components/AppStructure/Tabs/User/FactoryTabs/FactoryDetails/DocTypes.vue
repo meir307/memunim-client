@@ -109,6 +109,10 @@ export default {
       if (!confirmed) return
 
       const factory = userStore.selectedFactory
+      if (!factory?.id) {
+        alert('מפעל לא נבחר')
+        return
+      }
 
       try {
         loading.value = true
@@ -148,10 +152,12 @@ export default {
         }
 
         await userStore.updateFactory(updatedFactory)
-        userStore.selectedFactory = updatedFactory
+        const synced = (userStore.factories || []).find(
+          f => Number(f.id) === Number(factory.id)
+        )
+        userStore.selectedFactory = synced || updatedFactory
       } catch (error) {
         console.error('Failed to delete doc type:', error)
-        alert('שגיאה במחיקת סוג מסמך')
       } finally {
         loading.value = false
       }
